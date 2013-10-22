@@ -1,303 +1,618 @@
-package game;
+package decker;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
-import java.util.*;
-import java.io.*;
-/*
- * Controller acts as an action and mouse listener for various GUI components especially View.
- */
-public class Controller implements ActionListener, MouseListener{
-	private Game g;
-	private View v;
-	private LoadGame lg;
-	private SaveGame sg;
-    private NewGameView ngv;
-    private SeasonPanel sep;
-    private TavernPanel tp;
-    private ShopPanel sp;
-    private BattlePanel bp;
-    private TeamPanel tep;
-    private About ab;
-    private TopKOs top;
-    private TopTeams topteam;
-    private Askstuff ask;
-    private boolean gamestarted = false;
-    private boolean itemsadded = false;
-    private int whichaskaction = 0;
-	public Controller(View v, Game g, MainPanel m, TavernPanel t, ShopPanel s, BattlePanel b, SeasonPanel sep, TeamPanel tep){
-		this.g = g;
-		this.v= v;
-        this.sep = sep;
-        tp = t;
-        sp = s;
-        bp = b;
-        this.tep = tep;
-	}
-	public void actionPerformed(ActionEvent ae){
-		if(ae.getActionCommand().equals("EXIT")){
-			System.exit(0);
-		}
-		if(ae.getActionCommand().equals("NEW")){
-            if(ngv != null) ngv.dispose();
-            ngv = new NewGameView(this);
-		}
-		if(ae.getActionCommand().equals("HELP")){
-			try                                      //try statement
-	        {
-				String command = "rundll32 url.dll,FileProtocolHandler " + "USER_MANUAL.pdf";
-				Runtime.getRuntime().exec(command);
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-	        } catch (Exception e)                    //catch any exceptions here
-	          {
-	              v.addText("Error" + e );  //print the error
-	          }
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+//import java.io.*;
+/**
+ * Kontrolli luokka ohjelmalle. Viw:in ActionListener luokka.
+ * Yhdistää View:in Model:in. Luo myös Login, AddCards ja About ikkunoita 
+ * tarpeen mukaan. Sisältää myös ohjelman tarkistusrutiinit ja asettaa virheviestit Viewiin.
+ * @author Risto Salama
+ *
+ */
+/* ActionListener class for program. Connects View to Model. Also creates Login, AddCards and About
+ * windows when certain action is given.
+ */
+public class Controller implements ActionListener, ListSelectionListener, MouseListener{
+	// Classes and variables
+	private boolean online = false;
+	private View kayttoliittyma;
+	private Decker sovelluslogiikka;
+	private Login login;
+	private AddCards Cardadder;
+	private AddDeck Deckadder;
+	private About about;
+	private Help help;
+	private Calculate analysis;
+	private boolean loggaus = false;
+	private boolean addcardscheck = false;
+	private boolean adddeckcheck = false;
+	// boolean to help check if coloricon was pressed
+	private boolean whitep = false;
+	private boolean bluep = false;
+	private boolean blackp = false;
+	private boolean redp = false;
+	private boolean greenp = false;
+	private boolean iconlock = false;
+	private final File tallennus = new File(".\\Decks");
+	private ArrayList<String> lista;
+	private String card = null;
+	/**
+	 * Alustaja Controller luokalle.
+	 * @param k joka on ohjelman graafinen käyttöliittymä eli View-luokka.
+	 */
+	// Constructor. Creates a new Model by setting itself as Model's Controller.
+	public Controller(View k) {
+        kayttoliittyma = k;
+        sovelluslogiikka = new Decker(this);
+        kayttoliittyma.setErrorMessage("Welcome to MTG-Decker. For the first time: to properly configure database select Cards -> Add all cards.", false);
+        sovelluslogiikka.play();
+	}
+	/**
+	 * updateUI
+	 * Metodi joka laittaa View:in virheilmoituksen tyhjäksi.
+	 * Pysäyttää myös säikeen Model:ssa.
+	 */
+	// Method for setting View's error message to empty. 
+	// Also stops the thread in model when this method is called.
+	public void updateUI(){
+		kayttoliittyma.setErrorMessage("", true);
+		sovelluslogiikka.stop();
+	}
+	/**
+	 * actionPerformed
+	 * Tapahtumakuuntelija metodi, joka sisältää tapahtumankuuntelijat käyttöliittymän kaikille 
+	 * toiminnoille. SEARCH, SAVE, VIEW CARD ja REMOVE tapauksissa, tekee tarkistuksen onko toiminto suoritettu
+	 * oikein ja sitten välittää käyttöliittymästä tiedon MODEL:lle, joka käsittelee DAO:ta, ja palauttaa tiedot
+	 * lopuksi käyttöliittymälle ja käyttäjälle. Kun lisätään kortteja, logataan tai painetaan about nappia,
+	 * tämä metodi luo uuden ikkunan tapahtumaa varten.
+	 * 
+	 */
+	public void actionPerformed(ActionEvent ae){
+		if(ae.getActionCommand().equals("SELECT"))kayttoliittyma.selectAll();
+		if(ae.getActionCommand().equals("FORMAT")){
+			String forma = kayttoliittyma.getFormat();
+			if(forma=="" || forma=="Pauper" || forma == "Tribal Wars" || forma =="Vanguard") kayttoliittyma.formatEnableDisable(true);
+			else kayttoliittyma.formatEnableDisable(false);
 		}
-		if(ae.getActionCommand().equals("ABOUT")){
-			if(ab!=null)ab.dispose();
-			ab=new About();
-		}
-        if(ae.getActionCommand().equals("START_NEW_GAME")){
-            if(gamestarted)g = new Game();
-            String t[] = ngv.getTeamNames();
-            boolean check = false;
-            if(t[0] != null && !t[0].equals("")&&g.checkExistingTeamNames(t[0])){
-                v.setTeamName(t[0]);
-                check = true;
-            }else if(t[1] != null&& !t[1].equals("")&&g.checkExistingTeamNames(t[1])){
-                    v.setTeamName(t[1]);
-                    check = true;
-            }else if(t[2] != null&& !t[2].equals("")&&g.checkExistingTeamNames(t[2])){
-                    v.setTeamName(t[2]);
-                    check = true;
-            }else if(t[3] != null&& !t[3].equals("")&&g.checkExistingTeamNames(t[3])){
-                    v.setTeamName(t[3]);
-                    check = true;
-            }
-            if(check){
-                g.setTeams(t);
-                gamestarted = true;
-                ngv.disposeThis();
-                v.clearGladiatorPanels();
-                v.setTeamName(g.getActiveTeamName());
-                v.setSquirrels(g.getActiveSquirrels());
-                v.changePanel("mp");
-                v.enableStuff();
-                v.setCurSeason(g.getCurrentSeason());
-                v.addText("O noble player, thy first task in this game was a magnificent success!\nNow recruit gladiators, purchase equipments and spells and enter arena!");
-            }else v.addText("No valid names!");
-        }
-		if(ae.getActionCommand().equals("LOAD")){
-			if(lg==null);
-			else lg.dispose();
-			ArrayList<File> files = g.getSavedGames();
-			if(!files.isEmpty()){
-				lg = new LoadGame(g.getSavedGames(),this);
-			}else{
-				v.addText("No saved games exist.");
-			}
-		}
-		if(ae.getActionCommand().equals("LOADTHISGAME")){
-			v.changePanel("mp");
-			Game gah = g.loadGame(lg.getSelectedFile());
-			if(gah!=null){
-				g = gah;
-			}
-			v.clearGladiatorPanels();
-			v.addGladiatorstoPanels(g.getCurrentGladiators(true));
-			v.showGladiator(g.getCurrentGladiator());
-			v.setTeamName(g.getActiveTeamName());
-            v.setSquirrels(g.getActiveSquirrels());
-            v.setCurSeason(g.getCurrentSeason());
-            v.enableStuff();
-            gamestarted = true;
-            lg.dispose();
-		}
-		if(gamestarted){
-			if(ae.getActionCommand().equals("SAVE")){
-				if(sg==null){
-					sg = new SaveGame(this);
+		if(ae.getActionCommand().equals("SEARCH")){
+			// Empties the JComboBox list in View and also View's JTextfield and JTextArea. 
+			kayttoliittyma.emptyList();
+			kayttoliittyma.setName("");
+			kayttoliittyma.setDeck("");
+			kayttoliittyma.setSideboard("");
+			kayttoliittyma.setCurrentDate("");
+			kayttoliittyma.hideRating();
+			// Stores selected formats and colors to strings and sets error message and starts
+			// thread in model if either one is empty. 
+			String format = kayttoliittyma.checkFormat();
+			String color = kayttoliittyma.checkColor();
+			if((color.isEmpty() && !(kayttoliittyma.getFormat() == "Prismatic")) || (format.isEmpty() || (format == "Tribal Wars") || (format == "Pauper") || (format == "Vanguard"))){
+				kayttoliittyma.setErrorMessage("You must select both color and format for search to work", true);
+				sovelluslogiikka.play();
+			}else{ 
+				//Passes the model the information of both formats and colors and then checks whether
+				// ArrayList has anything in it by using iterator. If it has it passes the lista to view
+				lista = sovelluslogiikka.searchDecks(format, color);
+				Iterator<String> it = lista.iterator();
+				if(lista == null||!it.hasNext()){
+					kayttoliittyma.setErrorMessage("Search didn't find any decks using selected options", true);
+					sovelluslogiikka.play();
 				}else{
-					sg.dispose();
-					sg = new SaveGame(this);
+					kayttoliittyma.AddDekit(lista);
 				}
 			}
-			if(ae.getActionCommand().equals("SAVETHISGAME")){
-				g.saveGame(sg.getSavedName());
-				sg.dispose();
-				v.changePanel("mp");
+		}
+		if(ae.getActionCommand().equals("dekit")){
+			/* Sets the decklist JTextArea and also sets the JCheckboxes provided JCombobox's 
+			 * selected field isn't null. 
+			 */
+			String name = kayttoliittyma.valiName();
+			if(!(name == null)){
+				kayttoliittyma.setName(name);
+				String dekki = sovelluslogiikka.searchDekki(name);
+				iconlock = true;
+				kayttoliittyma.setColor(sovelluslogiikka.returnColor());
+				System.out.println(sovelluslogiikka.returnFormat());
+				kayttoliittyma.setFormat(sovelluslogiikka.returnFormat());
+				kayttoliittyma.setDeck(dekki);
+				kayttoliittyma.setSideboard(sovelluslogiikka.returnSideboard());
+				kayttoliittyma.setComments(sovelluslogiikka.returnComments());
+				kayttoliittyma.setDate("Date added: " + sovelluslogiikka.returnDate());
+				kayttoliittyma.setRating(sovelluslogiikka.returnRating(), sovelluslogiikka.returnAmountRatings());
+				iconlock = false;
 			}
-			if(ae.getActionCommand().equals("RESIGN")){
-				if(g.getHumanPlayers()> 1){
-					if(!(g.getCurrentGladiators(true)==null)){
-						whichaskaction = 2;
-	            		v.setEnabled(false);
-	            		ask = new Askstuff("Are thou sure thou want to resign from glamorous manager position?", this);
-		            }else v.addText("Thou must have at least one active gladiator in team before resigning.");
-				}else v.addText("Position of manager can only be resigned when more than one hï¿½bï¿½tti is managing the teams (in other words, there must be more than one player in game).");
+		}
+		if(ae.getActionCommand().equals("REMOVE")){
+			// Creates a new Login window unless user has already logged.
+			if(!loggaus && online){
+				if(!(login==null))login.close();
+				login = new Login(this);
 			}
-            if(ae.getActionCommand().equals("STARTBATTLE")){               
-                if(!(g.getCurrentGladiators(true)==null)){
-                    boolean battlestart = g.newBattle(bp, v);
-
-                    if(battlestart){
-                        v.changePanel("bp");
-                        v.disableStuff();
-                    }else{
-                        v.clearGladiatorPanels();
-                        v.setSquirrels(g.getActiveSquirrels());
-                        v.setTeamName(g.getActiveTeamName());
-                        v.addGladiatorstoPanels(g.getCurrentGladiators(true));
-                        v.showGladiator(g.getCurrentGladiator());
-                    }
-                }else v.addText("Manager refuses to enter arena. Alas! Thou must hire gladiator.");
-            }
-            if(ae.getActionCommand().equals("TAVERN")){
-            	v.addText("Thou has entered a local tavern. In the dark corners you can see variety of creeps howling for a chance to be gladiator.");
-                Vector<Gladiator> vec = g.getTavernGladiators();
-                String name[] = new String[vec.size()];
-                String race[] = new String[vec.size()];
-                int price[] = new int[vec.size()];
-                Iterator<Gladiator> it = vec.iterator();
-                int i = 0;
-                while(it.hasNext()){
-                    Gladiator apu = it.next();
-                    name[i] = apu.getName();
-                    race[i] = apu.getRace();
-                    price[i] = 10*apu.getUpkeep();
-                    i++;
-                }
-                tp.setGladiators(name, race, price);
-                tp.setRow();
-                v.changePanel("tp");
-            }
-            if(ae.getActionCommand().equals("BLACKSMITH")){
-                if(!itemsadded){
-                	v.addText("Greetings noble customer! I have a wide range of different armaments, exquisitive armor and exotic spells available for extraordinary prices. \nFeel free to browse my vast selection of goods and peep if anything is of interest.");
-                    sp.addShopItems(g.getMeleeBlacksmith(), g.getRangedBlacksmith(), g.getArmorBlacksmith(), g.getSpells(true), g.getSpells(false));
-                    itemsadded = true;
-                }else v.addText("Thou has entered a local shop. \nVariety of different armors and weapons, that are covered with cobwebs, are stockpiled here.");
-                v.changePanel("sp");
-            }      
-            if(ae.getActionCommand().equals("KO")){
-            	if(top!=null)top.dispose();
-    			top=new TopKOs(g.getTeams());
-            }
-            if(ae.getActionCommand().equals("TOP_TEAMS")){
-            	if(topteam!=null)topteam.dispose();
-            	topteam = new TopTeams(g.getTeams());
-            }
-            if(ae.getActionCommand().equals("SEASON")){
-            	sep.setText(g.getActiveTeam());
-            	v.changePanel("sep");
-            }
-            if(ae.getActionCommand().equals("OTHERTEAMS")){
-            	tep.setText(g.getTeams());
-            	v.changePanel("tep");
-            }
-            if(ae.getActionCommand().equals("TEAM_NAME")){
-                    v.teamorgladiatorNameOpen(true, g.getActiveTeamName());
-            }
-            if(ae.getActionCommand().equals("GLADIATOR_NAME")){
-                if(!(g.getCurrentGladiators(false)==null))
-                    v.teamorgladiatorNameOpen(false, g.getCurrentGladiator().getName());
-                else v.addText("No gladiator selected.");
-            }
-            if(ae.getActionCommand().equals("CHANGE_GLADIATOR_NAME")){
-                String n = v.getName();
-                if(!n.equals("")&&!n.isEmpty()){
-                    g.getCurrentGladiator().setName(n);
-                    v.showGladiator(g.getCurrentGladiator());
-                }
-            }
-            if(ae.getActionCommand().equals("CHANGE_TEAM_NAME")){
-                String n = v.getName();
-                if(!n.equals("")&&!n.isEmpty()){
-                    if(g.changeTeamName(n)){
-                    	v.setTeamName(n);
-                    }
-                    else{
-                    	v.addText("There is already a team with that name.");
-                    }
-                }
-            }
-            if(ae.getActionCommand().equals("TAVERN_LEAVE")){
-                v.changePanel("mp");
-            }
-            if(ae.getActionCommand().equals("TAVERN_HIRE")){
-                if(g.canHire()){
-                    String n = tp.getSelectedGladiator();
-                    boolean success = g.hireGladiator(n);
-                    if(success){
-                        v.addText("You hired a brand old gladiator.");
-                        v.changePanel("mp");
-                        v.clearGladiatorPanels();
-                        v.addGladiatorstoPanels(g.getCurrentGladiators(true));
-                        v.setSquirrels(g.getActiveSquirrels());
-                    }
-                    else v.addText("Not enough squirrels!");
-                }else v.addText("Too many gladiators in team already.");
-            }
-            if(ae.getActionCommand().equals("PURCHASE")){
-                Gladiator gl = g.getCurrentGladiator();                
-                if(gl!=null){
-                    String n = sp.getSelectedItem();
-                    g.purchaseItem(n, v);                    
-                }else v.addText("You have no gladiator selected.");
-            }
-            if(ae.getActionCommand().equals("FIRE")){
-            	Gladiator gl = g.getCurrentGladiator();
-            	if(gl!=null){
-            		whichaskaction = 1;
-            		v.setEnabled(false);
-            		ask = new Askstuff("Are thou sure thou want to fire " + gl.getName()+"?", this);
-                }else v.addText("You have no gladiator selected.");
-            }
-            if(ae.getActionCommand().equals("CONFIRM")){
-            	switch(whichaskaction){
-            	case 1:
-            		v.addText(g.getCurrentGladiator().getName() + " has been fired. Thou will never see him/her/whatever again.");
-                    g.fireGladiator();
-                    break;
-            	case 2:
-            		g.setComputer(g.getActiveTeam());
-	                boolean battlestart = g.newBattle(bp, v);
-	                if(battlestart){
-	                    v.changePanel("bp");
-	                    v.disableStuff();
-	                }else{
-	                    v.setSquirrels(g.getActiveSquirrels());
-	                    v.setTeamName(g.getActiveTeamName());
-	                }
-	                break;
-            	}
-            	v.clearGladiatorPanels();
-                v.addGladiatorstoPanels(g.getCurrentGladiators(true));
-                v.showGladiator(g.getCurrentGladiator());
-                v.setEnabled(true);
-            	ask.disposeThis();
-            }
-            if(ae.getActionCommand().equals("CANCEL")){
-            	v.setEnabled(true);
-            	ask.disposeThis();
-            }
-        }
+			if(loggaus || !online){
+				String name = kayttoliittyma.getName();
+				String format = kayttoliittyma.checkFormat();
+				if(!name.isEmpty()){
+					boolean r = sovelluslogiikka.removeDeck(name, format);
+					if(!r){
+						kayttoliittyma.setErrorMessage("Program couldn't find such deck from database", true);
+						sovelluslogiikka.play();
+					}else{
+						kayttoliittyma.setErrorMessage("Deck removed succesfully", false);
+						sovelluslogiikka.play();
+						kayttoliittyma.removefromDecklist(name);
+					}
+				}else{
+					kayttoliittyma.setErrorMessage("You need to give the deck's name you want to be removed.", true);
+					sovelluslogiikka.play();
+				}
+			}
+		}
+		//Saves the deck to database
+		if(ae.getActionCommand().equals("SAVE")){
+			// Creates a new Login window unless user has already logged.
+			if(!loggaus && online){
+				if(!(login==null))login.close();
+				login = new Login(this);
+			}
+			if(loggaus || !online){
+				String Name = kayttoliittyma.getName();
+				if(!Name.isEmpty()){
+					String Format = kayttoliittyma.checkFormat();
+					String Color = kayttoliittyma.checkColor();
+					//Checks whether format and color is set
+					if((Color.isEmpty()) || Format.isEmpty()){
+						kayttoliittyma.setErrorMessage("You must select both color and format for the deck you want to create/save", true);
+						sovelluslogiikka.play();
+					}else{ 
+						String Decklist = kayttoliittyma.getDeck();
+						//Counts whether deck in question has 60 cards. Sets error message if not. Uses
+						//StringTokenizer to filter non-numerals out in order to count the numerals.
+						StringTokenizer apu = new StringTokenizer(Decklist, " !%&}]`´[{$£@()?+-_,&*'=abcdefghijklmnopqrstuvwyxzäåöABCDEFGHIJKLMNOPQRSTUVWYXZYÄÖÅ\t\n\r\f");
+						int amount = 0;
+						while (apu.hasMoreTokens()) {
+							amount = amount + Integer.parseInt(apu.nextToken());
+					     }
+						if(amount<60){
+							kayttoliittyma.setErrorMessage("Constructed decks minimum number of cards is 60. Your deck has " +amount+" cards.", true);
+							sovelluslogiikka.play();
+						}else{
+							//Checks whether sideboard is empty or has exactly 15 cards. Uses StringTokenizer
+							//in the same way as above.
+							String Sideboard = kayttoliittyma.getSideboard();
+							StringTokenizer apusb = new StringTokenizer(Sideboard, " !`´%&}][{$£@()?+-_,&*'=abcdefghijklmnopqrstuvwyxzäåöABCDEFGHIJKLMNOPQRSTUVWYXZYÄÖÅ\t\n\r\f");
+							int amountsb = 0;
+							while (apusb.hasMoreTokens()) {
+								amountsb = amountsb + Integer.parseInt(apusb.nextToken());
+						    }
+							if (!Sideboard.isEmpty() && amountsb != 15){
+								kayttoliittyma.setErrorMessage("Sideboard must either be empty or contain exactly 15 cards.", true);
+								sovelluslogiikka.play();
+							}else{
+								String Comments = kayttoliittyma.getComments();
+								sovelluslogiikka.addDeck(Name, Format, Decklist, Color, Sideboard, Comments);
+								kayttoliittyma.setErrorMessage("Deck saved successfully.", false);
+								sovelluslogiikka.play();
+							}
+						}
+						
+					
+					}
+				}else{
+					kayttoliittyma.setErrorMessage("You need to give the deck's name you want to be created/saved.", true);
+					sovelluslogiikka.play();
+				}
+			}
+		}
+		/* Shows the card user wants to view, provided such name can be found from the database.
+		 * 
+		 */
+		if(ae.getActionCommand().equals("VIEW")){
+			String card = kayttoliittyma.getSelectedCard();
+			String image = sovelluslogiikka.searchCard(card, kayttoliittyma.getcardlistSelection());
+			if(image.isEmpty()){
+				kayttoliittyma.setErrorMessage("No such card in database.", true);
+				sovelluslogiikka.play();
+			}
+			else{
+				kayttoliittyma.setCardImage(image);
+			}
+		}
+		if(ae.getActionCommand().equals("VIEW2")){
+			String card = kayttoliittyma.getSelectedCard();
+			String image = sovelluslogiikka.searchAnyCard(card);
+			if(image.isEmpty()){
+				kayttoliittyma.setErrorMessage("No such card in database.", true);
+				sovelluslogiikka.play();
+			}
+			else{
+				kayttoliittyma.setCardImage(image);
+			}
+		}
+		if(ae.getActionCommand().equals("LOGIN")){
+			// Creates a new Login window unless user has already logged, in which case it sets error message.
+			if(!loggaus){
+				if(!(login==null))login.close();
+				login = new Login(this);
+			}
+			else kayttoliittyma.setErrorMessage("Already logged in.", true);
+		}
+		if(ae.getActionCommand().equals("LOGOUT"))
+			if(!loggaus){
+				kayttoliittyma.setErrorMessage("Not logged in.", true);
+			}else{
+				loggaus = false;
+				kayttoliittyma.setErrorMessage("Successfully logged out.", false);
+			}
+		//Closes program.
+		if(ae.getActionCommand().equals("Exit")){
+			System.exit(0);
+		}
+		//Creates a new about window of the program.
+		if(ae.getActionCommand().equals("About")){
+			if(!(about==null))about.close();
+			about = new About();
+		}
+		if(ae.getActionCommand().equals("Help")){
+			if(!(help==null))help.close();
+			help = new Help();
+		}
+		if(ae.getActionCommand().equals("Analysis")){
+			if(!(analysis==null))analysis.close();
+			analysis = new Calculate();
+		}
+		if(ae.getActionCommand().equals("Add Cards")){
+			// Creates a new Login window unless user has already logged. 
+			//if(!loggaus){
+				//addcardscheck = true;
+				//if(!(login==null))login.close();
+				//login = new Login(this);
+			//}
+			// Creates a new AddCards window.
+			//if(loggaus){
+				if(!(Cardadder==null))Cardadder.close();
+				if(!(Deckadder==null))Deckadder.close();
+				Cardadder = new AddCards(this);
+			//}
+		}
+		//Opens new cardlist window when user wants list of cards.
+		if(ae.getActionCommand().equals("CARDS")){
+			String[] sets = sovelluslogiikka.setslist();
+			String[] cards = sovelluslogiikka.cardslists(sets[0]);
+			if(cards==null){
+				kayttoliittyma.setErrorMessage("No card images in database", true);
+				sovelluslogiikka.play();
+			}else{
+				kayttoliittyma.cardList(cards, sets);
+				kayttoliittyma.setErrorMessage("To add card to deck mouseclick + Ctrl, to sideboard mouseclick+Alt", false);
+				sovelluslogiikka.play();
+			}
+		}
+		if(ae.getActionCommand().equals("SETS")){
+			String[] cards = sovelluslogiikka.cardslists(kayttoliittyma.getcardlistSelection());
+			if(cards==null){
+				kayttoliittyma.setErrorMessage("No card images in selected database", true);
+				sovelluslogiikka.play();
+			}else{
+				kayttoliittyma.updateCardlist(cards);
+			}
+		}
+		// Closes AddCards window when user presses CANCEL-button.
+		if(ae.getActionCommand().equals(JFileChooser.CANCEL_SELECTION)){
+			if(!(Cardadder==null)){Cardadder.close(); Cardadder = null;
+			}else{ Deckadder.close(); Deckadder = null;}
+		}
+		// Closes AddCards window after sending the file(s) to Model in order to save them
+		// to database.
+		if(ae.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)){
+			if(!(Cardadder==null)){File[] Images = Cardadder.getSelectedImages();
+				Cardadder.close();
+				Cardadder = null;
+				sovelluslogiikka.addCards(Images, null, null);
+			}else{
+				File deck = Deckadder.getSelectedDeck();
+				String deckName = deck.getName();
+				deckName = deckName.replace("_", " ");
+				deckName = deckName.replace(".txt", "");
+				boolean dek = false;
+				if(deckName.contains(".dek")){
+					dek = true;
+					deckName = deckName.replace(".dek", "");
+				}
+				try{
+					FileInputStream fr = new FileInputStream(deck.getPath());
+					BufferedReader in = new BufferedReader(new InputStreamReader(fr));
+					Vector<String> decklist = new Vector<String>();
+					Vector<String> sb = new Vector<String>();
+					Vector<String> quantitydl = new Vector<String>();
+					Vector<String> quantitysb = new Vector<String>();
+					String readline;
+					while ((readline = in.readLine()) != null){
+						if(!dek)decklist.add(readline + "\n");
+						else if(readline.contains("CatID")){
+							kayttoliittyma.setErrorMessage("Opening dek-file might take a while.", true);
+							sovelluslogiikka.play();
+							String card = readline.substring(10, 26);
+							StringTokenizer apu = new StringTokenizer(card, " <>!`´%&}][{$£@()?+-_,&*'=abcdefghijklmnopqrstuvwyxzäåöABCDEFGHIJKLMNOPQRSTUVWYXZYÄÖÅ\t\n\r\f\"");
+							card = "";
+							while(apu.hasMoreTokens())card+=apu.nextToken();
+							String quantity = readline.substring(27, 37);
+							apu = new StringTokenizer(quantity, " <>!`´%&}][{$£@()?+-_,&*'=abcdefghijklmnopqrstuvwyxzäåöABCDEFGHIJKLMNOPQRSTUVWYXZYÄÖÅ\t\n\r\f\"");
+							quantity="";
+							while(apu.hasMoreTokens())quantity+=apu.nextToken();
+							if(readline.contains("true")){ 
+								quantitysb.add(quantity);
+								sb.add(card);
+								//sb += quantity +" " + sovelluslogiikka.searchCardbyCatID(card) + "\n";
+							}
+							else{
+								quantitydl.add(quantity);
+								decklist.add(card);
+								//decklist += quantity + " " + sovelluslogiikka.searchCardbyCatID(card) + "\n";
+							}
+						}
+					}
+					fr.close();
+					in.close();
+					String[] deckl = (String[])decklist.toArray(new String[0]);
+					String[] quantityd = (String[])quantitydl.toArray(new String[0]);
+					String[] side = (String[])sb.toArray(new String[0]);
+					String[] quantitys = (String[])quantitysb.toArray(new String[0]);
+					if(dek)deckl = sovelluslogiikka.searchCardbyCatID(deckl);
+					if(dek)side = sovelluslogiikka.searchCardbyCatID(side);
+					String sideb = "";
+					String decke = "";
+					if(dek){
+						for(int k = 0; k<deckl.length; k++)decke += quantityd[k] + " " + deckl[k] + "\n";
+						for(int x = 0; x<side.length; x++)sideb += quantitys[x] + " " + side[x] + "\n";
+					}else{
+						for(int k = 0; k<deckl.length; k++)decke += deckl[k];
+					}
+					decke = decke.replace("'", "´");
+					sideb = sideb.replace("'", "`");
+					kayttoliittyma.setName(deckName);
+					kayttoliittyma.setDeck(decke);
+					kayttoliittyma.setSideboard(sideb);
+					Deckadder.close();
+					Deckadder = null;
+				}catch(Exception e){
+					System.err.println(e);
+				}
+			}
+		}
+		if(ae.getActionCommand().equals("ADDALLCARDS")){
+				kayttoliittyma.setErrorMessage("Adding cards to database, please be patient.", false);
+				sovelluslogiikka.play();
+				sovelluslogiikka.addAll();
+				kayttoliittyma.setErrorMessage("All sets from Cardpics folder are now included in database.", false);
+				sovelluslogiikka.play();
+		}
+		if(ae.getActionCommand().equals("ADD")){
+			//if(!loggaus){
+				//adddeckcheck = true;
+				//if(!(login==null))login.close();
+				//login = new Login(this);
+			//}
+			// Creates a new AddCards window.
+			//if(loggaus){
+				if(!(Deckadder==null))Deckadder.close();
+				if(!(Cardadder==null))Cardadder.close();
+				Deckadder = new AddDeck(this);
+			//}
+		}
+		if(ae.getActionCommand().equals("SAVEDECK")){
+			if(kayttoliittyma.getName().isEmpty()){
+				kayttoliittyma.setErrorMessage("Deck has to have a name in order to save it", true);
+				sovelluslogiikka.play();
+			}else{
+				File tallenna = new File(kayttoliittyma.getName());
+				new SaveDeck(tallenna, kayttoliittyma.getDeck(), kayttoliittyma.getSideboard());
+			}
+				
+		}
+		if(ae.getActionCommand().equals("SAVEALL")){
+			if(kayttoliittyma.getName().isEmpty()){
+				kayttoliittyma.setErrorMessage("You have not selected decks to save", true);
+				sovelluslogiikka.play();
+			}else{
+				Iterator<String> it = lista.iterator();
+				while(it.hasNext()){
+					String name = it.next();
+					String dekki = sovelluslogiikka.searchDekki(name);
+					String sideboard = sovelluslogiikka.returnSideboard();
+					try{
+						System.out.println(name);
+						FileWriter writer = new FileWriter(".\\Decks\\"+name+".txt");
+						PrintWriter printer = new PrintWriter(writer);
+						StringTokenizer pakk = new StringTokenizer(dekki, "\n");
+						while(pakk.hasMoreTokens())printer.println(pakk.nextToken());
+						printer.println();
+						pakk = new StringTokenizer(sideboard, "\n");
+						while(pakk.hasMoreTokens())printer.println(pakk.nextToken());
+						printer.close();
+					}
+					catch(Exception e){
+						
+					}
+				}
+				kayttoliittyma.setErrorMessage("Decks in list were saved to: "+tallennus.getAbsolutePath(), false);
+				sovelluslogiikka.play();
+			}				
+		}
+		// Closes AddCards window after sending the file(s) to Model in order to save them
+		// to database.
+		/* Checks if password and username are correct, sets errormessage to login screen if not.
+		 */
+		if(ae.getActionCommand().equals("OK")){
+			String User = login.getUser();
+			char[] Pass = login.getPassword();
+			boolean check = sovelluslogiikka.passCheck(User, Pass);
+			if(check == true){
+				loggaus = true;
+				login.close();
+				if(addcardscheck){
+					addcardscheck = false;
+					Cardadder = new AddCards(this);
+				}
+				if(adddeckcheck){
+					adddeckcheck = false;
+					Deckadder = new AddDeck(this);
+				}
+			}else login.error();
+		}
+		//Closes login screen.
+		if(ae.getActionCommand().equals("CANCEL")){
+			login.close();
+		}
+		if(!iconlock){
+			if(ae.getActionCommand().equals("WHITE")){
+				if(!whitep){
+					whitep = true;
+					kayttoliittyma.changeIcon(1, true);
+				}else{
+					whitep = false;
+					kayttoliittyma.changeIcon(1, false);
+				}
+			}
+			if(ae.getActionCommand().equals("BLUE")){
+				if(!bluep){
+					bluep = true;
+					kayttoliittyma.changeIcon(2, true);
+				}else{
+					bluep = false;
+					kayttoliittyma.changeIcon(2, false);
+				}
+			}
+			if(ae.getActionCommand().equals("BLACK")){
+				if(!blackp){
+					blackp = true;
+					kayttoliittyma.changeIcon(3, true);
+				}else{
+					blackp = false;
+					kayttoliittyma.changeIcon(3, false);
+				}
+			}
+			if(ae.getActionCommand().equals("RED")){
+				if(!redp){
+					redp = true;
+					kayttoliittyma.changeIcon(4, true);
+				}else{
+					redp = false;
+					kayttoliittyma.changeIcon(4, false);
+				}
+			}
+			if(ae.getActionCommand().equals("GREEN")){
+				if(!greenp){
+					greenp = true;
+					kayttoliittyma.changeIcon(5, true);
+				}else{
+					greenp = false;
+					kayttoliittyma.changeIcon(5, false);
+				}
+			}
+		}
+		if(ae.getActionCommand().equals("RATE")){
+			sovelluslogiikka.setRating(kayttoliittyma.getRating(), kayttoliittyma.getName(), kayttoliittyma.checkFormat());
+			kayttoliittyma.setRating(sovelluslogiikka.returnRating(), sovelluslogiikka.returnAmountRatings());
+		}
 	}
-    public void mouseClicked(MouseEvent evt){
-        Object o = evt.getSource();
-        if(o.equals(tp.getTable())){
-            String gladiator = tp.getSelectedGladiator();
-            Gladiator gl = g.getGladiator(gladiator, "TAVERN");
-            v.showGladiator(gl);
-        }else{
-            g.setCurrentGladiator(v.getLabelGladiator(o));
-            if(g==null)v.addText("You have no gladiator selected.");
-        }
-    }
-    public void mouseExited(MouseEvent evt){}
-    public void mouseEntered(MouseEvent evt){}
-    public void mouseReleased(MouseEvent evt){}
-    public void mousePressed(MouseEvent evt){}
+	/**
+	 * valueChanged
+	 * Tapahtumakuuntelija metodi JListille, korttien listausta varten.
+	 */
+	public void valueChanged(ListSelectionEvent e){
+		@SuppressWarnings("unchecked")
+		JList<String> list = (JList<String>) e.getSource();
+		if (e.getValueIsAdjusting() == false) {
+			if (list.getSelectedIndex() == -1) {
+			} else {
+				String card = (String) list.getSelectedValue();
+				String image = sovelluslogiikka.searchCard(card, kayttoliittyma.getcardlistSelection());
+				if(image.isEmpty()){
+					kayttoliittyma.setErrorMessage("No such card in database.", true);
+					sovelluslogiikka.play();
+				}
+				else{
+					kayttoliittyma.setCardImage(image);
+				}				
+			}	
+		}
+	}
+	public void mouseClicked(MouseEvent e) {
+		@SuppressWarnings("unchecked")
+		JList<String> list = (JList<String>) e.getSource();
+		if(e.isControlDown()){
+			int amount = 1;
+			if(e.isShiftDown()) amount = 4;
+
+			if((String) list.getSelectedValue()!= null) card = (String) list.getSelectedValue();
+			String dekki = kayttoliittyma.getDeck();
+			if(card!=null){
+				if (dekki=="" || dekki.isEmpty() || dekki == null)dekki += amount + " " + card +"\n";
+				else{
+					if(dekki.contains(card)){
+						StringTokenizer apusb = new StringTokenizer(dekki, "\n");
+						dekki = "";
+						while(apusb.hasMoreTokens()){
+							String apu = apusb.nextToken();
+							if (apu.contains(card)){
+								StringTokenizer laskeb = new StringTokenizer(apu, " !`´%&}][{$£@()?+-_,&*'=abcdefghijklmnopqrstuvwyxzäåöABCDEFGHIJKLMNOPQRSTUVWYXZYÄÖÅ\t\n\r\f");
+								int amountexists = Integer.parseInt(laskeb.nextToken());
+								amount = amount + amountexists;
+								dekki += amount + " " + card + "\n";
+							}else dekki += apu + "\n";
+						}						
+					}else dekki += amount + " " + card + "\n";
+				}
+				kayttoliittyma.setDeck(dekki);
+			}
+		}
+		if(e.isAltDown()){
+			int amount = 1;
+			if(e.isShiftDown()) amount = 4;
+			if((String) list.getSelectedValue()!= null) card = (String) list.getSelectedValue();
+			String dekki = kayttoliittyma.getSideboard();
+			if(card!=null){
+				if (dekki=="" || dekki.isEmpty() || dekki == null)dekki += amount + " " + card + "\n";
+				else{
+					if(dekki.contains(card)){
+						StringTokenizer apusb = new StringTokenizer(dekki, "\n");
+						dekki = "";
+						while(apusb.hasMoreTokens()){
+							String apu = apusb.nextToken();
+							if (apu.contains(card)){
+								StringTokenizer laskeb = new StringTokenizer(apu, " !`´%&}][{$£@()?+-_,&*'=abcdefghijklmnopqrstuvwyxzäåöABCDEFGHIJKLMNOPQRSTUVWYXZYÄÖÅ\t\n\r\f");
+								int amountexists = Integer.parseInt(laskeb.nextToken());
+								amount = amount + amountexists;
+								dekki += amount + " " + card + "\n";
+							}else dekki += apu + "\n";
+						}						
+					}else dekki += amount + " " + card + "\n";
+				}
+				kayttoliittyma.setSideboard(dekki);
+			}
+		}
+	}
+	public void mouseExited(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e){}
+	public void mouseEntered(MouseEvent e){}
+	public void mousePressed(MouseEvent e){}
 }
