@@ -1,942 +1,1412 @@
-package decker;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.border.Border;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.TextAction;
-import javax.swing.undo.UndoManager;
-/**
+/*
  * View.java
- * MTG-Decker sovelluksen pääikkuna, joka sisältää sovelluksen keskeiset komponentit.
- * @author Risto Salama
  *
+ * Created on 22.4.2009, 16:52:52
  */
-/* Graphical Interface for the MTG-Decker. Main window of the program.
- * Contains search, save and remove JButtons for decks. And view JButton for viewing card images.
- * Also has JMenuBar which contains Login, Add Cards, Save Deck, Remove Deck, View Card,
- * Help and About JMenuItems.
+
+package game;
+import java.awt.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.*;
+/**
+ *
+ * @author Humakt83
  */
-public class View extends JFrame{
-	static final long serialVersionUID = 1;
-	private int focus = 0;
-	private final Date da = new Date();
-	private final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy");
-    private final String today = dateFormat.format(da);
-    private URL urlrate = View.class.getResource("rate.jpg");
-    private URL urlnorate = View.class.getResource("norate.jpg");
-	//Background icons for main window and JButtons
-	private ImageIcon icon = new ImageIcon("MtGBG.jpg");
-	private ImageIcon bicon = new ImageIcon("MtGButton.jpg");
-	//Default card image for the program
-	private ImageIcon cardpic = new ImageIcon("cardback.jpg");
-	private ImageIcon w = new ImageIcon("white.png");
-	private ImageIcon b = new ImageIcon("black.png");
-	private ImageIcon u = new ImageIcon("blue.png");
-	private ImageIcon g = new ImageIcon("green.png");
-	private ImageIcon r = new ImageIcon("red.png");
-	private ImageIcon wp = new ImageIcon("whitep.png");
-	private ImageIcon bp = new ImageIcon("blackp.png");
-	private ImageIcon up = new ImageIcon("bluep.png");
-	private ImageIcon gp = new ImageIcon("greenp.png");
-	private ImageIcon rp = new ImageIcon("redp.png");
-	// Graphical interface components:
-	private Controller kontrolleri;
-	private JPanel sailio = new JPanel(){
-		static final long serialVersionUID = 1;
-		// paints the background for sailio-panel, which contains other panels.
-		protected void paintComponent(Graphics g)
-		{
-			g.drawImage(icon.getImage(), 0, 0, null);
-			Dimension d = getSize();
-			g.drawImage(icon.getImage(), 0, 0, d.width, d.height, null);
-			super.paintComponent(g);
-		}
-	};
-	private JPanel imagecontainer = new JPanel();
-	private JPanel searchpan = new JPanel();
-	private JPanel colorlab = new JPanel();
-	private JPanel formatlab = new JPanel();
-	private JPanel restofbuttons = new JPanel();
-	private JPanel decksb = new JPanel();
-	private JPanel deckpan = new JPanel();
-	private JPanel namepan = new JPanel();
-	private JButton search = new JButton("SEARCH", bicon);
-	private JButton remove = new JButton("REMOVE", bicon);
-	private JButton save = new JButton("SAVE", bicon);
-	private JButton viewer = new JButton("VIEW", bicon);
-	private JTextField name = new JTextField(10);
-	private JLabel namelabel = new JLabel("Name:");
-	private JLabel decklabel = new JLabel("Decklist");
-	private JLabel sblabel = new JLabel("Sideboard");
-	private JLabel describtionlabel = new JLabel("Description");
-	private JLabel listofdecks = new JLabel("Decks:");
-	private JLabel date = new JLabel("  " + today);
-	private JLabel error = new JLabel();
-	private JLabel imageholder = new JLabel(cardpic);	
-	private JTextArea deck = new JTextArea(14,22);
-	private JTextArea sideboard = new JTextArea(8,6);
-	private JTextArea description = new JTextArea(8,6);
-	private JCheckBox white = new JCheckBox(w);
-	private JCheckBox blue = new JCheckBox(u);
-	private JCheckBox black = new JCheckBox(b);
-	private JCheckBox red = new JCheckBox(r);
-	private JCheckBox green= new JCheckBox(g);
-	private JCheckBox standard = new JCheckBox("Standard");
-	private JCheckBox extended = new JCheckBox("Extended");
-	private JCheckBox classic = new JCheckBox("Classic");
-	private JComboBox<String> format = new JComboBox<>();
-	private JComboBox<String> dekit = new JComboBox<>();
-	//Items for deck rating:
-	private JLabel ratingholder = new JLabel();
-	private JPanel ratingpanel = new JPanel();
-	private JButton rate = new JButton("RATE", bicon);
-	private SpinnerNumberModel ratings = new SpinnerNumberModel(10,0,10,1);
-	private JSpinner ratingspinner = new JSpinner(ratings);
-	// Menu and menu items:
-	private JMenuBar menubar = new JMenuBar();
-	private JMenu filemenu = new JMenu("File");
-	private JMenu db = new JMenu("Database");
-	private JMenu help = new JMenu("Help");
-	private JMenu tools = new JMenu("Tools");
-	private JMenu edit = new JMenu("Edit");
-	private JMenu cardsmenu = new JMenu("Cards");
-	private JMenuItem addcards = new JMenuItem("Add Cards");
-	private JMenuItem addallcards = new JMenuItem("Add All Cards");
-	private JMenuItem viewcards = new JMenuItem("View Card", 'W');
-	private JMenuItem cardlist = new JMenuItem("List of Cards");
-	private JMenuItem database = new JMenuItem("Use Database of Server");
-	private JMenuItem newaccount = new JMenuItem("Create New Account");
-	private JMenuItem login = new JMenuItem("Login");
-	private JMenuItem logout = new JMenuItem("Logout");
-	private JMenuItem adddeck = new JMenuItem("Open Deck");
-	private JMenuItem remover = new JMenuItem("Remove Deck", 'R');
-	private JMenuItem saver = new JMenuItem("Save Deck", 'S');
-	private JMenuItem savedecks = new JMenuItem("Save All");
-	private JMenuItem savedeck = new JMenuItem("Save to Folder");
-	private JMenuItem exit = new JMenuItem("Exit");
-	private JMenuItem about = new JMenuItem("About");
-	private JMenuItem helpitem = new JMenuItem("Help");
-	private JMenuItem analysis = new JMenuItem("Analysis");
-	private JMenuItem cut = new JMenuItem(new CutAct());
-	private JMenuItem copy = new JMenuItem(new CopyAct());
-	private JMenuItem paste = new JMenuItem(new PasteAct());
-	private JMenuItem select = new JMenuItem("Select All");
-	private Document doku = deck.getDocument();
-	private Document doku1 = sideboard.getDocument();
-	private Document doku2 = description.getDocument();
-	private UndoManager peruutus = new UndoManager();
-	private JMenuItem undo = new JMenuItem(new UndoAct());
-	private JMenuItem redo = new JMenuItem(new RedoAct());
-	private ButtonGroup bg = new ButtonGroup();
-	//Cardlist components
-	private JList<String> ListofCards;
-	private JFrame apuframe;
-	private JComboBox<String> setit;
-	private DefaultListModel<String> Cardslist;
+public class View extends javax.swing.JFrame implements ChangeListener{
 	/**
-	 * Konstruktori.
-	 * Tässä muokataan käyttöliittymäkomponenttien ominaisuuksia ja ryhmitetään ne.
+	 * 
 	 */
-	public View(){
-		// Customizing JComponents
-		deck.setLineWrap(true);
-		deck.setSelectedTextColor(Color.WHITE);
-		deck.setSelectionColor(Color.BLUE);
-		sideboard.setSelectedTextColor(Color.WHITE);
-		sideboard.setSelectionColor(Color.BLUE);
-		description.setSelectedTextColor(Color.WHITE);
-		description.setSelectionColor(Color.BLUE);
-		name.setSelectedTextColor(Color.WHITE);
-		name.setSelectionColor(Color.BLUE);
-		deck.setAutoscrolls(true);
-		description.setLineWrap(true);
-		sideboard.setLineWrap(true);
-		restofbuttons.setOpaque(false);
-		sailio.setOpaque(false);
-		decksb.setOpaque(false);
-		imagecontainer.setOpaque(false);
-		searchpan.setOpaque(false);
-		formatlab.setOpaque(false);
-		colorlab.setOpaque(false);
-		deckpan.setOpaque(false);
-		namepan.setOpaque(false);
-		white.setOpaque(false);
-		black.setOpaque(false);
-		green.setOpaque(false);
-		blue.setOpaque(false);
-		red.setOpaque(false);
-		ratingholder.setOpaque(false);
-		ratingpanel.setOpaque(false);
-		extended.setOpaque( false );
-		classic.setOpaque( false );
-		standard.setOpaque( false );
-		format.setOpaque( false );
-		setNappi(search, "SEARCH");
-		setNappi(remove, "REMOVE");
-		setNappi(save, "SAVE");
-		setNappi(viewer, "VIEW");
-		setNappi(rate, "RATE");
-		search.setToolTipText("<html><b>Search</b> the database for decks that have the selected <u>parameters.</u></html>");
-		save.setToolTipText("<html><b>Creates</b> a new deck to the database or saves the changes in case deck with the same name already exists.</html>");
-		remove.setToolTipText("<html><b>Removes</b> a deck <i>(only name is required field)</i> from the database.</html>");
-		viewer.setToolTipText("<html><b>View</b> picture of the card you have selected <i>(painted over with mouse)</i>.</html>");
-		savedecks.setToolTipText("<html>Saves all decks from the list to computer</html>");
-		rate.setToolTipText("<html>Rate the selected deck.</html>");
-		database.setToolTipText("<html>Switch between <b>server</b> and <b>client</b> databases<html>");
-		addallcards.setToolTipText("<html>Add all cards and sets from <i>cardpics</i> folder</html>");
-		deck.setPreferredSize(new Dimension(300,10000));
-		sideboard.setPreferredSize(new Dimension(300,500));
-		description.setPreferredSize(new Dimension(300,500));
-		dekit.setPreferredSize(new Dimension(100,20));
-		Border whiteline = BorderFactory.createLineBorder(Color.white);
-		colorlab.setBorder(BorderFactory.createTitledBorder(whiteline, "Color"));
-		formatlab.setBorder(BorderFactory.createTitledBorder(whiteline, "Format"));
-		Color whiter = new Color(255,255,255);
-		colorlab.setForeground(whiter);
-		error.setForeground(new Color(255,0,0));
-		name.setFont(new Font("Times New Roman",Font.BOLD,12));
-		namelabel.setForeground(whiter);
-		decklabel.setForeground(whiter);
-		sblabel.setForeground(whiter);
-		describtionlabel.setForeground(whiter);
-		date.setForeground(whiter);
-		white.setForeground(whiter);
-		black.setForeground(whiter);
-		red.setForeground(whiter);
-		green.setForeground(whiter);
-		blue.setForeground(whiter);
-		extended.setForeground(whiter);
-		standard.setForeground(whiter);
-		classic.setForeground(whiter);
-		listofdecks.setForeground(whiter);
-		viewer.setFocusable(false);
-		ratingholder.setVisible(false);
-		ratingpanel.setVisible(false);
-		white.setPressedIcon(wp);
-		blue.setPressedIcon(up);
-		black.setPressedIcon(bp);
-		red.setPressedIcon(rp);
-		green.setPressedIcon(gp);
-	    bg.add(standard);
-	    bg.add(extended);
-	    bg.add(classic);
-		//formats
-		format.addItem("");
-		format.addItem("Singleton");
-		format.addItem("100 Card Singleton");
-		format.addItem("Pauper");
-		format.addItem("Prismatic");
-		format.addItem("Tribal Wars");
-		format.addItem("Vanguard");
-		format.addItem("Test");
-		format.addItem("Alara Block");
-		format.addItem("Lorwyn-Shadowmoor Block");
-		format.addItem("Time Spiral Block");
-		format.addItem("Ravnica Block");
-		format.addItem("Kamigawa Block");
-		format.addItem("Mirrodin Block");
-		format.addItem("Onslaught Block");
-		format.addItem("Odyssey Block");
-		format.addItem("Invasion Block");
-		format.addItem("Tempest Block");
-		format.addItem("Mirage Block");
-		format.addItem("Ice Age Block");
-		// Storing components and containers to containers
-		ratingspinner.setSize(new Dimension(10,5));
-		ratingpanel.setLayout(new BoxLayout(ratingpanel, BoxLayout.X_AXIS));
-		ratingpanel.add(ratingspinner);
-		ratingpanel.add(rate);
-		colorlab.add(white);
-		colorlab.add(blue);
-		colorlab.add(black);
-		colorlab.add(red);
-		colorlab.add(green);
-		formatlab.add(format);
-		formatlab.add(standard);
-		formatlab.add(extended);
-		formatlab.add(classic);
-		searchpan.add(colorlab);
-		searchpan.add(formatlab);
-		searchpan.add(search);
-		decksb.setLayout(new BoxLayout(decksb, BoxLayout.Y_AXIS));
-		decksb.add(decklabel);
-		decksb.add(new JScrollPane(deck));
-		decksb.add(sblabel);
-		decksb.add(new JScrollPane(sideboard));
-		decksb.add(describtionlabel);
-		decksb.add(new JScrollPane(description));
-		namepan.add(namelabel);
-		namepan.add(name);
-		deckpan.add(listofdecks);
-		deckpan.add(dekit);	
-		restofbuttons.add(namepan);
-		restofbuttons.add(ratingholder);
-		restofbuttons.add(ratingpanel);
-		restofbuttons.add(date);
-		restofbuttons.add(deckpan);	
-		restofbuttons.add(save);
-		restofbuttons.add(remove);
-		restofbuttons.add(viewer);
-		restofbuttons.setLayout(new GridLayout(0,1));
-		imagecontainer.add(imageholder);
-		sailio.add(searchpan);
-		sailio.add(imagecontainer);
-		sailio.add(decksb);
-		sailio.add(restofbuttons);
-		sailio.add(error);
-		add(sailio);
-		// Forming menu group
-		cardsmenu.add(viewcards);
-		cardsmenu.add(cardlist);
-		cardsmenu.addSeparator();
-		cardsmenu.add(addcards);
-		cardsmenu.add(addallcards);
-		filemenu.add(adddeck);
-		filemenu.add(saver);
-		filemenu.add(savedeck);
-		filemenu.add(savedecks);
-		filemenu.add(remover);
-		filemenu.addSeparator();
-		filemenu.add(exit);
-		db.add(database);
-		db.addSeparator();
-		db.add(newaccount);
-		db.add(login);
-		db.add(logout);
-		login.setEnabled(false);
-		logout.setEnabled(false);
-		newaccount.setEnabled(false);
-		tools.add(analysis);
-		edit.add(undo);
-		edit.add(redo);
-		edit.addSeparator();
-		edit.add(cut);
-		edit.add(copy);
-		edit.add(paste);
-		edit.addSeparator();
-		edit.add(select);
-		//help.add(helpdoc);
-		help.add(helpitem);
-		help.add(about);
-		menubar.add(filemenu);
-		menubar.add(edit);
-		//menubar.add(db);
-		menubar.add(cardsmenu);
-		menubar.add(tools);
-		menubar.add(help);
-		setJMenuBar(menubar);
-		viewcards.setFocusable(false);
-		// Making mnemonics for menu group
-		viewcards.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_MASK));
-		cardlist.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK));
-		remover.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
-		saver.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-		paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
-		analysis.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.ALT_MASK));
-		adddeck.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
-		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
-		select.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-		//Setting attributes for main window
-		pack();
-		setSize(800,720);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = getSize();
+	private static final long serialVersionUID = -7086547429633216078L;
+	/** Creates new form View */
+    public View(MainPanel m, TavernPanel t, ShopPanel s, BattlePanel b, SeasonPanel se, TeamPanel te) {
+        tp = t;
+        mp = m;
+        sp = s;
+        bp = b;
+        sep = se;
+        tep = te;
+        initComponents();
+        ChangingPanel.setLayout(cl);
+        ChangingPanel.add(mp, "mp");
+        ChangingPanel.add(tp, "tp");
+        ChangingPanel.add(sp, "sp");
+        ChangingPanel.add(bp, "bp");
+        ChangingPanel.add(sep, "sep");
+        ChangingPanel.add(tep, "tep");
+        this.setVisible(true);
+        this.setResizable(false);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        Container.setEnabled(false);
+        // forming team name view components
+        namelabel.setOpaque(false);
+		namelabel.setForeground(Color.WHITE);
+		namepanel.setLayout(new FlowLayout());
+		namepanel.add(namelabel);
+		namepanel.add(namefield);
+		namepanel.add(confirmnamechanges);
+		namepanel.setBackground(Color.RED);
+		setName.add(namepanel);
+		setName.setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setName.setSize(250, 120);
+		setName.setResizable(false);
+		setName.setIconImage(gladius.getImage());
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension frameSize = setName.getSize();
         if (frameSize.height > screenSize.height) {
             frameSize.height = screenSize.height;
         }
         if (frameSize.width > screenSize.width) {
             frameSize.width = screenSize.width;
         }
-        setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-		setResizable(false);
-		setTitle( "MTG-Decker" );
-		setLayout(new GridLayout());
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	/**
-	 * setKontrolleri
-	 * Tässä metodissa asetetaan tapahtumankuuntelijat komponenteille.
-	 * @param k saa parametrinaan Controllerin joka on ohjelman tapahtumankuuntelija luokka.
-	 */
-	// Sets action listener for the components.
-	void setKontrolleri(Controller k){
-        kontrolleri = k;
-        newaccount.setActionCommand("NEWACCOUNT");
-        white.setActionCommand("WHITE");
-        blue.setActionCommand("BLUE");
-        black.setActionCommand("BLACK");
-        red.setActionCommand("RED");
-        green.setActionCommand("GREEN");
-        savedecks.setActionCommand("SAVEALL");
-        savedeck.setActionCommand("SAVEDECK");
-        dekit.setActionCommand("dekit");
-        login.setActionCommand("LOGIN");
-        logout.setActionCommand("LOGOUT");
-        saver.setActionCommand("SAVE");
-        remover.setActionCommand("REMOVE");
-        viewcards.setActionCommand("VIEW2");
-        viewer.setActionCommand("VIEW2");
-        cardlist.setActionCommand("CARDS");
-        adddeck.setActionCommand("ADD");
-        select.setActionCommand("SELECT");
-        addallcards.setActionCommand("ADDALLCARDS");
-        database.setActionCommand("DATABASE");
-        format.setActionCommand("FORMAT");
-        format.addActionListener(kontrolleri);
-        addallcards.addActionListener(kontrolleri);
-        database.addActionListener(kontrolleri);
-        search.addActionListener(kontrolleri);
-        remove.addActionListener(kontrolleri);
-        save.addActionListener(kontrolleri);
-        viewer.addActionListener(kontrolleri);
-        viewcards.addActionListener(kontrolleri);
-        dekit.addActionListener(kontrolleri);
-        login.addActionListener(kontrolleri);
-        logout.addActionListener(kontrolleri);
-        exit.addActionListener(kontrolleri);
-        addcards.addActionListener(kontrolleri);
-        about.addActionListener(kontrolleri);
-        helpitem.addActionListener(kontrolleri);
-        saver.addActionListener(kontrolleri);
-        remover.addActionListener(kontrolleri);
-        cardlist.addActionListener(kontrolleri);
-        analysis.addActionListener(kontrolleri);
-        adddeck.addActionListener(kontrolleri);
-        select.addActionListener(kontrolleri);
-        savedecks.addActionListener(kontrolleri);
-        savedeck.addActionListener(kontrolleri);
-        white.addActionListener(kontrolleri);
-        blue.addActionListener(kontrolleri);
-        black.addActionListener(kontrolleri);
-        red.addActionListener(kontrolleri);
-        green.addActionListener(kontrolleri);
-        rate.addActionListener(kontrolleri);
-        newaccount.addActionListener(kontrolleri);
-        Undous u = new Undous();
-        doku.addUndoableEditListener(u);
-        doku1.addUndoableEditListener(u);
-        doku2.addUndoableEditListener(u);
-        Focuser f = new Focuser();
-        deck.addFocusListener(f);
-        sideboard.addFocusListener(f);
-        description.addFocusListener(f);
+		setName.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frameSize = getSize();
+        if (frameSize.height > screenSize.height) {
+            frameSize.height = screenSize.height;
+        }
+        if (frameSize.width > screenSize.width) {
+            frameSize.width = screenSize.width;
+        }
+        //center frame to screen
+        setLocation((screenSize.width - frameSize.width) / 2,
+                          (screenSize.height - frameSize.height)/4);
     }
-	/**
-	 * checkColor
-	 * Metodi joka asettaa merkkijonoon valitut värit. Kutsutaan Controllerista.
-	 * @return colors palauttaa valitut värit merkkijonona Controllerille.
-	 */
-	// Methods to help identify which Colors and Formats are selected.
-	public String checkColor(){
-		String colors = "";
-		if(white.isSelected()){
-			colors = colors +"white";
-		}
-		if(blue.isSelected()){
-			colors = colors +"blue";
-		}
-		if(black.isSelected()){
-			colors = colors +"black";
-		}
-		if(red.isSelected()){
-			colors = colors +"red";
-		}
-		if(green.isSelected()){
-			colors = colors + "green";
-		}
-		return colors;
-	}	
-	public void changeIcon(int s, boolean p){
-		switch(s){
-		case 1: 
-			if(p){
-				white.setIcon(wp);
-				white.setPressedIcon(w);
-			}else{
-				white.setIcon(w);
-				white.setPressedIcon(wp);
-			}
-			break;
-		case 2: 
-			if(p){
-				blue.setIcon(up);
-				blue.setPressedIcon(u);
-			}else{
-				blue.setIcon(u);
-				blue.setPressedIcon(up);
-			}
-			break;
-		case 3:
-			if(p){
-				black.setIcon(bp);
-				black.setPressedIcon(b);
-			}else{
-				black.setIcon(b);
-				black.setPressedIcon(bp);
-			}
-			break;
-		case 4:
-			if(p){
-				red.setIcon(rp);
-				red.setPressedIcon(r);
-			}else{
-				red.setIcon(r);
-				red.setPressedIcon(rp);
-			}
-			break;
-		case 5:
-			if(p){
-				green.setIcon(gp);
-				green.setPressedIcon(g);
-			}else{
-				green.setIcon(g);
-				green.setPressedIcon(gp);
-			}
-		break;
-		}
-	}
-	/**
-	 * checkFormat
-	 * Metodi joka asettaa merkkijonoon valitut formaatit. Kutsutaan Controllerista.
-	 * @return format palauttaa valitut formaatit merkkijonona Controllerille.
-	 */
-	public String checkFormat(){
-		String forma = "";
-		if(standard.isSelected()){
-			forma = forma +"standard";
-		}
-		if(extended.isSelected()){
-			forma = forma + "extended";
-		}
-		if(classic.isSelected()){
-			forma = forma +"classic";
-		}
-		forma = forma + format.getSelectedItem();
-		return forma;
-	}
-	public String getFormat(){
-		return (String)format.getSelectedItem();
-	}
-	public void formatEnableDisable(boolean enable){
-		if(enable){
-			classic.setEnabled(true);
-			extended.setEnabled(true);
-			standard.setEnabled(true);
-		}else{
-			bg.clearSelection();
-			//classic.setSelected(false);
-			//extended.setSelected(false);
-			//standard.setSelected(false);
-			classic.setEnabled(false);
-			extended.setEnabled(false);
-			standard.setEnabled(false);
-		}
-	}
-	/**
-	 * setColor
-	 * Metodi joka asettaa värin JCheckboxit valituksi tai ei valituksi, saadun parametrin mukaan.
-	 * @param c saa asetettavat värit Controllerilta.
-	 */
-	// Sets the format(s) and color(s) of the deck in question.
-	public void setColor(String c){
-		if(c.contains("white"))white.setSelected(true);
-		else white.setSelected(false);
-		if(c.contains("blue"))blue.setSelected(true);
-		else blue.setSelected(false);
-		if(c.contains("black"))black.setSelected(true);
-		else black.setSelected(false);
-		if(c.contains("red"))red.setSelected(true);
-		else red.setSelected(false);
-		if(c.contains("green"))green.setSelected(true);
-		else green.setSelected(false);
-	}
-	public void selectAll(){
-		switch(focus){
-		case 0: deck.grabFocus();
-				deck.selectAll();
-				break;
-		case 1:
-				sideboard.grabFocus();
-				sideboard.selectAll();
-				break;
-		case 2:
-				description.grabFocus();
-				description.selectAll();
-				break;
-		}
-		
-		//sideboard.selectAll();
-	}
-	/**
-	 * setFormat
-	 * Metodi joka asettaa formaatin JCheckboxit valituksi tai ei valituksi, saadun parametrin mukaan.
-	 * @param f saa asetettavat formaatit Controllerilta.
-	 */
-	public void setFormat(String f){
-		bg.clearSelection();
-		if(f.contains("standard"))standard.setSelected(true);
-		if(f.contains("extended"))extended.setSelected(true);
-		if(f.contains("classic"))classic.setSelected(true);
-	}
-	/**
-	 * getName
-	 * Getteri pakan nimeä varten.
-	 * return String palauttaa nimen Controllerille.
-	 */
-	// Get- and Set-methods for deck's name, decklist and sideboard.
-	public String getName(){
-		String n = name.getText();
-		n = n.replace("'", "´");
-		return n;
-	}
-	/**
-	 * setName
-	 * Setteri pakan nimeä varten.
-	 * @param x pakan nimi Controllerilta.
-	 */
-	public void setName(String x){
-		name.setText(x);
-	}
-	/**
-	 * getDeck
-	 * Getteri pakan sisältöä varten.
-	 * return String palauttaa sisällön Controllerille.
-	 */
-	public String getDeck(){
-		String d = deck.getText();
-		d = d.replace("'", "´");
-		return d;
-	}
-	/**
-	 * setDeck
-	 * Setteri pakan sisältöä varten.
-	 * @param x pakan sisältö Controllerilta.
-	 */
-	public void setDeck(String x){
-		deck.setText(x);
-	}
-	/**
-	 * getSideboard
-	 * Getteri pakan apupakkaa varten.
-	 * return String palauttaa apupakan Controllerille.
-	 */
-	public String getSideboard(){
-		String sb = sideboard.getText();
-		sb = sb.replace("'", "´");
-		return sb;
-	}
-	/**
-	 * setSideboard
-	 * Setteri pakan apupakkaa varten.
-	 * @param x pakan apupakka Controllerilta.
-	 */
-	public void setSideboard(String x){
-		sideboard.setText(x);
-	}
-	public String getComments(){
-		String c = description.getText();
-		c = c.replace("'", "´");
-		return c;
-	}
-	public void setComments(String x){
-		description.setText(x);
-	}
-	public void setDate(String x){
-		date.setText("  " + x);
-	}
-	public void setCurrentDate(String x){
-		date.setText("  " +today);
-	}
-	/**
-	 * AddDekit
-	 * Laittaa pakkojen nimiä JComboBoxiin iteraattorin avulla. Tapahtuu kun etsitoiminto on onnistuneesti
-	 * suoritettu.
-	 * @param j pakkojen nimiä sisältävä ArrayList Controllerilta.
-	 */
-	// Adds deck names to JCombobox from given ArrayList using Iterator.
-	public void AddDekit(ArrayList<String> j){
-		dekit.removeAllItems();
-		for (Iterator<String> it = j.iterator (); it.hasNext ();) {
-			dekit.addItem(it.next());
-		}
-	}
-	public void removefromDecklist(String Nam){
-		dekit.removeItem(Nam);
-	}
-	/**
-	 * emptyList
-	 * Poistaa JComboBoxista kaikki pakkojen nimet, kutsutaan etsi-toiminnon alussa Controllerista.
-	 */
-	// Method for emptying JCombobox of all items.
-	public void emptyList(){
-		dekit.removeAllItems();
-	}
-	/**
-	 * valiName
-	 * Metodi jota Controller kutsuu saadakseen mikä pakka JComboBoxista on valittuna
-	 * @return palauttaa Controllerille pakan nimen.
-	 */
-	// Return method for giving the selected deck name from JCombobox (dekit) to Controller class. 
-	public String valiName(){
-		String paluu = (String)dekit.getSelectedItem();
-		return paluu;
-	}
-	/**
-	 * setNappi.
-	 * Muokkaa nappien ominaisuuksia. Kutsutaan vain tästä luokasta.
-	 * @param s saa JButton objektin parametrinaan.
-	 * @param tex saa nappiin asetettan tekstin.
-	 */
-	// Customizes JButtons.
-	public void setNappi(JButton s, String tex){
-		s.setText(tex);
-		s.setForeground(new Color(255,255,255));
-		s.setHorizontalTextPosition(JButton.CENTER);
-		s.setVerticalTextPosition(JButton.CENTER);
-		s.setContentAreaFilled(false);
-		s.setBorderPainted(false);
-		s.setSize(bicon.getIconWidth(),bicon.getIconHeight());
-	}
-	/**
-	 * setErrorMessage
-	 * Asettaa virheilmoitukset ja muut viestit error-jlabeliin. Kyseisen JLabelin teksti näkyy punaisena
-	 * jotta käyttäjä huomaisi virheilmoituksen.
-	 * @param s saa parametrinaan viestin sisällön kontrollerilta.
-	 */
-	// Sets the error and system messages (painted red in the program)
-	public void setErrorMessage(String s, boolean virhe){
-		if(virhe)error.setForeground(Color.RED);
-		else error.setForeground(new Color(0,100,0));
-		error.setText(s);
-	}
-	public void hideRating(){
-		ratingholder.setVisible(false);
-		ratingpanel.setVisible(false);
-	}
-	public void setRating(int rating, int amount){
-		String sivu = "<html><table style='border-collapse: collapse'><tr>";
-		for(int i = 0; i<10; i++){
-			if(rating>0){
-				sivu += "<td style='padding: 0; margin-top: 0; margin-bottom: 0;'><img src="+urlrate+"></td>";
-				rating--;
-			}else{
-				sivu += "<td style='padding: 0; margin-top: 0; margin-bottom: 0;'><img src="+urlnorate+"></td>";
-			}
-		}
-		sivu+="</tr><tr><td colspan='10'>";
-		if(amount>0)sivu += "Amount of ratings: " +amount;
-		else sivu+= "Not yet rated.";
-		sivu += "</td></tr></table></html>";
-		ratingholder.setText(sivu);
-		ratingholder.setVisible(true);
-		ratingpanel.setVisible(true);
-	}
-	public int getRating(){
-		return ratings.getNumber().intValue();
-	}
-	/**
-	 * getSelectedCard
-	 * Metodi kortin kuvan näyttämistä varten. Tarkistaa onko käyttäjä maalannut nimen apupakasta vai
-	 * varsinaisesta pakasta.
-	 * @return selected palauttaa nimen Controllerille.
-	 */
-	/* Returns the selected text from JTextArea to controller.
-	 * Which is ideally a proper card name.
-	 */ 
-	public String getSelectedCard(){
-		String selected;
-		if(sideboard.isFocusOwner())selected = "" + sideboard.getSelectedText();
-		else selected = "" + deck.getSelectedText();
-		return selected;
-	}
-	/**
-	 * setCardImage
-	 * Metodi joka vaihtaa kortin kuvaa.
-	 * @param s saa parametrinaan Controllerilta kortin hakemistopolun
-	 */
-	// Changes the card-image in the imageholder label
-	public void setCardImage(String s){
-		cardpic = new ImageIcon(s);
-		imageholder.setIcon(cardpic);
-	}
-	/**
-	 * cardList
-	 * Luo uuden ikkunan korttien listaamista varten.
-	 * @param cards saa parametrinaan taulukon korttien nimistä Controllerilta.
-	 */
-	public void cardList(String[] cards, String[] setteja){
-		/* Disposes apuframe if another one exists so two instances of apuframe can't
-		 * coexist.
-		 */
-		if(apuframe != null){
-			apuframe.dispose();
-		}
-		apuframe = new JFrame();
-		JPanel apu = new JPanel();
-		setit = new JComboBox<>();
-		for(int j = 0; j<setteja.length; j++){
-			setit.addItem(setteja[j]);
-		}
-		JScrollPane Cardspanel = new JScrollPane();
-		Cardslist = new DefaultListModel<>();
-		//Adds the card names to the list
-		for(int i = 0; i<cards.length; i++){
-			Cardslist.addElement(cards[i]);
-		}
-		ListofCards = new JList<>(Cardslist);
-		ListofCards.setVisibleRowCount(25);
-		ListofCards.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		ListofCards.addListSelectionListener(kontrolleri);
-		ListofCards.addMouseListener(kontrolleri);
-		setit.setActionCommand("SETS");
-	    setit.addActionListener(kontrolleri);
-		Cardspanel.setWheelScrollingEnabled(true);
-		Cardspanel.getViewport().setView(ListofCards);
-		apu.add(setit);
-		apu.add(Cardspanel);
-		apuframe.add(apu);
-		apuframe.setVisible(true);
-		apuframe.setResizable(false);
-		apuframe.setSize(setit.getWidth()+20,440);
-		apuframe.setTitle("Cardlist");
-		apuframe.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-	}
-	//function to get chosen set from cardlist
-	public String getcardlistSelection(){
-		return (String)setit.getSelectedItem();
-	}
-	//function to update selected list
-	public void updateCardlist(String[] cards){
-		Cardslist.removeAllElements();
-		for(int i = 0; i<cards.length; i++){
-			Cardslist.addElement(cards[i]);
-		}
-	}
-	//function to changetext of database
-	public void databaseChangeText(boolean online){
-		if(online){
-			database.setText("Use Database in your Computer");
-			login.setEnabled(true);
-			logout.setEnabled(true);
-			newaccount.setEnabled(true);
-		}
-		else{
-			database.setText("Use Database of Server");
-			login.setEnabled(false);
-			logout.setEnabled(false);
-			newaccount.setEnabled(false);
-		}
-	}
-	class Undous implements UndoableEditListener{
-		public void undoableEditHappened(UndoableEditEvent e){
-			peruutus.addEdit(e.getEdit());
-		}
-	}
-	class CutAct extends TextAction {
-		static final long serialVersionUID = 1;
-		public CutAct(){
-			super("Cut");
-		}
-		public void actionPerformed(ActionEvent e){
-			JTextComponent target = getTextComponent(e);
-			if (target != null) target.cut();
-		}
-	}
-	class PasteAct extends TextAction {
-		static final long serialVersionUID = 1;
-		public PasteAct(){
-			super("Paste");
-		}
-		public void actionPerformed(ActionEvent e){
-			JTextComponent target = getTextComponent(e);
-			if (target != null) target.paste();
-		}
-	}
-	class CopyAct extends TextAction {
-		static final long serialVersionUID = 1;
-		public CopyAct(){
-			super("Copy");
-		}
-		public void actionPerformed(ActionEvent e){
-			JTextComponent target = getTextComponent(e);
-			if (target != null) target.copy();
-		}
-	}
-	class UndoAct extends AbstractAction {
-		static final long serialVersionUID = 1;
-		public UndoAct(){
-			super("Undo Typing");
-		}
-		public void actionPerformed(ActionEvent e){
-			if(peruutus.canUndo())peruutus.undo();
-		}
-	}
-	class RedoAct extends AbstractAction {
-		static final long serialVersionUID = 1;
-		public RedoAct(){
-			super("Redo");
-		}
-		public void actionPerformed(ActionEvent e){
-			if(peruutus.canRedo())peruutus.redo();
-		}
-	}
-	class Focuser implements FocusListener{
-		public void focusGained(FocusEvent e){
-			if(e.getSource()==deck){
-				focus = 0;
-			}else
-				if(e.getSource()==sideboard){
-					focus = 1;
-				}else focus = 2;
-			
-		}
-		public void focusLost(FocusEvent e){
-			
-		}
-	}
+    public void setController(Controller c){
+        mp.setController(c);
+        tp.setController(c);
+        sp.setController(c);
+        sep.setController(c);
+        tep.setController(c);
+        NewGame.setActionCommand("NEW");
+        NewGame.addActionListener(c);
+        Exit.setActionCommand("EXIT");
+        Exit.addActionListener(c);
+        about.addActionListener(c);
+        about.setActionCommand("ABOUT");
+        kostats.addActionListener(c);
+        kostats.setActionCommand("KO");
+        helper.setActionCommand("HELP");
+        helper.addActionListener(c);
+        teamstats.addActionListener(c);
+        teamstats.setActionCommand("TOP_TEAMS");
+        save.setActionCommand("SAVE");
+        save.addActionListener(c);
+        MenuGladiatorName.setActionCommand("GLADIATOR_NAME");
+        MenuTeamName.setActionCommand("TEAM_NAME");
+        MenuGladiatorName.addActionListener(c);
+        MenuTeamName.addActionListener(c);
+        confirmnamechanges.addActionListener(c);
+        LoadGame.setActionCommand("LOAD");
+        LoadGame.addActionListener(c);
+        resign.setActionCommand("RESIGN");
+        resign.addActionListener(c);
+        fire.setActionCommand("FIRE");
+        fire.addActionListener(c);
+        Gladiator1.addMouseListener(c);
+        Gladiator2.addMouseListener(c);
+        Gladiator3.addMouseListener(c);
+        Gladiator4.addMouseListener(c);
+        Gladiator5.addMouseListener(c);
+        Gladiator6.addMouseListener(c);
+        jScrollPane1.getVerticalScrollBar().getModel().addChangeListener(this);
+    } 
+    public void setBattleController(Battle b){
+    	this.addKeyListener(b);
+    	this.setFocusable(true);
+    	this.requestFocus();
+    }
+    public void removeBattleController(Battle b){
+    	this.removeKeyListener(b);
+    }
+    public void changePanel(String s){
+        cl.show(ChangingPanel, s);
+    }
+    public void addText(String s){
+        shouldscroll = true;
+        MessageArea.append(s+"\n");
+    }
+    public void setTeamName(String s){
+        TeamName.setText(s);
+    }
+    public void enableStuff(){
+        MenuGladiatorName.setEnabled(true);
+        MenuTeamName.setEnabled(true);
+        kostats.setEnabled(true);
+        teamstats.setEnabled(true);
+        save.setEnabled(true);
+        fire.setEnabled(true);
+        LoadGame.setEnabled(true);
+        resign.setEnabled(true);
+        mp.enableStuff();
+    }
+    public void disableStuff(){
+    	MenuGladiatorName.setEnabled(false);
+    	MenuTeamName.setEnabled(false);
+    	fire.setEnabled(false);
+    	save.setEnabled(false);
+    	resign.setEnabled(false);
+    	LoadGame.setEnabled(false);
+    }
+    public void setSquirrels(String s){
+        Squirrels.setText(s);
+    }
+    public void teamorgladiatorNameOpen(boolean team, String n){
+        if(team){
+            setName.setTitle("Change Team Name");
+            namelabel.setText("Team Name: ");
+            confirmnamechanges.setActionCommand("CHANGE_TEAM_NAME");
+        }else{
+            setName.setTitle("Change Gladiator Name");
+            namelabel.setText("Gladiator Name: ");
+            confirmnamechanges.setActionCommand("CHANGE_GLADIATOR_NAME");
+        }
+        namefield.setText(n);
+        setName.setVisible(true);
+    }
+    public String getName(){
+        setName.setVisible(false);
+        return namefield.getText();
+    }
+    public Gladiator getLabelGladiator(Object o){
+        Gladiator gl = null;
+        if(o.equals(Gladiator1)&&gladiators.size()>0){
+            gl = gladiators.elementAt(0);
+            Gladiator1.setBackground(Color.RED);
+            Gladiator1.setOpaque(true);
+            this.showGladiator(gl);
+	    }else{
+        	Gladiator1.setBackground(Color.WHITE);
+        	Gladiator1.setOpaque(false);
+        }
+        if(o.equals(Gladiator2)&&gladiators.size()>1){
+            gl = gladiators.elementAt(1);
+            Gladiator2.setOpaque(true);
+            Gladiator2.setBackground(Color.RED);
+            this.showGladiator(gl);
+        }else{
+        	Gladiator2.setBackground(Color.WHITE);
+        	Gladiator2.setOpaque(false);
+        }
+        if(o.equals(Gladiator3)&&gladiators.size()>2){
+            gl = gladiators.elementAt(2);
+            Gladiator3.setBackground(Color.RED);
+            Gladiator3.setOpaque(true);
+            this.showGladiator(gl);
+        }else{
+        	Gladiator3.setBackground(Color.WHITE);
+        	Gladiator3.setOpaque(false);
+        }
+        if(o.equals(Gladiator4)&&gladiators.size()>3){
+            gl = gladiators.elementAt(3);
+            Gladiator4.setBackground(Color.RED);
+            Gladiator4.setOpaque(true);
+            this.showGladiator(gl);
+        }else{
+        	Gladiator4.setBackground(Color.WHITE);
+        	Gladiator4.setOpaque(false);
+        }
+        if(o.equals(Gladiator5)&&gladiators.size()>4){
+            gl = gladiators.elementAt(4);
+            Gladiator5.setBackground(Color.RED);
+            Gladiator5.setOpaque(true);
+            this.showGladiator(gl);
+        }else{
+        	Gladiator5.setBackground(Color.WHITE);
+        	Gladiator5.setOpaque(false);
+        }
+        if(o.equals(Gladiator6)&&gladiators.size()>5){
+            gl = gladiators.elementAt(5);
+            Gladiator6.setBackground(Color.RED);
+            Gladiator6.setOpaque(true);
+            this.showGladiator(gl);
+        }else{
+        	Gladiator6.setBackground(Color.WHITE);
+        	Gladiator6.setOpaque(false);
+        }
+        return gl;
+    }
+    public void clearGladiatorPanels(){
+        Gladiator1.setIcon(new ImageIcon("res/BLANK.gif"));
+        Gladiator2.setIcon(new ImageIcon("res/BLANK.gif"));
+        Gladiator3.setIcon(new ImageIcon("res/BLANK.gif"));
+        Gladiator4.setIcon(new ImageIcon("res/BLANK.gif"));
+        Gladiator5.setIcon(new ImageIcon("res/BLANK.gif"));
+        Gladiator6.setIcon(new ImageIcon("res/BLANK.gif"));
+    }
+    public void makeRed(){
+    	this.getLabelGladiator(Gladiator1);
+    }
+    public void addGladiatorstoPanels(Vector<Gladiator> gl){
+        gladiators = gl;
+        if(gl!=null)
+        	for(int i = 0; i<gl.size(); i++){
+	            switch(i){
+	                case 0:
+	                    //System.out.println(gl.elementAt(i).getRace());
+	                    Gladiator1.setIcon(gl.elementAt(i).getImage());
+	                    break;
+	                case 1:
+	                    Gladiator2.setIcon(gl.elementAt(i).getImage());
+	                    break;
+	                case 2:
+	                    Gladiator3.setIcon(gl.elementAt(i).getImage());
+	                    break;
+	                case 3:
+	                    Gladiator4.setIcon(gl.elementAt(i).getImage());
+	                    break;
+	                case 4:
+	                    Gladiator5.setIcon(gl.elementAt(i).getImage());
+	                    break;
+	                case 5:
+	                    Gladiator6.setIcon(gl.elementAt(i).getImage());
+	                    break;
+	            }
+        	}
+    }
+    public void showGladiator(Gladiator g){
+        Gladiator_Name.setText(g.getName());
+        Health.setText(g.getHealth()+"/"+g.getMaxhealth());
+        Agility.setText(""+g.getAgility());
+        Strength.setText(""+g.getStrength());
+        Mana.setText(""+g.getMana());        
+        Spear.setText(g.getSpearskillAtt()+"/"+g.getSpearskillDef());
+        Sword.setText(g.getSwordskillAtt()+"/"+g.getSwordskillDef());
+        Hammer.setText(g.getHammerskillAtt()+"/"+g.getHammerskillDef());
+        Axe.setText(g.getAxeskillAtt()+"/"+g.getAxeskillDef());
+        Resistance.setText(""+g.getResistance());
+        Evasion.setText(""+g.getEvasion());
+        Bow.setText(""+g.getBowskill());
+        Crossbow.setText(""+g.getCrossbowskill());
+        actualrace.setText(g.getRace());
+        upkeemam.setText(""+g.getUpkeep());
+        if(g.getMelee() == null){
+            MeleeName.setText("None");
+            MeleeDamage.setText("0");
+        }else{
+            MeleeName.setText(g.getMelee().getName());
+            MeleeDamage.setText(g.getMelee().getMinDam()+"-"+g.getMelee().getMaxDam());
+        }
+        if(g.getRanged() == null){
+            RangedName.setText("None");
+            RangedDamage.setText("0");
+        }else{
+            RangedName.setText(g.getRanged().getName());
+            RangedDamage.setText(g.getRanged().getMinDam()+"-"+g.getRanged().getMaxDam());
+        }
+        if(g.getArmor() == null){
+            ArmorName.setText("None");
+            ArmorProtection.setText("0");
+        }else{
+            ArmorName.setText(g.getArmor().getName());
+            ArmorProtection.setText(""+g.getArmor().getArmor());
+        }
+        if(g.getSpell1() == null){
+            Spell1Name.setText("None");
+            Spell1Damage.setText("0");
+            Spell1Mana.setText("0");
+        }else{
+            Spell1Name.setText(g.getSpell1().getName());
+            if(g.getSpell1().getDamageSpell()) Spell1Effect.setText("Damage");
+            else Spell1Effect.setText("Healing");
+            Spell1Damage.setText(g.getSpell1().getMinDamage()+"-"+g.getSpell1().getMaxDamage());
+            Spell1Mana.setText(""+g.getSpell1().getManaCost());
+        }
+        if(g.getSpell2() == null){
+            Spell2Name.setText("None");
+            Spell2Damage.setText("0");
+            Spell2Mana.setText("0");
+        }else{
+            Spell2Name.setText(g.getSpell2().getName());
+            if(g.getSpell2().getDamageSpell()) Spell2Effect.setText("Damage");
+            else Spell2Effect.setText("Healing");
+            Spell2Damage.setText(g.getSpell2().getMinDamage()+"-"+g.getSpell2().getMaxDamage());
+            Spell2Mana.setText(""+g.getSpell1().getManaCost());
+        }
+    }
+    public void stateChanged(ChangeEvent e){
+    // Test for flag. Otherwise, if we scroll unconditionally,
+    // the scroll bar will be stuck at the bottom even when the
+    // user tries to drag it. So we only scroll when we know
+    // we've added text
+    	if (shouldscroll){
+		    JScrollBar vertBar = jScrollPane1.getVerticalScrollBar();
+		    vertBar.setValue(vertBar.getMaximum());
+		    shouldscroll = false;
+    	}
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+   
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        Container = new JPanel(){
+			private static final long serialVersionUID = -8510359596315741787L;
+
+			public void paintComponent(Graphics g){
+            	Graphics2D g2d = (Graphics2D) g;
+            	Dimension d = this.getSize();
+            	g2d.setPaint(new GradientPaint(0, 0, new Color(105,0,155), 50, 50, new Color(75,0,105),true));
+            	g2d.fillRect(0, 0, d.width, d.height);
+            }
+        };
+        ChangingPanel = new javax.swing.JPanel();
+        GladiatorPanel = new GradientPanel();
+        jPanel1 = new javax.swing.JPanel();
+        Gladiator1 = new javax.swing.JLabel();
+        Gladiator2 = new javax.swing.JLabel();
+        Gladiator3 = new javax.swing.JLabel();
+        Gladiator4 = new javax.swing.JLabel();
+        Gladiator5 = new javax.swing.JLabel();
+        Gladiator6 = new javax.swing.JLabel();
+        TeamName = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel(){
+			private static final long serialVersionUID = -8565442463248186340L;
+			{
+    			this.setBorder(new BevelBorder(BevelBorder.RAISED));
+    		}
+    		public void paintComponent(Graphics g){
+    	    	Graphics2D g2d = (Graphics2D) g;
+    	    	Dimension d = this.getSize();
+    	    	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), d.width, 0, new Color(255,0,0)));
+    	    	g2d.fillRect(0, 0, d.width, d.height);
+    	    }
+        };
+        jLabel4 = new javax.swing.JLabel();
+        Gladiator_Name = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        Strength = new javax.swing.JLabel();
+        Mana = new javax.swing.JLabel();
+        Agility = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        Health = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel(){
+			private static final long serialVersionUID = 1834377823101098450L;
+			{
+    			this.setBorder(new BevelBorder(BevelBorder.RAISED));
+    		}
+    		public void paintComponent(Graphics g){
+    	    	Graphics2D g2d = (Graphics2D) g;
+    	    	Dimension d = this.getSize();
+    	    	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), d.width, 0, new Color(255,0,0)));
+    	    	g2d.fillRect(0, 0, d.width, d.height);
+    	    }
+        };
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        Spear = new javax.swing.JLabel();
+        Sword = new javax.swing.JLabel();
+        Axe = new javax.swing.JLabel();
+        Hammer = new javax.swing.JLabel();
+        Bow = new javax.swing.JLabel();
+        Crossbow = new javax.swing.JLabel();
+        Evasion = new javax.swing.JLabel();
+        Resistance = new javax.swing.JLabel();
+        Squirrels = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel(){
+			private static final long serialVersionUID = 1669397330336216026L;
+			{
+    			this.setBorder(new BevelBorder(BevelBorder.RAISED));
+    		}
+    		public void paintComponent(Graphics g){
+    	    	Graphics2D g2d = (Graphics2D) g;
+    	    	Dimension d = this.getSize();
+    	    	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), d.width, 0, new Color(255,0,0)));
+    	    	g2d.fillRect(0, 0, d.width, d.height);
+    	    }
+        };
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        MeleeName = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        RangedName = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        RangedDamage = new javax.swing.JLabel();
+        MeleeDamage = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel(){
+			private static final long serialVersionUID = -2307242449287234293L;
+			{
+    			this.setBorder(new BevelBorder(BevelBorder.RAISED));
+    		}
+    		public void paintComponent(Graphics g){
+    	    	Graphics2D g2d = (Graphics2D) g;
+    	    	Dimension d = this.getSize();
+    	    	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), d.width, 0, new Color(255,0,0)));
+    	    	g2d.fillRect(0, 0, d.width, d.height);
+    	    }
+        };
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        Spell1Name = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        Spell2Name = new javax.swing.JLabel();
+        Spell1Effect = new javax.swing.JLabel();
+        Spell2Effect = new javax.swing.JLabel();
+        Spell2Damage = new javax.swing.JLabel();
+        Spell1Damage = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        Spell1Mana = new javax.swing.JLabel();
+        Spell2Mana = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel(){
+			private static final long serialVersionUID = 4681837100762777494L;
+			{
+    			this.setBorder(new BevelBorder(BevelBorder.RAISED));
+    		}
+    		public void paintComponent(Graphics g){
+    	    	Graphics2D g2d = (Graphics2D) g;
+    	    	Dimension d = this.getSize();
+    	    	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), d.width, 0, new Color(255,0,0)));
+    	    	g2d.fillRect(0, 0, d.width, d.height);
+    	    }
+        };
+        jLabel26 = new javax.swing.JLabel();
+        ArmorName = new javax.swing.JLabel();
+        Labe = new javax.swing.JLabel();
+        race = new JLabel("Race");
+        actualrace = new JLabel("Kaarnapeikko");
+        upkeep = new JLabel("Salary");
+        upkeemam = new JLabel("##");
+        ArmorProtection = new javax.swing.JLabel();
+        InfoPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        MessageArea = new javax.swing.JTextArea();
+        jMenuBar1 = new javax.swing.JMenuBar(){
+			private static final long serialVersionUID = -2307242449287234293L;
+
+			public void paintComponent(Graphics g){
+    	    	Graphics2D g2d = (Graphics2D) g;
+    	    	Dimension d = this.getSize();
+    	    	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), d.width, 0, new Color(255,0,0)));
+    	    	g2d.fillRect(0, 0, d.width, d.height);
+    	    }
+        };
+        jMenu1 = new javax.swing.JMenu();
+        NewGame = new javax.swing.JMenuItem();
+        LoadGame = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
+        Exit = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        MenuTeamName = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        MenuGladiatorName = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        kostats = new JMenuItem("Knockouts");
+        about = new JMenuItem("About");
+        helper = new JMenuItem("Help");
+        fire = new JMenuItem("Fire Gladiator");
+        save = new JMenuItem("Save Game");
+        resign = new JMenuItem("Resign");
+        fire.setEnabled(false);
+        teamstats = new JMenuItem("Top Teams");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Gladius I Arenum");
+        setBackground(new Color(150,0,255));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        Mana.setText("00");
+
+        Container.setBackground(new Color(150,0,255));
+        Container.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.white, java.awt.Color.black, java.awt.Color.darkGray));
+        Container.setPreferredSize(new java.awt.Dimension(this.getWidth(), this.getHeight()));
+
+        ChangingPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.white, java.awt.Color.black, java.awt.Color.darkGray));
+        ChangingPanel.setName("ChangingPanel"); // NOI18N
+        ChangingPanel.setPreferredSize(new java.awt.Dimension(412, 333));
+
+        javax.swing.GroupLayout ChangingPanelLayout = new javax.swing.GroupLayout(ChangingPanel);
+        ChangingPanel.setLayout(ChangingPanelLayout);
+        ChangingPanelLayout.setHorizontalGroup(
+            ChangingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 484, Short.MAX_VALUE)
+        );
+        ChangingPanelLayout.setVerticalGroup(
+            ChangingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 327, Short.MAX_VALUE)
+        );
+        GladiatorPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.white, java.awt.Color.black, java.awt.Color.darkGray));
+        GladiatorPanel.setName("GladiatorPanel"); // NOI18N
+        
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        Gladiator1.setIcon(new ImageIcon("res/BLANK.gif")); // NOI18N
+
+        Gladiator2.setIcon(new ImageIcon("res/BLANK.gif")); // NOI18N
+
+        Gladiator3.setIcon(new ImageIcon("res/BLANK.gif")); // NOI18N
+
+        Gladiator4.setIcon(new ImageIcon("res/BLANK.gif")); // NOI18N
+
+        Gladiator5.setIcon(new ImageIcon("res/BLANK.gif")); // NOI18N
+
+        Gladiator6.setIcon(new ImageIcon("res/BLANK.gif")); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(Gladiator1)
+                .addGap(26, 26, 26)
+                .addComponent(Gladiator2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 35, Short.MAX_VALUE)
+                .addComponent(Gladiator3)
+                .addGap(18, 18, 18)
+                .addComponent(Gladiator4)
+                .addGap(18, 18, 18)
+                .addComponent(Gladiator5)
+                .addGap(18, 18, 18)
+                .addComponent(Gladiator6)
+                .addGap(22, 22, 22))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Gladiator2)
+                    .addComponent(Gladiator1)
+                    .addComponent(Gladiator3)
+                    .addComponent(Gladiator4)
+                    .addComponent(Gladiator5)
+                    .addComponent(Gladiator6))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        TeamName.setFont(new java.awt.Font("High Tower Text", 1, 18)); // NOI18N
+        TeamName.setForeground(new java.awt.Color(255, 255, 255));
+        TeamName.setText("TEAM");
+
+        jPanel2.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Strength");
+
+        Gladiator_Name.setFont(new java.awt.Font("High Tower Text", 1, 14)); // NOI18N
+        Gladiator_Name.setForeground(new java.awt.Color(255, 255, 255));
+        Gladiator_Name.setText("Name");
+
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Mana");
+
+        Strength.setForeground(new java.awt.Color(255, 255, 255));
+        Strength.setText("00");
+
+        Mana.setForeground(new java.awt.Color(255, 255, 255));
+        
+        
+
+        Agility.setForeground(new java.awt.Color(255, 255, 255));
+        Agility.setText("00");
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Agility");
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Health");
+
+        Health.setForeground(new java.awt.Color(255, 255, 255));
+        Health.setText("00000");
+        race.setForeground(Color.WHITE);
+        actualrace.setForeground(Color.WHITE);
+        upkeep.setForeground(Color.WHITE);
+        upkeemam.setForeground(Color.WHITE);
+        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                	.addComponent(race)
+                	.addComponent(jLabel3)
+                    .addComponent(jLabel2))
+                    
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                	.addComponent(actualrace)
+                	.addComponent(Agility, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Health))
+                    
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 70, 70)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, 26, Short.MAX_VALUE)
+                        .addComponent(Mana, GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, 26, Short.MAX_VALUE)
+                        .addComponent(Strength, GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        
+                    .addGroup(jPanel2Layout.createSequentialGroup()     
+                        .addComponent(upkeep)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, 26, Short.MAX_VALUE)
+                        .addComponent(upkeemam, GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        //.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED))
+                .addGap(25, 25, 25))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(113, 113, 113)
+                .addComponent(Gladiator_Name, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(175, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(Gladiator_Name)
+                .addGap(11, 11, 11)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(Strength)
+                    .addComponent(jLabel2)
+                    .addComponent(Health))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(Mana)
+                    .addComponent(Agility)
+                    .addComponent(jLabel3))
+                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(upkeep)
+                    .addComponent(upkeemam)
+                    .addComponent(actualrace)
+                    .addComponent(race))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel3.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel11.setFont(new java.awt.Font("High Tower Text", 1, 14)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("Skills");
+
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel12.setText("Spear");
+
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("Sword");
+
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel14.setText("Axe");
+
+        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel15.setText("Hammer");
+
+        jLabel16.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel16.setText("Bow");
+
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel17.setText("Crossbow");
+
+        jLabel18.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel18.setText("Evasion");
+
+        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel19.setText("Resistance");
+
+        Spear.setForeground(new java.awt.Color(255, 255, 255));
+        Spear.setText("00000");
+
+        Sword.setForeground(new java.awt.Color(255, 255, 255));
+        Sword.setText("00000");
+
+        Axe.setForeground(new java.awt.Color(255, 255, 255));
+        Axe.setText("00000");
+
+        Hammer.setForeground(new java.awt.Color(255, 255, 255));
+        Hammer.setText("00000");
+
+        Bow.setForeground(new java.awt.Color(255, 255, 255));
+        Bow.setText("00");
+
+        Crossbow.setForeground(new java.awt.Color(255, 255, 255));
+        Crossbow.setText("00");
+
+        Evasion.setForeground(new java.awt.Color(255, 255, 255));
+        Evasion.setText("00");
+
+        Resistance.setForeground(new java.awt.Color(255, 255, 255));
+        Resistance.setText("00");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel11))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel15))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Spear)
+                            .addComponent(Sword)
+                            .addComponent(Axe)
+                            .addComponent(Hammer))
+                        .addGap(38, 38, 38)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel19)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 31, Short.MAX_VALUE)
+                                .addComponent(Resistance))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 36, Short.MAX_VALUE)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(Bow)
+                                    .addComponent(Crossbow)
+                                    .addComponent(Evasion))))))
+                .addContainerGap(120, 120))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel16)
+                    .addComponent(Spear)
+                    .addComponent(Bow))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel17)
+                    .addComponent(Sword)
+                    .addComponent(Crossbow))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel18)
+                    .addComponent(Axe)
+                    .addComponent(Evasion))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel19)
+                    .addComponent(Hammer)
+                    .addComponent(Resistance))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        Squirrels.setFont(new java.awt.Font("High Tower Text", 0, 18)); // NOI18N
+        Squirrels.setForeground(new java.awt.Color(255, 255, 255));
+        Squirrels.setText("0000 sq");
+
+        jPanel4.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel20.setFont(new java.awt.Font("High Tower Text", 1, 14)); // NOI18N
+        jLabel20.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel20.setText("Weapons");
+
+        jLabel21.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel21.setText("Melee");
+
+        MeleeName.setForeground(new java.awt.Color(255, 255, 255));
+        MeleeName.setText("None.......");
+
+        jLabel22.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel22.setText("Ranged");
+
+        RangedName.setForeground(new java.awt.Color(255, 255, 255));
+        RangedName.setText("None.......");
+
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Damage");
+
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Damage");
+
+        RangedDamage.setForeground(new java.awt.Color(255, 255, 255));
+        RangedDamage.setText("00");
+
+        MeleeDamage.setForeground(new java.awt.Color(255, 255, 255));
+        MeleeDamage.setText("00");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel20))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel21)
+                                .addGap(27, 27, 27)
+                                .addComponent(MeleeName))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel22)
+                                .addGap(18, 18, 18)
+                                .addComponent(RangedName)))
+                        .addGap(49, 49, 49)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(RangedDamage))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(MeleeDamage)))))
+                .addContainerGap(137, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel20)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(MeleeName)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MeleeDamage))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(RangedName)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(RangedDamage))
+                .addContainerGap(21, Short.MAX_VALUE))
+        );
+        
+        jPanel5.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel23.setFont(new java.awt.Font("High Tower Text", 1, 14)); // NOI18N
+        jLabel23.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel23.setText("Spells");
+
+        jLabel24.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel24.setText("Spell 1");
+
+        Spell1Name.setForeground(new java.awt.Color(255, 255, 255));
+        Spell1Name.setText("None......");
+
+        jLabel25.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel25.setText("Spell 2");
+
+        Spell2Name.setForeground(new java.awt.Color(255, 255, 255));
+        Spell2Name.setText("None......");
+
+        Spell1Effect.setForeground(new java.awt.Color(255, 255, 255));
+        Spell1Effect.setText("Damage");
+
+        Spell2Effect.setForeground(new java.awt.Color(255, 255, 255));
+        Spell2Effect.setText("Damage");
+
+        Spell2Damage.setForeground(new java.awt.Color(255, 255, 255));
+        Spell2Damage.setText("00");
+
+        Spell1Damage.setForeground(new java.awt.Color(255, 255, 255));
+        Spell1Damage.setText("00");
+
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Cost");
+
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Cost");
+
+        Spell1Mana.setForeground(new java.awt.Color(255, 255, 255));
+        Spell1Mana.setText("00");
+
+        Spell2Mana.setForeground(new java.awt.Color(255, 255, 255));
+        Spell2Mana.setText("00");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel23))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel24)
+                                .addGap(27, 27, 27)
+                                .addComponent(Spell1Name))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel25)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Spell2Name)))
+                        .addGap(49, 49, 49)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(Spell2Effect)
+                                .addGap(18, 18, 18)
+                                .addComponent(Spell2Damage)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(Spell2Mana))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(Spell1Effect)
+                                .addGap(18, 18, 18)
+                                .addComponent(Spell1Damage)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel7)
+                                .addGap(18, 18, 18)
+                                .addComponent(Spell1Mana)))))
+                .addContainerGap(68, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel23)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24)
+                    .addComponent(Spell1Name)
+                    .addComponent(Spell1Effect, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Spell1Damage)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Spell1Mana))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel25)
+                    .addComponent(Spell2Effect, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Spell2Damage)
+                    .addComponent(Spell2Name)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Spell2Mana))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel6.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel6.setForeground(new java.awt.Color(255, 255, 255));
+
+        jLabel26.setFont(new java.awt.Font("High Tower Text", 1, 14)); // NOI18N
+        jLabel26.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel26.setText("Armor");
+
+        ArmorName.setForeground(new java.awt.Color(255, 255, 255));
+        ArmorName.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        ArmorName.setText("None......");
+        Labe.setForeground(new java.awt.Color(255, 255, 255));
+        Labe.setText("Protection");
+
+        ArmorProtection.setForeground(new java.awt.Color(255, 255, 255));
+        ArmorProtection.setText("00");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel26))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(82, 82, 82)
+                        .addComponent(ArmorName)
+                        .addGap(49, 49, 49)
+                        .addComponent(Labe)
+                        .addGap(18, 18, 18)
+                        .addComponent(ArmorProtection)))
+                .addContainerGap(128, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ArmorName)
+                    .addComponent(Labe, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ArmorProtection))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout GladiatorPanelLayout = new javax.swing.GroupLayout(GladiatorPanel);
+        GladiatorPanel.setLayout(GladiatorPanelLayout);
+        GladiatorPanelLayout.setHorizontalGroup(
+            GladiatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                .addGroup(GladiatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, 390))
+                    .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                        .addGap(121, 121, 121)
+                        .addComponent(TeamName))
+                    .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(GladiatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(Squirrels)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, 390)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, 390)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, GladiatorPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, 390)
+                .addContainerGap())
+            .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, 390)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        GladiatorPanelLayout.setVerticalGroup(
+            GladiatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(GladiatorPanelLayout.createSequentialGroup()
+                .addGap(5, 5, 5)
+                .addGroup(GladiatorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TeamName)
+                    .addComponent(Squirrels))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1.setPreferredSize(new Dimension(390, 70));
+        jPanel2.setPreferredSize(new Dimension(390, 130));
+        jPanel3.setPreferredSize(new Dimension(390, 130));
+        jPanel4.setPreferredSize(new Dimension(390, 100));
+        jPanel5.setPreferredSize(new Dimension(390, 100));
+        jPanel6.setPreferredSize(new Dimension(390, 60));
+        InfoPanel.setBackground(new java.awt.Color(51, 51, 255));
+        InfoPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, java.awt.Color.lightGray, java.awt.Color.white, java.awt.Color.black, java.awt.Color.darkGray));
+        InfoPanel.setName("InfoPanel"); // NOI18N
+        InfoPanel.setPreferredSize(new java.awt.Dimension(490, 279));
+
+        MessageArea.setColumns(20);
+        MessageArea.setEditable(false);
+        MessageArea.setLineWrap(true);
+        MessageArea.setWrapStyleWord(true);
+        MessageArea.setRows(5);
+        MessageArea.setAutoscrolls(true);
+        jScrollPane1.setViewportView(MessageArea);
+
+        javax.swing.GroupLayout InfoPanelLayout = new javax.swing.GroupLayout(InfoPanel);
+        InfoPanel.setLayout(InfoPanelLayout);
+        InfoPanelLayout.setHorizontalGroup(
+            InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+        );
+        InfoPanelLayout.setVerticalGroup(
+            InfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout ContainerLayout = new javax.swing.GroupLayout(Container);
+        Container.setLayout(ContainerLayout);
+        ContainerLayout.setHorizontalGroup(
+            ContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ChangingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(InfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(GladiatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        ContainerLayout.setVerticalGroup(
+            ContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContainerLayout.createSequentialGroup()
+                .addGroup(ContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ContainerLayout.createSequentialGroup()
+                        .addComponent(ChangingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(InfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(GladiatorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        jMenuBar1.setBackground(new java.awt.Color(255, 0, 51));
+        jMenuBar1.setForeground(new java.awt.Color(255, 255, 255));
+        jMenu1.setForeground(Color.WHITE);
+        jMenu1.setText("Game");
+        jMenu1.setBackground(new java.awt.Color(255, 0, 51));
+        NewGame.setText("New Game");
+        NewGame.setForeground(Color.WHITE);
+        jMenu1.add(NewGame);
+        jMenu1.addSeparator();
+        NewGame.setBackground(new java.awt.Color(255, 0, 51));
+        LoadGame.setForeground(Color.WHITE);
+        LoadGame.setText("Load Game");
+        LoadGame.setBackground(new java.awt.Color(255, 0, 51));
+        jMenu1.add(LoadGame);
+        save.setForeground(Color.WHITE);
+        save.setBackground(new java.awt.Color(255, 0, 51));
+        jMenu1.add(save);
+        jMenu1.add(jSeparator1);
+        Exit.setForeground(Color.WHITE);
+        Exit.setText("Exit");
+        Exit.setBackground(new java.awt.Color(255, 0, 51));
+        jMenu1.add(Exit);
+        
+        jMenuBar1.add(jMenu1);
+        jMenu3.setForeground(Color.WHITE);
+        jMenu3.setText("Team");
+        jMenu3.setBackground(new java.awt.Color(255, 0, 51));
+        resign.setForeground(Color.WHITE);
+        resign.setText("Resign");
+        resign.setEnabled(false);
+        resign.setBackground(new java.awt.Color(255, 0, 51));
+        MenuTeamName.setForeground(Color.WHITE);
+        MenuTeamName.setText("Rename");
+        MenuTeamName.setEnabled(false);
+        MenuTeamName.setBackground(new java.awt.Color(255, 0, 51));
+        kostats.setForeground(Color.WHITE);
+        kostats.setEnabled(false);
+        kostats.setBackground(new java.awt.Color(255, 0, 51));
+        teamstats.setForeground(Color.WHITE);
+        teamstats.setEnabled(false);
+        teamstats.setBackground(new java.awt.Color(255, 0, 51));
+        jMenu3.add(MenuTeamName);
+        jMenu3.addSeparator();
+        jMenu3.add(resign);
+
+        jMenuBar1.add(jMenu3);
+        jMenu5.setForeground(Color.WHITE);
+        jMenu5.setText("Gladiator");
+        jMenu5.setBackground(new java.awt.Color(255, 0, 51));
+        MenuGladiatorName.setForeground(Color.WHITE);
+        MenuGladiatorName.setText("Rename");
+        MenuGladiatorName.setEnabled(false);
+        MenuGladiatorName.setBackground(new java.awt.Color(255, 0, 51));
+        jMenu5.add(MenuGladiatorName);
+        jMenu5.addSeparator();
+        jMenu5.add(fire);
+        jMenuBar1.add(jMenu5);
+        fire.setForeground(Color.WHITE);
+        fire.setBackground(new Color(255, 0, 51));
+        jMenu4.setForeground(Color.WHITE);
+        jMenu4.setText("Statistics");
+        jMenu4.add(teamstats);
+        jMenu4.addSeparator();
+        jMenu4.add(kostats);
+        jMenuBar1.add(jMenu4);
+        jMenu2.setForeground(Color.WHITE);
+        jMenu2.setText("Help");
+        jMenu2.add(helper);
+        jMenu2.addSeparator();
+        jMenu2.add(about);
+        about.setForeground(Color.WHITE);
+        about.setBackground(new java.awt.Color(255, 0, 51));
+        helper.setForeground(Color.WHITE);
+        helper.setBackground(new java.awt.Color(255, 0, 51));
+        jMenuBar1.add(jMenu2);
+        save.setEnabled(false);
+        
+        setJMenuBar(jMenuBar1);
+        this.setLayout(new GridLayout(0,1));
+        this.add(Container);
+        this.setIconImage(gladius.getImage());
+        this.setPreferredSize(new Dimension(942, 725));
+        /*javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Container, javax.swing.GroupLayout.PREFERRED_SIZE, 937, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Container, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE)
+        );*/
+        //this.setBackground(Color.WHITE);
+        this.getContentPane().setBackground(new Color(150,0,255));
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+    public void setCurSeason(int s){
+    	mp.setSeason(s);
+    }
+    /**
+    * @param args the command line arguments
+    */
+    //JFrame components for player name change view:
+	private JFrame setName = new JFrame("Change Team Name");
+	private JPanel namepanel = new JPanel(){
+		private static final long serialVersionUID = -8510359596315741787L;
+
+		public void paintComponent(Graphics g){
+        	Graphics2D g2d = (Graphics2D) g;
+        	Dimension d = this.getSize();
+        	g2d.setPaint(new GradientPaint(0, 0, new Color(100,0,0), 50, 50, new Color(255,0,0),true));
+        	g2d.fillRect(0, 0, d.width, d.height);
+        }
+	};
+	private JLabel namelabel = new JLabel("Team Name: ");
+	private JTextField namefield = new JTextField("Name", 15);
+	private JButton confirmnamechanges = new RedButton("OK");
+    private Vector<Gladiator> gladiators;
+    private CardLayout cl = new CardLayout();
+    private MainPanel mp;
+    private TavernPanel tp;
+    private ShopPanel sp;
+    private BattlePanel bp;
+    private SeasonPanel sep;
+    private TeamPanel tep;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Agility;
+    private javax.swing.JLabel ArmorName;
+    private javax.swing.JLabel ArmorProtection;
+    private javax.swing.JLabel Axe;
+    private javax.swing.JLabel Bow;
+    private javax.swing.JPanel ChangingPanel;
+    private javax.swing.JPanel Container;
+    private javax.swing.JLabel Crossbow;
+    private javax.swing.JLabel Evasion;
+    private javax.swing.JMenuItem Exit;
+    private javax.swing.JLabel Gladiator1;
+    private javax.swing.JLabel Gladiator2;
+    private javax.swing.JLabel Gladiator3;
+    private javax.swing.JLabel Gladiator4;
+    private javax.swing.JLabel Gladiator5;
+    private javax.swing.JLabel Gladiator6;
+    private javax.swing.JPanel GladiatorPanel;
+    private javax.swing.JLabel Gladiator_Name;
+    private javax.swing.JLabel Hammer;
+    private javax.swing.JLabel Health;
+    private javax.swing.JPanel InfoPanel;
+    private javax.swing.JLabel Labe;
+    private javax.swing.JLabel Mana;
+    private javax.swing.JLabel MeleeDamage;
+    private javax.swing.JLabel MeleeName;
+    private javax.swing.JMenuItem MenuGladiatorName;
+    private javax.swing.JMenuItem MenuTeamName;
+    private javax.swing.JTextArea MessageArea;
+    private javax.swing.JMenuItem NewGame;
+    private javax.swing.JLabel RangedDamage;
+    private javax.swing.JLabel RangedName;
+    private javax.swing.JLabel Resistance;
+    private javax.swing.JLabel Spear;
+    private javax.swing.JLabel Spell1Damage;
+    private javax.swing.JLabel Spell1Effect;
+    private javax.swing.JLabel Spell1Mana;
+    private javax.swing.JLabel Spell1Name;
+    private javax.swing.JLabel Spell2Damage;
+    private javax.swing.JLabel Spell2Effect;
+    private javax.swing.JLabel Spell2Mana;
+    private javax.swing.JLabel Spell2Name;
+    private javax.swing.JLabel Squirrels;
+    private javax.swing.JLabel Strength;
+    private javax.swing.JLabel Sword;
+    private javax.swing.JLabel TeamName;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private JLabel race;
+    private JLabel actualrace;
+    private JLabel upkeep;
+    private JLabel upkeemam;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem LoadGame;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private JMenuItem fire;
+    private JMenuItem kostats;
+    private JMenuItem teamstats;
+    private JMenuItem about;
+    private JMenuItem save;
+    private JMenuItem resign;
+    private JMenuItem helper;
+    private boolean shouldscroll = false;
+    private ImageIcon gladius = new ImageIcon("Gladius.png");
+    // End of variables declaration//GEN-END:variables
+    
+    
 }
