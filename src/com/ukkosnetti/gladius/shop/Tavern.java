@@ -1,6 +1,7 @@
 package com.ukkosnetti.gladius.shop;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Tavern implements ShopInterface, Serializable {
 	private List<Gladiator> gladiators;
 
 	public Tavern() {
-		gladiators = Gladiator.getGladiators();
+		gladiators = new ArrayList<>(Gladiator.getGladiators());
 	}
 
 	public boolean purchase(Team t, String which, Gladiator g, View v) {

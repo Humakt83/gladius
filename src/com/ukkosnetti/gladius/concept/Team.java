@@ -198,7 +198,7 @@ public class Team implements Serializable {
 	// TODO: Temporary method in order to get rid of old dao impl
 	public static List<Team> getTeams() {
 		List<Team> teams = new ArrayList<Team>();
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			Team team = new Team("Team" + i, 4 - ((int)Math.floor(i / 4)), 500, true);
 			team.addGladiator(Gladiator.getGladiators().get(0));
 			teams.add(team);
