@@ -16,8 +16,8 @@ public class Gladiator implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 8109938923144968581L;
-	private WeaponInterface melee;
-	private WeaponInterface ranged;
+	private WeaponInterface<?> melee;
+	private WeaponInterface<?> ranged;
 	private Spell spell1;
 	private Spell spell2;
 	private Armor armor;
@@ -83,19 +83,19 @@ public class Gladiator implements Serializable {
 		this.evasion = evasion;
 	}
 
-	public WeaponInterface getMelee() {
+	public WeaponInterface<?> getMelee() {
 		return melee;
 	}
 
-	public void setMelee(WeaponInterface melee) {
+	public void setMelee(WeaponInterface<?> melee) {
 		this.melee = melee;
 	}
 
-	public WeaponInterface getRanged() {
+	public WeaponInterface<?> getRanged() {
 		return ranged;
 	}
 
-	public void setRanged(WeaponInterface ranged) {
+	public void setRanged(WeaponInterface<?> ranged) {
 		this.ranged = ranged;
 	}
 

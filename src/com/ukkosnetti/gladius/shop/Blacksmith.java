@@ -1,7 +1,6 @@
 package com.ukkosnetti.gladius.shop;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 
 import com.ukkosnetti.gladius.concept.Team;
@@ -10,7 +9,6 @@ import com.ukkosnetti.gladius.gui.View;
 import com.ukkosnetti.gladius.item.Armor;
 import com.ukkosnetti.gladius.item.MeleeWeapon;
 import com.ukkosnetti.gladius.item.RangedWeapon;
-import com.ukkosnetti.gladius.item.WeaponInterface;
 
 /*
  * Class for Blacksmith. Contains weapons and armors used to place in ShopPanel.
@@ -20,22 +18,23 @@ public class Blacksmith implements ShopInterface, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6727096730008821602L;
-	private List<RangedWeapon> rangedweapons; // Container for ranged weapons.
+
+	private List<RangedWeapon> rangedWeapons; // Container for ranged weapons.
 	private List<Armor> armors; // Container for armors.
-	private List<MeleeWeapon> meleeweapons; // Container for melee weapons.
+	private List<MeleeWeapon> meleeWeapons; // Container for melee weapons.
 
 	public Blacksmith() {
 		armors = Armor.getArmors();
-		rangedweapons = RangedWeapon.getRangedWeapons();
-		meleeweapons = MeleeWeapon.getMeleeWeapons();
+		rangedWeapons = RangedWeapon.getRangedWeapons();
+		meleeWeapons = MeleeWeapon.getMeleeWeapons();
 	}
 
 	public List<RangedWeapon> getRangeds() {
-		return rangedweapons;
+		return rangedWeapons;
 	}
 
 	public List<MeleeWeapon> getMelees() {
-		return meleeweapons;
+		return meleeWeapons;
 	}
 
 	public List<Armor> getArmors() {
@@ -49,74 +48,64 @@ public class Blacksmith implements ShopInterface, Serializable {
 	 * from new item's price.
 	 */
 	public boolean purchase(Team t, String which, Gladiator g, View v) {
+		if (g.getRace().equals("Beholder") || g.getRace().equals("Beholder_Hero")) {
+			v.addText("Beholders can't wear armor or use weapons.");
+			return true;
+		}
 		int squirrels = t.getSquirrels();
-		Iterator<MeleeWeapon> it = meleeweapons.iterator();
-		while (it.hasNext()) {
-			WeaponInterface apu = it.next();
-			if (apu.getName().equals(which)) {
-				if (g.getRace().equals("Beholder") || g.getRace().equals("Beholder_Hero")) {
-					v.addText("Beholders can't wear armor or use weapons.");
-					return true;
-				} else if (g.getMelee() != null) {
+		for (MeleeWeapon meleeWeapon : meleeWeapons) {
+			if (meleeWeapon.getName().equals(which)) {
+				if (g.getMelee() != null) {
 					int discount = (int) (g.getMelee().getPrice() / 2);
-					if (squirrels >= apu.getPrice() - discount) {
+					if (squirrels >= meleeWeapon.getPrice() - discount) {
 						v.addText("Thy will get " + discount + " squirrels for thine old weapon.");
-						t.setSquirrels((squirrels - (apu.getPrice() - discount)));
-						g.setMelee(apu);
+						t.setSquirrels((squirrels - (meleeWeapon.getPrice() - discount)));
+						g.setMelee(meleeWeapon);
 						v.addText("Thanks for purchasing o noble customer.");
 						return true;
 					}
-				} else if (squirrels >= apu.getPrice()) {
-					g.setMelee(apu);
+				} else if (squirrels >= meleeWeapon.getPrice()) {
+					g.setMelee(meleeWeapon);
 					v.addText("Thanks for purchasing o noble customer.");
-					t.setSquirrels((squirrels - apu.getPrice()));
+					t.setSquirrels((squirrels - meleeWeapon.getPrice()));
 					return true;
 				}
 			}
 		}
-		Iterator<RangedWeapon> it2 = rangedweapons.iterator();
-		while (it2.hasNext()) {
-			WeaponInterface apu = it2.next();
-			if (apu.getName().equals(which)) {
-				if (g.getRace().equals("Beholder") || g.getRace().equals("Beholder_Hero")) {
-					v.addText("Beholders can't wear armor or use weapons.");
-					return true;
-				} else if (g.getRanged() != null) {
+
+		for (RangedWeapon rangedWeapon : rangedWeapons) {
+			if (rangedWeapon.getName().equals(which)) {
+				if (g.getRanged() != null) {
 					int discount = (int) (g.getRanged().getPrice() / 2);
-					if (squirrels >= apu.getPrice() - discount) {
+					if (squirrels >= rangedWeapon.getPrice() - discount) {
 						v.addText("Thy will get " + discount + " squirrels for thine old weapon.");
-						g.setRanged(apu);
+						g.setRanged(rangedWeapon);
 						v.addText("Thanks for purchasing o noble customer.");
-						t.setSquirrels((squirrels - (apu.getPrice() - discount)));
+						t.setSquirrels((squirrels - (rangedWeapon.getPrice() - discount)));
 						return true;
 					}
-				} else if (squirrels >= apu.getPrice()) {
-					g.setRanged(apu);
-					t.setSquirrels((squirrels - apu.getPrice()));
+				} else if (squirrels >= rangedWeapon.getPrice()) {
+					g.setRanged(rangedWeapon);
+					t.setSquirrels((squirrels - rangedWeapon.getPrice()));
 					v.addText("Thanks for purchasing o noble customer.");
 					return true;
 				}
 			}
 		}
-		Iterator<Armor> it3 = armors.iterator();
-		while (it3.hasNext()) {
-			Armor apu = it3.next();
-			if (apu.getName().equals(which)) {
-				if (g.getRace().equals("Beholder") || g.getRace().equals("Beholder_Hero")) {
-					v.addText("Beholders can't wear armor or use weapons.");
-					return true;
-				} else if (g.getArmor() != null) {
+		for (Armor armor : armors) {
+			if (armor.getName().equals(which)) {
+				if (g.getArmor() != null) {
 					int discount = (int) (g.getArmor().getPrice() / 2);
-					if (squirrels >= apu.getPrice() - discount) {
+					if (squirrels >= armor.getPrice() - discount) {
 						v.addText("Thy will get " + discount + " squirrels for thine old armor.");
-						g.setArmor(apu);
-						t.setSquirrels((squirrels - (apu.getPrice() - discount)));
+						g.setArmor(armor);
+						t.setSquirrels((squirrels - (armor.getPrice() - discount)));
 						v.addText("Thanks for purchasing o noble customer.");
 						return true;
 					}
-				} else if (squirrels >= apu.getPrice()) {
-					g.setArmor(apu);
-					t.setSquirrels((squirrels - apu.getPrice()));
+				} else if (squirrels >= armor.getPrice()) {
+					g.setArmor(armor);
+					t.setSquirrels((squirrels - armor.getPrice()));
 					v.addText("Thanks for purchasing o noble customer.");
 					return true;
 				}
@@ -125,32 +114,4 @@ public class Blacksmith implements ShopInterface, Serializable {
 		return false;
 	}
 
-	/*
-	 * Getter for returning weapon or armor from vector.
-	 */
-	public WeaponInterface getWeapon(String n) {
-		Iterator<MeleeWeapon> it = meleeweapons.iterator();
-		while (it.hasNext()) {
-			WeaponInterface apu = it.next();
-			if (apu.getName().equals(n))
-				return apu;
-		}
-		Iterator<RangedWeapon> it2 = rangedweapons.iterator();
-		while (it2.hasNext()) {
-			WeaponInterface apu = it2.next();
-			if (apu.getName().equals(n))
-				return apu;
-		}
-		return null;
-	}
-
-	public Armor getArmor(String n) {
-		Iterator<Armor> it = armors.iterator();
-		while (it.hasNext()) {
-			Armor apu = it.next();
-			if (apu.getName().equals(n))
-				return apu;
-		}
-		return null;
-	}
 }

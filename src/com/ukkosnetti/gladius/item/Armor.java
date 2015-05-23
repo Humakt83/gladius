@@ -7,7 +7,7 @@ import java.util.List;
 /*
  * Class for Armor object.
  */
-public class Armor implements Serializable {
+public class Armor implements Serializable, Purchasable {
 	/**
 	 * 
 	 */

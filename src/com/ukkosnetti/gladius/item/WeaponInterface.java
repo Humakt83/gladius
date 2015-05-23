@@ -1,6 +1,6 @@
 package com.ukkosnetti.gladius.item;
 
-public interface WeaponInterface<T> {
+public interface WeaponInterface<T> extends Purchasable {
 
 	T getWeaponType();
 
@@ -10,7 +10,4 @@ public interface WeaponInterface<T> {
 
 	int battleDamage();
 
-	String getName();
-
-	int getPrice();
 }

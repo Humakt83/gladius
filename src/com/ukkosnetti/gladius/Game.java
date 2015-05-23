@@ -23,7 +23,6 @@ import com.ukkosnetti.gladius.item.Armor;
 import com.ukkosnetti.gladius.item.MeleeWeapon;
 import com.ukkosnetti.gladius.item.RangedWeapon;
 import com.ukkosnetti.gladius.item.Spell;
-import com.ukkosnetti.gladius.item.WeaponInterface;
 import com.ukkosnetti.gladius.shop.Blacksmith;
 import com.ukkosnetti.gladius.shop.Spellshop;
 import com.ukkosnetti.gladius.shop.Tavern;
@@ -218,18 +217,6 @@ public class Game implements Serializable {
 			g = tavern.getGladiator(n);
 		}
 		return g;
-	}
-
-	public WeaponInterface getWeaponBlacksmith(String n) {
-		return blacksmith.getWeapon(n);
-	}
-
-	public Armor getOneArmor(String n) {
-		return blacksmith.getArmor(n);
-	}
-
-	public Spell getOneSpell(String n) {
-		return spellshop.getSpell(n);
 	}
 
 	public List<MeleeWeapon> getMeleeBlacksmith() {
