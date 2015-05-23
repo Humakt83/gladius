@@ -13,6 +13,8 @@ import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gui.BattlePanel;
 import com.ukkosnetti.gladius.gui.View;
+import com.ukkosnetti.gladius.item.MeleeWeaponType;
+import com.ukkosnetti.gladius.item.RangedWeaponType;
 import com.ukkosnetti.gladius.item.Spell;
 
 /*
@@ -415,15 +417,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	 */
 	public void duelMelee(Gladiator a, Gladiator b, int x, int y) {
 		String weapa, weapb;
-		String weaptypea = "", weaptypeb = "";
+		MeleeWeaponType weaptypea = null, weaptypeb = null;
 		if (a.getMelee() != null) {
 			weapa = a.getMelee().getName();
-			weaptypea = a.getMelee().getWeaponType();
+			weaptypea = (MeleeWeaponType) a.getMelee().getWeaponType();
 		} else
 			weapa = "fist";
 		if (b.getMelee() != null) {
 			weapb = b.getMelee().getName();
-			weaptypeb = b.getMelee().getWeaponType();
+			weaptypeb = (MeleeWeaponType) b.getMelee().getWeaponType();
 		} else
 			weapb = "fist";
 		if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
@@ -503,10 +505,11 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	 * Function for deciding outcome of ranged attack.
 	 */
 	public void duelRanged(Gladiator a, Gladiator b, int x, int y) {
-		String weapa = "", weaptypea = "";
+		String weapa = "";
+		RangedWeaponType weaptypea = null;
 		if (a.getRanged() != null) {
 			weapa = a.getRanged().getName();
-			weaptypea = a.getRanged().getWeaponType();
+			weaptypea = (RangedWeaponType) a.getRanged().getWeaponType();
 		}
 		if (a.getRanged() != null)
 			v.addText(a.getName() + " shoots " + b.getName() + " with " + weapa + ".");

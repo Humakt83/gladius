@@ -5,19 +5,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class RangedWeapon implements WeaponInterface, Serializable {
-	/**
-	 * 
-	 */
+public class RangedWeapon implements WeaponInterface<RangedWeaponType>, Serializable {
+
 	private static final long serialVersionUID = -7494794713855008746L;
 	private int damagemax;
 	private int damagemin;
-	private String weapontype; // 0 bow, 1 crossbow
+	private RangedWeaponType weapontype;
 	private int price;
 	private Random r = new Random();
 	private String name;
 
-	public RangedWeapon(int min, int max, String type, String n, int p) {
+	public RangedWeapon(int min, int max, RangedWeaponType type, String n, int p) {
 		damagemin = min;
 		damagemax = max;
 		weapontype = type;
@@ -25,7 +23,7 @@ public class RangedWeapon implements WeaponInterface, Serializable {
 		price = p;
 	}
 
-	public String getWeaponType() {
+	public RangedWeaponType getWeaponType() {
 		return weapontype;
 	}
 
@@ -50,6 +48,7 @@ public class RangedWeapon implements WeaponInterface, Serializable {
 	}
 
 	public static List<RangedWeapon> getRangedWeapons() {
-		return Arrays.asList(new RangedWeapon(1, 3, "0", "Sling", 25), new RangedWeapon(2, 5, "0", "Bow", 50), new RangedWeapon(4, 7, "1", "Crossbow", 75));
+		return Arrays.asList(new RangedWeapon(1, 3, RangedWeaponType.BOW, "Sling", 25), new RangedWeapon(2, 5, RangedWeaponType.BOW, "Bow", 50), new RangedWeapon(4, 7, RangedWeaponType.CROSSBOW,
+				"Crossbow", 75));
 	}
 }

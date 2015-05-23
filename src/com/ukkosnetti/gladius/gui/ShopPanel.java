@@ -76,7 +76,7 @@ public class ShopPanel extends GradientPanel {
 			MeleeWeapon apu = it.next();
 			String[] t = new String[4];
 			t[0] = apu.getName();
-			t[1] = apu.getWeaponType();
+			t[1] = apu.getWeaponType().name().toLowerCase();
 			t[2] = apu.getMinDam() + "-" + apu.getMaxDam();
 			t[3] = "" + apu.getPrice();
 			dtm.addRow(t);
@@ -92,7 +92,7 @@ public class ShopPanel extends GradientPanel {
 			RangedWeapon apu = it2.next();
 			String[] t = new String[4];
 			t[0] = apu.getName();
-			t[1] = apu.getWeaponType();
+			t[1] = apu.getWeaponType().name().toLowerCase();
 			t[2] = apu.getMinDam() + "-" + apu.getMaxDam();
 			t[3] = "" + apu.getPrice();
 			dtm.addRow(t);

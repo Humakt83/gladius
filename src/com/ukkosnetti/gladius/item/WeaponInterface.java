@@ -1,8 +1,8 @@
 package com.ukkosnetti.gladius.item;
 
-public interface WeaponInterface {
+public interface WeaponInterface<T> {
 
-	String getWeaponType();
+	T getWeaponType();
 
 	int getMinDam();
 
