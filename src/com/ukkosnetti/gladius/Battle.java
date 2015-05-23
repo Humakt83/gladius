@@ -74,7 +74,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 																											// team2.
 				// Adding values to integers from Gladiators' attributes and
 				// their weapon attributes.
-				int ra = aglad.getDamageMax() + aglad.getNaturalarmor() + aglad.getMaxhealth(), rb = bglad.getDamageMax() + bglad.getNaturalarmor() + bglad.getMaxhealth();
+				int ra = aglad.getStrength() + aglad.getNaturalarmor() + aglad.getMaxhealth(), rb = bglad.getStrength() + bglad.getNaturalarmor() + bglad.getMaxhealth();
 				if (aglad.getArmor() != null)
 					ra += aglad.getArmor().getArmor();
 				if (aglad.getMelee() != null)
@@ -467,7 +467,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			}
 			drawingarea.hitmiss(x, y, true);
 		} else {
-			int damage = r.nextInt(a.getDamageMax() - a.getDamageMin()) + a.getDamageMin();
+			int damage = r.nextInt(a.getStrength());
 			if (!weapa.equals("fist")) {
 				damage = damage + a.getMelee().battleDamage();
 			}
@@ -534,7 +534,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		} else {
 			int damage = 0;
 			if (a.getRanged() == null)
-				damage = (int) (r.nextInt(a.getDamageMax() - a.getDamageMin()) + a.getDamageMin()) / 2;
+				damage = (int) (r.nextInt(a.getStrength()) / 2);
 			else
 				damage = a.getRanged().battleDamage();
 			if (b.getArmor() != null)

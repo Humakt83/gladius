@@ -21,8 +21,6 @@ public class Gladiator implements Serializable {
 	private Spell spell1;
 	private Spell spell2;
 	private Armor armor;
-	private int damagemin;
-	private int damagemax;
 	private String race;
 	private int naturalarmor;
 	private int health;
@@ -52,12 +50,10 @@ public class Gladiator implements Serializable {
 
 	private ImageIcon picture;
 
-	public Gladiator(int damagemin, int damagemax, String race, int naturalarmor, int maxhealth, int attack, int defense, int agility, int resistance, int swordatt, int sworddef, int spearatt,
-			int speardef, int axeatt, int axedef, int hammeratt, int hammerdef, int bowskill, int crossbowskill, int maxmana, String name, int upkeep, ImageIcon p, int strength, int evasion) {
+	public Gladiator(String race, int naturalarmor, int maxhealth, int attack, int defense, int agility, int resistance, int swordatt, int sworddef, int spearatt, int speardef, int axeatt,
+			int axedef, int hammeratt, int hammerdef, int bowskill, int crossbowskill, int maxmana, String name, int upkeep, ImageIcon p, int strength, int evasion) {
 		picture = p;
 		this.strength = strength;
-		this.damagemin = damagemin;
-		this.damagemax = damagemax;
 		this.race = race;
 		this.naturalarmor = naturalarmor;
 		this.health = maxhealth;
@@ -121,22 +117,6 @@ public class Gladiator implements Serializable {
 
 	public void setArmor(Armor armor) {
 		this.armor = armor;
-	}
-
-	public int getDamageMin() {
-		return damagemin;
-	}
-
-	public void setDamageMin(int damage) {
-		this.damagemin = damage;
-	}
-
-	public int getDamageMax() {
-		return damagemax;
-	}
-
-	public void setDamageMax(int damage) {
-		this.damagemax = damage;
 	}
 
 	public String getRace() {
@@ -412,6 +392,6 @@ public class Gladiator implements Serializable {
 	// TODO: Temporary method in order to get rid of current DAO implementation
 	// of the project
 	public static List<Gladiator> getGladiators() {
-		return Arrays.asList(new Gladiator(1, 5, "Höbötti", 0, 15, 25, 35, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 25, 25, 10, "Kontikka", 5, new ImageIcon("res/Höbötti.gif"), 5, 15));
+		return Arrays.asList(new Gladiator("Höbötti", 0, 15, 25, 35, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 25, 25, 10, "Kontikka", 5, new ImageIcon("res/Höbötti.gif"), 5, 15));
 	}
 }
