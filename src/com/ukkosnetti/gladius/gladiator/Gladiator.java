@@ -1,13 +1,15 @@
 package com.ukkosnetti.gladius.gladiator;
+
+import java.awt.Point;
+import java.io.Serializable;
+
 import javax.swing.ImageIcon;
 
 import com.ukkosnetti.gladius.item.Armor;
 import com.ukkosnetti.gladius.item.Spell;
 import com.ukkosnetti.gladius.item.WeaponInterface;
 
-import java.awt.*;
-import java.io.Serializable;
-public class Gladiator implements Serializable{
+public class Gladiator implements Serializable {
 	/**
 	 * 
 	 */
@@ -18,25 +20,25 @@ public class Gladiator implements Serializable{
 	private Spell spell2;
 	private Armor armor;
 	private int damagemin;
-    private int damagemax;
+	private int damagemax;
 	private String race;
 	private int naturalarmor;
 	private int health;
 	private int maxhealth;
-    private int strength;
+	private int strength;
 	private int attack;
 	private int defense;
 	private int agility;
-    private int evasion;
+	private int evasion;
 	private int resistance;
 	private int swordatt;
-    private int sworddef;
-    private int spearatt;
-    private int speardef;
-    private int axeatt;
-    private int axedef;
-    private int hammeratt;
-    private int hammerdef;
+	private int sworddef;
+	private int spearatt;
+	private int speardef;
+	private int axeatt;
+	private int axedef;
+	private int hammeratt;
+	private int hammerdef;
 	private int bowskill;
 	private int crossbowskill;
 	private int mana;
@@ -44,20 +46,16 @@ public class Gladiator implements Serializable{
 	private String name;
 	private int upkeep;
 	private int knockdowns = 0;
-    private Point location = new Point(0,0);
+	private Point location = new Point(0, 0);
 
-	
 	private ImageIcon picture;
 
-	public Gladiator(int damagemin, int damagemax, String race, int naturalarmor,
-			int maxhealth, int attack, int defense, int agility,
-			int resistance, int swordatt, int sworddef, int spearatt, int speardef, int axeatt, int axedef,
-			int hammeratt, int hammerdef, int bowskill, int crossbowskill,
-			int maxmana, String name, int upkeep, ImageIcon p, int strength, int evasion) {
+	public Gladiator(int damagemin, int damagemax, String race, int naturalarmor, int maxhealth, int attack, int defense, int agility, int resistance, int swordatt, int sworddef, int spearatt,
+			int speardef, int axeatt, int axedef, int hammeratt, int hammerdef, int bowskill, int crossbowskill, int maxmana, String name, int upkeep, ImageIcon p, int strength, int evasion) {
 		picture = p;
-        this.strength = strength;
+		this.strength = strength;
 		this.damagemin = damagemin;
-        this.damagemax = damagemax;
+		this.damagemax = damagemax;
 		this.race = race;
 		this.naturalarmor = naturalarmor;
 		this.health = maxhealth;
@@ -67,20 +65,20 @@ public class Gladiator implements Serializable{
 		this.agility = agility;
 		this.resistance = resistance;
 		this.swordatt = swordatt;
-        this.sworddef = sworddef;
-        this.spearatt = spearatt;
-        this.speardef = speardef;
-        this.axeatt = axeatt;
-        this.axedef = axedef;
-        this.hammeratt = hammeratt;
-        this.hammerdef = hammerdef;
+		this.sworddef = sworddef;
+		this.spearatt = spearatt;
+		this.speardef = speardef;
+		this.axeatt = axeatt;
+		this.axedef = axedef;
+		this.hammeratt = hammeratt;
+		this.hammerdef = hammerdef;
 		this.bowskill = bowskill;
 		this.crossbowskill = crossbowskill;
 		this.mana = maxmana;
 		this.maxmana = maxmana;
 		this.name = name;
 		this.upkeep = upkeep;
-        this.evasion = evasion;
+		this.evasion = evasion;
 	}
 
 	public WeaponInterface getMelee() {
@@ -130,7 +128,8 @@ public class Gladiator implements Serializable{
 	public void setDamageMin(int damage) {
 		this.damagemin = damage;
 	}
-    public int getDamageMax() {
+
+	public int getDamageMax() {
 		return damagemax;
 	}
 
@@ -145,12 +144,15 @@ public class Gladiator implements Serializable{
 	public void setRace(String race) {
 		this.race = race;
 	}
-    public int getEvasion(){
-        return evasion;
-    }
-    public void setEvasion(int e){
-        evasion = e;
-    }
+
+	public int getEvasion() {
+		return evasion;
+	}
+
+	public void setEvasion(int e) {
+		evasion = e;
+	}
+
 	public int getNaturalarmor() {
 		return naturalarmor;
 	}
@@ -186,12 +188,14 @@ public class Gladiator implements Serializable{
 	public int getDefense() {
 		return defense;
 	}
-    public void setStrength(int s){
-        strength = s;
-    }
-    public int getStrength(){
-        return strength;
-    }
+
+	public void setStrength(int s) {
+		strength = s;
+	}
+
+	public int getStrength() {
+		return strength;
+	}
 
 	public void setDefense(int defense) {
 		this.defense = defense;
@@ -220,7 +224,8 @@ public class Gladiator implements Serializable{
 	public void setSwordskillAtt(int s) {
 		this.swordatt = s;
 	}
-    public int getSwordskillDef() {
+
+	public int getSwordskillDef() {
 		return sworddef;
 	}
 
@@ -235,7 +240,8 @@ public class Gladiator implements Serializable{
 	public void setSpearskillAtt(int s) {
 		this.spearatt = s;
 	}
-    public int getSpearskillDef() {
+
+	public int getSpearskillDef() {
 		return speardef;
 	}
 
@@ -250,7 +256,8 @@ public class Gladiator implements Serializable{
 	public void setAxeskillAtt(int s) {
 		this.axeatt = s;
 	}
-    public int getAxeskillDef() {
+
+	public int getAxeskillDef() {
 		return axedef;
 	}
 
@@ -265,7 +272,8 @@ public class Gladiator implements Serializable{
 	public void setHammerskillAtt(int s) {
 		this.hammeratt = s;
 	}
-    public int getHammerskillDef() {
+
+	public int getHammerskillDef() {
 		return hammerdef;
 	}
 
@@ -328,68 +336,74 @@ public class Gladiator implements Serializable{
 	public void setKnockdowns(int knockdowns) {
 		this.knockdowns += knockdowns;
 	}
-	public ImageIcon getImage(){
+
+	public ImageIcon getImage() {
 		return picture;
 	}
-    public void setLocation(Point p){
-        location = p;
-    }
-    public Point getLocation(){
-        return location;
-    }
-    public boolean increaseMeleeAttackSkill(){
-    	if(this.melee!= null){
-    		if(melee.getWeaponType().equals("spear")&&spearatt<99){
-    			spearatt++;
-    			return true;
-    		}
-    		if(melee.getWeaponType().equals("sword")&&swordatt<99){
-    			swordatt++;
-    			return true;
-    		}
-    		if(melee.getWeaponType().equals("axe")&&axeatt<99){
-    			axeatt++;
-    			return true;
-    		}
-    		if(melee.getWeaponType().equals("hammer")&&hammeratt<99){
-    			hammeratt++;
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-    public boolean increaseRangedSkill(){
-    	if(this.ranged!= null){
-    		if(ranged.getWeaponType().equals("bow")&&bowskill<99){
-    			bowskill++;
-    			return true;
-    		}
-    		if(ranged.getWeaponType().equals("crossbow")&&crossbowskill<99){
-    			crossbowskill++;
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-    public boolean increaseMeleeDefendSkill(){
-    	if(this.melee!= null){
-    		if(melee.getWeaponType().equals("spear")&&speardef<99){
-    			speardef++;
-    			return true;
-    		}
-    		if(melee.getWeaponType().equals("sword")&&sworddef<99){
-    			sworddef++;
-    			return true;
-    		}
-    		if(melee.getWeaponType().equals("axe")&&axedef<99){
-    			axedef++;
-    			return true;
-    		}
-    		if(melee.getWeaponType().equals("hammer")&&hammerdef<99){
-    			hammerdef++;
-    			return true;
-    		}
-    	}
-    	return false;
-    }
+
+	public void setLocation(Point p) {
+		location = p;
+	}
+
+	public Point getLocation() {
+		return location;
+	}
+
+	public boolean increaseMeleeAttackSkill() {
+		if (this.melee != null) {
+			if (melee.getWeaponType().equals("spear") && spearatt < 99) {
+				spearatt++;
+				return true;
+			}
+			if (melee.getWeaponType().equals("sword") && swordatt < 99) {
+				swordatt++;
+				return true;
+			}
+			if (melee.getWeaponType().equals("axe") && axeatt < 99) {
+				axeatt++;
+				return true;
+			}
+			if (melee.getWeaponType().equals("hammer") && hammeratt < 99) {
+				hammeratt++;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean increaseRangedSkill() {
+		if (this.ranged != null) {
+			if (ranged.getWeaponType().equals("bow") && bowskill < 99) {
+				bowskill++;
+				return true;
+			}
+			if (ranged.getWeaponType().equals("crossbow") && crossbowskill < 99) {
+				crossbowskill++;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean increaseMeleeDefendSkill() {
+		if (this.melee != null) {
+			if (melee.getWeaponType().equals("spear") && speardef < 99) {
+				speardef++;
+				return true;
+			}
+			if (melee.getWeaponType().equals("sword") && sworddef < 99) {
+				sworddef++;
+				return true;
+			}
+			if (melee.getWeaponType().equals("axe") && axedef < 99) {
+				axedef++;
+				return true;
+			}
+			if (melee.getWeaponType().equals("hammer") && hammerdef < 99) {
+				hammerdef++;
+				return true;
+			}
+		}
+		return false;
+	}
 }

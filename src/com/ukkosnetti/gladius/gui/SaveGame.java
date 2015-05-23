@@ -1,11 +1,19 @@
 package com.ukkosnetti.gladius.gui;
-import javax.swing.*;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.ukkosnetti.gladius.controller.Controller;
 import com.ukkosnetti.gladius.gui.components.RedButton;
 
-import java.awt.*;
-public class SaveGame extends JFrame{
+public class SaveGame extends JFrame {
 	/**
 	 * 
 	 */
@@ -14,15 +22,16 @@ public class SaveGame extends JFrame{
 	private JButton save = new RedButton("SAVE");
 	private ImageIcon gladius = new ImageIcon("Gladius.png");
 	private JPanel container = new JPanel();
-	public SaveGame(Controller c){
+
+	public SaveGame(Controller c) {
 		savename.setColumns(13);
 		save.setActionCommand("SAVETHISGAME");
 		save.addActionListener(c);
-		save.setBackground(new Color(255,0,50));
+		save.setBackground(new Color(255, 0, 50));
 		save.setForeground(Color.WHITE);
 		container.add(savename);
 		container.add(save);
-		container.setBackground(new Color(50,0,255));
+		container.setBackground(new Color(50, 0, 255));
 		this.add(container);
 		this.setVisible(true);
 		this.setResizable(false);
@@ -31,18 +40,18 @@ public class SaveGame extends JFrame{
 		this.setTitle("Save Game");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension frameSize = this.getSize();
-        if (frameSize.height > screenSize.height) {
-            frameSize.height = screenSize.height;
-        }
-        if (frameSize.width > screenSize.width) {
-            frameSize.width = screenSize.width;
-        }
-        //center frame to screen
-        this.setLocation((screenSize.width - frameSize.width) / 2,
-                          (screenSize.height - frameSize.height)/4);
+		Dimension frameSize = this.getSize();
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		// center frame to screen
+		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 4);
 	}
-	public String getSavedName(){
+
+	public String getSavedName() {
 		return savename.getText();
 	}
 }

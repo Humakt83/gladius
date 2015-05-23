@@ -1,10 +1,16 @@
 package com.ukkosnetti.gladius.item;
 
-public abstract interface WeaponInterface {
-	public abstract String getWeaponType();
-	public abstract int getMinDam();
-    public abstract int getMaxDam();
-	public abstract int battleDamage();
-	public abstract String getName();
-    public abstract int getPrice();
+public interface WeaponInterface {
+
+	String getWeaponType();
+
+	int getMinDam();
+
+	int getMaxDam();
+
+	int battleDamage();
+
+	String getName();
+
+	int getPrice();
 }
