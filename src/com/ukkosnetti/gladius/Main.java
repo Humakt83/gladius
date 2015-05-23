@@ -12,7 +12,7 @@ import com.ukkosnetti.gladius.gui.View;
 
 public class Main {
 
-	public Main() {
+	public static void main(String args[]) {
 		Loadscreen ls = new Loadscreen();
 		MainPanel mp = new MainPanel();
 		BattlePanel bp = new BattlePanel();
@@ -25,9 +25,5 @@ public class Main {
 		View v = new View(mp, tp, sp, bp, sep, tep);
 		Controller c = new Controller(v, g, mp, tp, sp, bp, sep, tep);
 		v.setController(c);
-	}
-
-	public static void main(String args[]) {
-		new Main();
 	}
 }

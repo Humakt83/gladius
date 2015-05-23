@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import com.ukkosnetti.gladius.concept.Season;
 import com.ukkosnetti.gladius.concept.Team;
@@ -184,9 +183,9 @@ public class Game implements Serializable {
 			return false;
 	}
 
-	public Vector<Gladiator> getCurrentGladiators(boolean change) {
+	public List<Gladiator> getCurrentGladiators(boolean change) {
 		if (activeTeam.getGladiators() != null && change)
-			currentGladiator = activeTeam.getGladiators().elementAt(0);
+			currentGladiator = activeTeam.getGladiators().get(0);
 		return activeTeam.getGladiators();
 	}
 

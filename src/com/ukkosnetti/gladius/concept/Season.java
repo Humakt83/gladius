@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import com.ukkosnetti.gladius.Battle;
 import com.ukkosnetti.gladius.Game;
@@ -19,8 +18,8 @@ public class Season implements Serializable {
 	private Team[][][] matchTable; // 8 matches 2 teams 3 rounds[8][2][3]
 	private List<Team> teams;
 	private Game game;
-	private int currentmatch = 0;
-	private int currentround = 0;
+	private int currentMatch = 0;
+	private int currentRound = 0;
 
 	public Season(List<Team> teams, Game g) {
 		game = g;
@@ -68,16 +67,16 @@ public class Season implements Serializable {
 	}
 
 	public Team getTeamAForCurrentBattle() {
-		return matchTable[currentmatch][0][currentround];
+		return matchTable[currentMatch][0][currentRound];
 	}
 
 	public Team getTeamBForCurrentBattle() {
-		return matchTable[currentmatch][1][currentround];
+		return matchTable[currentMatch][1][currentRound];
 	}
 
 	public void nextBattle(BattlePanel bp, View v) {
-		if (currentmatch >= 7) {
-			currentmatch = 0;
+		if (currentMatch >= 7) {
+			currentMatch = 0;
 			v.changePanel("mp");
 			v.addText("Current round of arena battles are over. ");
 			v.enableStuff();
@@ -88,13 +87,13 @@ public class Season implements Serializable {
 			v.addGladiatorstoPanels(game.getCurrentGladiators(true));
 			v.showGladiator(game.getCurrentGladiator());
 			v.makeRed();
-			if (currentround >= 2) {
+			if (currentRound >= 2) {
 				v.addText("Current season is over.");
 				game.newSeason(v);
 			} else
-				currentround++;
+				currentRound++;
 		} else {
-			currentmatch++;
+			currentMatch++;
 			new Battle(this.getTeamAForCurrentBattle(), this.getTeamBForCurrentBattle(), this, bp, v);
 		}
 	}
@@ -105,23 +104,4 @@ public class Season implements Serializable {
 			it.next().resetMatchWins();
 	}
 
-	public Vector<Team> getSeasonSide1() {
-		Vector<Team> s = new Vector<Team>();
-		for (int j = 0; j < 8; j++) {
-			for (int i = 0; i < 8; i++) {
-				s.add(matchTable[i][0][j]);
-			}
-		}
-		return s;
-	}
-
-	public Vector<Team> getSeasonSide2() {
-		Vector<Team> s = new Vector<Team>();
-		for (int j = 0; j < 8; j++) {
-			for (int i = 0; i < 8; i++) {
-				s.add(matchTable[i][1][j]);
-			}
-		}
-		return s;
-	}
 }

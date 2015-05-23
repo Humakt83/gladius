@@ -142,8 +142,8 @@ public class BattlePanel extends GradientPanel implements Runnable {
 						g.drawRect(x * 40, y * 40, 40, 40);
 					}
 					if (battle.getBattleTableValue(x, y) > 0 && battle.getBattleTableValue(x, y) < 10) {
-						g.drawImage(battle.team1.getGladiators().elementAt(battle.getBattleTableValue(x, y) - 1).getImage().getImage(), x * 40, y * 40, null);
-						if (battle.team1.getGladiators().elementAt(battle.getBattleTableValue(x, y) - 1).getHealth() <= 0) {
+						g.drawImage(battle.team1.getGladiators().get(battle.getBattleTableValue(x, y) - 1).getImage().getImage(), x * 40, y * 40, null);
+						if (battle.team1.getGladiators().get(battle.getBattleTableValue(x, y) - 1).getHealth() <= 0) {
 							// g.setColor(Color.RED);
 							// g.drawLine(x*40, y*40, (x*40)+40, (y*40)+40);
 							// g.drawLine((x*40)+40, y*40, x*40, (y*40)+40);
@@ -151,8 +151,8 @@ public class BattlePanel extends GradientPanel implements Runnable {
 						}
 					}
 					if (battle.getBattleTableValue(x, y) < 0 && battle.getBattleTableValue(x, y) > -10) {
-						g.drawImage(battle.team2.getGladiators().elementAt((-battle.getBattleTableValue(x, y)) - 1).getImage().getImage(), x * 40, y * 40, null);
-						if (battle.team2.getGladiators().elementAt(-(battle.getBattleTableValue(x, y)) - 1).getHealth() <= 0) {
+						g.drawImage(battle.team2.getGladiators().get((-battle.getBattleTableValue(x, y)) - 1).getImage().getImage(), x * 40, y * 40, null);
+						if (battle.team2.getGladiators().get(-(battle.getBattleTableValue(x, y)) - 1).getHealth() <= 0) {
 							g.drawImage(ko.getImage(), x * 40, y * 40, null);
 						}
 					}

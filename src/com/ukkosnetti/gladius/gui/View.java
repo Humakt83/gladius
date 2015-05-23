@@ -20,7 +20,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -216,7 +216,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 	public Gladiator getLabelGladiator(Object o) {
 		Gladiator gl = null;
 		if (o.equals(Gladiator1) && gladiators.size() > 0) {
-			gl = gladiators.elementAt(0);
+			gl = gladiators.get(0);
 			Gladiator1.setBackground(Color.RED);
 			Gladiator1.setOpaque(true);
 			this.showGladiator(gl);
@@ -225,7 +225,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			Gladiator1.setOpaque(false);
 		}
 		if (o.equals(Gladiator2) && gladiators.size() > 1) {
-			gl = gladiators.elementAt(1);
+			gl = gladiators.get(1);
 			Gladiator2.setOpaque(true);
 			Gladiator2.setBackground(Color.RED);
 			this.showGladiator(gl);
@@ -234,7 +234,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			Gladiator2.setOpaque(false);
 		}
 		if (o.equals(Gladiator3) && gladiators.size() > 2) {
-			gl = gladiators.elementAt(2);
+			gl = gladiators.get(2);
 			Gladiator3.setBackground(Color.RED);
 			Gladiator3.setOpaque(true);
 			this.showGladiator(gl);
@@ -243,7 +243,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			Gladiator3.setOpaque(false);
 		}
 		if (o.equals(Gladiator4) && gladiators.size() > 3) {
-			gl = gladiators.elementAt(3);
+			gl = gladiators.get(3);
 			Gladiator4.setBackground(Color.RED);
 			Gladiator4.setOpaque(true);
 			this.showGladiator(gl);
@@ -252,7 +252,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			Gladiator4.setOpaque(false);
 		}
 		if (o.equals(Gladiator5) && gladiators.size() > 4) {
-			gl = gladiators.elementAt(4);
+			gl = gladiators.get(4);
 			Gladiator5.setBackground(Color.RED);
 			Gladiator5.setOpaque(true);
 			this.showGladiator(gl);
@@ -261,7 +261,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			Gladiator5.setOpaque(false);
 		}
 		if (o.equals(Gladiator6) && gladiators.size() > 5) {
-			gl = gladiators.elementAt(5);
+			gl = gladiators.get(5);
 			Gladiator6.setBackground(Color.RED);
 			Gladiator6.setOpaque(true);
 			this.showGladiator(gl);
@@ -285,29 +285,29 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 		this.getLabelGladiator(Gladiator1);
 	}
 
-	public void addGladiatorstoPanels(Vector<Gladiator> gl) {
+	public void addGladiatorstoPanels(List<Gladiator> gl) {
 		gladiators = gl;
 		if (gl != null)
 			for (int i = 0; i < gl.size(); i++) {
 				switch (i) {
 				case 0:
 					// System.out.println(gl.elementAt(i).getRace());
-					Gladiator1.setIcon(gl.elementAt(i).getImage());
+					Gladiator1.setIcon(gl.get(i).getImage());
 					break;
 				case 1:
-					Gladiator2.setIcon(gl.elementAt(i).getImage());
+					Gladiator2.setIcon(gl.get(i).getImage());
 					break;
 				case 2:
-					Gladiator3.setIcon(gl.elementAt(i).getImage());
+					Gladiator3.setIcon(gl.get(i).getImage());
 					break;
 				case 3:
-					Gladiator4.setIcon(gl.elementAt(i).getImage());
+					Gladiator4.setIcon(gl.get(i).getImage());
 					break;
 				case 4:
-					Gladiator5.setIcon(gl.elementAt(i).getImage());
+					Gladiator5.setIcon(gl.get(i).getImage());
 					break;
 				case 5:
-					Gladiator6.setIcon(gl.elementAt(i).getImage());
+					Gladiator6.setIcon(gl.get(i).getImage());
 					break;
 				}
 			}
@@ -1262,7 +1262,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 	private JLabel namelabel = new JLabel("Team Name: ");
 	private JTextField namefield = new JTextField("Name", 15);
 	private JButton confirmnamechanges = new RedButton("OK");
-	private Vector<Gladiator> gladiators;
+	private List<Gladiator> gladiators;
 	private CardLayout cl = new CardLayout();
 	private MainPanel mp;
 	private TavernPanel tp;

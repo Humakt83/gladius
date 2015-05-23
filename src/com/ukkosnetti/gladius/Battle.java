@@ -67,7 +67,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 																		// still
 																		// in
 																		// battle.
-				Gladiator aglad = t1.getGladiators().elementAt(a), bglad = t2.getGladiators().elementAt(b); // Gladiator
+				Gladiator aglad = t1.getGladiators().get(a), bglad = t2.getGladiators().get(b); // Gladiator
 																											// from
 																											// team1
 																											// and
@@ -158,13 +158,13 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			// stands for member of team 1.
 			for (int i = team1.getGladiators().size(), j = 1; i > 0; i--, j++) {
 				battletable[1][j] = i;
-				team1.getGladiators().elementAt(i - 1).setLocation(new Point(1, j));
+				team1.getGladiators().get(i - 1).setLocation(new Point(1, j));
 			}
 			// Placing team 2 gladiators to table, number lesser than zero
 			// stands for member of team 2.
 			for (int i = team2.getGladiators().size(), j = 1; i > 0; i--, j++) {
 				battletable[8][j] = -i;
-				team2.getGladiators().elementAt(i - 1).setLocation(new Point(8, j));
+				team2.getGladiators().get(i - 1).setLocation(new Point(8, j));
 			}
 			// Reseting values of moveTable, which is done often so using
 			// function for it is practical.
@@ -198,11 +198,11 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			// members of both teams
 			team1size = team1.getGladiators().size();
 			for (int j = team1size; j > 0; j--)
-				if (team1.getGladiators().elementAt(j - 1).getHealth() <= 0)
+				if (team1.getGladiators().get(j - 1).getHealth() <= 0)
 					team1size--;
 			team2size = team2.getGladiators().size();
 			for (int j = team2size; j > 0; j--)
-				if (team2.getGladiators().elementAt(j - 1).getHealth() <= 0)
+				if (team2.getGladiators().get(j - 1).getHealth() <= 0)
 					team2size--;
 			int i = 0, counter = 0, team1gladturn = 0, team2gladturn = 0;
 			team1turn = true;
@@ -237,13 +237,13 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					}
 					if (team1turn && i < team1size) {
 						counter++;
-						while (team1.getGladiators().elementAt(team1gladturn).getHealth() <= 0)
+						while (team1.getGladiators().get(team1gladturn).getHealth() <= 0)
 							team1gladturn++; // Gets the nearest conscious
 												// gladiator in team.
-						battleTurn(team1.getGladiators().elementAt(team1gladturn));
+						battleTurn(team1.getGladiators().get(team1gladturn));
 						team1turn = false;
 						if (team1.getComputer())
-							this.moveAI(team1.getGladiators().elementAt(team1gladturn)); // If
+							this.moveAI(team1.getGladiators().get(team1gladturn)); // If
 																							// team
 																							// 1
 																							// is
@@ -264,13 +264,13 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 										// less gladiators than team 2.
 						if (i < team2size) {
 							counter++;
-							while (team2.getGladiators().elementAt(team2gladturn).getHealth() <= 0)
+							while (team2.getGladiators().get(team2gladturn).getHealth() <= 0)
 								team2gladturn++; // Gets the nearest conscious
 													// gladiator in team.
-							battleTurn(team2.getGladiators().elementAt(team2gladturn));
+							battleTurn(team2.getGladiators().get(team2gladturn));
 							team1turn = true;
 							if (team2.getComputer())
-								this.moveAI(team2.getGladiators().elementAt(team2gladturn)); // If
+								this.moveAI(team2.getGladiators().get(team2gladturn)); // If
 																								// team
 																								// 2
 																								// is
@@ -662,15 +662,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						boolean ko = false;
 						int other = battletable[x][y];
 						if (other > 0) {
-							if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+							if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 								ko = true;
-						} else if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+						} else if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 							ko = true;
 						if (!ko) {
 							if (other > 0)
-								this.duelMelee(gl, team1.getGladiators().elementAt(other - 1), x, y);
+								this.duelMelee(gl, team1.getGladiators().get(other - 1), x, y);
 							else
-								this.duelMelee(gl, team2.getGladiators().elementAt(-other - 1), x, y);
+								this.duelMelee(gl, team2.getGladiators().get(-other - 1), x, y);
 							done = true;
 						}
 					}
@@ -684,15 +684,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						boolean ko = false;
 						int other = battletable[x][y];
 						if (other > 0) {
-							if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+							if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 								ko = true;
-						} else if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+						} else if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 							ko = true;
 						if (!ko) {
 							if (other > 0)
-								this.duelRanged(gl, team1.getGladiators().elementAt(other - 1), x, y);
+								this.duelRanged(gl, team1.getGladiators().get(other - 1), x, y);
 							else
-								this.duelRanged(gl, team2.getGladiators().elementAt(-other - 1), x, y);
+								this.duelRanged(gl, team2.getGladiators().get(-other - 1), x, y);
 							done = true;
 						}
 					}
@@ -716,9 +716,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						boolean ko = false;
 						int other = battletable[x][y];
 						if (other > 0) {
-							if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+							if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 								ko = true;
-						} else if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+						} else if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 							ko = true;
 						if (!ko) {
 							int howclosex, howclosey;
@@ -743,57 +743,57 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			// making the move:
 
 			if (battletable[i + closest[0]][j + closest[1]] == 0
-					|| ((battletable[i + closest[0]][j + closest[1]] < 0 && team2.getGladiators().elementAt(-battletable[i + closest[0]][j + closest[1]] - 1).getHealth() <= 0) || (battletable[i
-							+ closest[0]][j + closest[1]] > 0 && team1.getGladiators().elementAt(battletable[i + closest[0]][j + closest[1]] - 1).getHealth() <= 0))) {
+					|| ((battletable[i + closest[0]][j + closest[1]] < 0 && team2.getGladiators().get(-battletable[i + closest[0]][j + closest[1]] - 1).getHealth() <= 0) || (battletable[i
+							+ closest[0]][j + closest[1]] > 0 && team1.getGladiators().get(battletable[i + closest[0]][j + closest[1]] - 1).getHealth() <= 0))) {
 				int other = battletable[i + closest[0]][j + closest[1]];
 				battletable[i + closest[0]][j + closest[1]] = battletable[i][j];
 				battletable[i][j] = other;
 				if (other < 0)
-					team2.getGladiators().elementAt(-other - 1).setLocation(new Point(i, j));
+					team2.getGladiators().get(-other - 1).setLocation(new Point(i, j));
 				else if (other > 0)
-					team1.getGladiators().elementAt(other - 1).setLocation(new Point(i, j));
+					team1.getGladiators().get(other - 1).setLocation(new Point(i, j));
 				gl.setLocation(new Point(i + closest[0], j + closest[1]));
 			} else {
 				if (battletable[i + closest[0]][j] == 0
-						|| ((battletable[i + closest[0]][j] < 0 && team2.getGladiators().elementAt(-battletable[i + closest[0]][j] - 1).getHealth() <= 0) || (battletable[i + closest[0]][j] > 0 && team1
-								.getGladiators().elementAt(battletable[i + closest[0]][j] - 1).getHealth() <= 0))) {
+						|| ((battletable[i + closest[0]][j] < 0 && team2.getGladiators().get(-battletable[i + closest[0]][j] - 1).getHealth() <= 0) || (battletable[i + closest[0]][j] > 0 && team1
+								.getGladiators().get(battletable[i + closest[0]][j] - 1).getHealth() <= 0))) {
 					int other = battletable[i + closest[0]][j];
 					battletable[i + closest[0]][j] = battletable[i][j];
 					battletable[i][j] = other;
 					if (other < 0)
-						team2.getGladiators().elementAt(-other - 1).setLocation(new Point(i, j));
+						team2.getGladiators().get(-other - 1).setLocation(new Point(i, j));
 					else if (other > 0)
-						team1.getGladiators().elementAt(other - 1).setLocation(new Point(i, j));
+						team1.getGladiators().get(other - 1).setLocation(new Point(i, j));
 					gl.setLocation(new Point(i + closest[0], j));
 				} else {
 					if (closest[0] != 0) {
 						boolean notdone = true;
 						if (j > 0) {
 							if (battletable[i + closest[0]][j - 1] == 0
-									|| ((battletable[i + closest[0]][j - 1] < 0 && team2.getGladiators().elementAt(-battletable[i + closest[0]][j - 1] - 1).getHealth() <= 0) || (battletable[i
-											+ closest[0]][j - 1] > 0 && team1.getGladiators().elementAt(battletable[i + closest[0]][j - 1] - 1).getHealth() <= 0))) {
+									|| ((battletable[i + closest[0]][j - 1] < 0 && team2.getGladiators().get(-battletable[i + closest[0]][j - 1] - 1).getHealth() <= 0) || (battletable[i + closest[0]][j - 1] > 0 && team1
+											.getGladiators().get(battletable[i + closest[0]][j - 1] - 1).getHealth() <= 0))) {
 								int other = battletable[i + closest[0]][j - 1];
 								battletable[i + closest[0]][j - 1] = battletable[i][j];
 								battletable[i][j] = other;
 								if (other < 0)
-									team2.getGladiators().elementAt(-other - 1).setLocation(new Point(i, j));
+									team2.getGladiators().get(-other - 1).setLocation(new Point(i, j));
 								else if (other > 0)
-									team1.getGladiators().elementAt(other - 1).setLocation(new Point(i, j));
+									team1.getGladiators().get(other - 1).setLocation(new Point(i, j));
 								gl.setLocation(new Point(i + closest[0], j - 1));
 								notdone = false;
 							}
 						}
 						if (j < 7 && notdone) {
 							if (battletable[i + closest[0]][j + 1] == 0
-									|| ((battletable[i + closest[0]][j + 1] < 0 && team2.getGladiators().elementAt(-battletable[i + closest[0]][j + 1] - 1).getHealth() <= 0) || (battletable[i
-											+ closest[0]][j + 1] > 0 && team1.getGladiators().elementAt(battletable[i + closest[0]][j + 1] - 1).getHealth() <= 0))) {
+									|| ((battletable[i + closest[0]][j + 1] < 0 && team2.getGladiators().get(-battletable[i + closest[0]][j + 1] - 1).getHealth() <= 0) || (battletable[i + closest[0]][j + 1] > 0 && team1
+											.getGladiators().get(battletable[i + closest[0]][j + 1] - 1).getHealth() <= 0))) {
 								int other = battletable[i + closest[0]][j + 1];
 								battletable[i + closest[0]][j + 1] = battletable[i][j];
 								battletable[i][j] = other;
 								if (other < 0)
-									team2.getGladiators().elementAt(-other - 1).setLocation(new Point(i, j));
+									team2.getGladiators().get(-other - 1).setLocation(new Point(i, j));
 								else if (other > 0)
-									team1.getGladiators().elementAt(other - 1).setLocation(new Point(i, j));
+									team1.getGladiators().get(other - 1).setLocation(new Point(i, j));
 								gl.setLocation(new Point(i + closest[0], j + 1));
 							}
 						}
@@ -801,30 +801,30 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						boolean notdone = true;
 						if (i > 0) {
 							if (battletable[i - 1][j + closest[1]] == 0
-									|| ((battletable[i - 1][j + closest[1]] < 0 && team2.getGladiators().elementAt(-battletable[i - 1][j + closest[1]] - 1).getHealth() <= 0) || (battletable[i - 1][j
-											+ closest[1]] > 0 && team1.getGladiators().elementAt(battletable[i - 1][j + closest[1]] - 1).getHealth() <= 0))) {
+									|| ((battletable[i - 1][j + closest[1]] < 0 && team2.getGladiators().get(-battletable[i - 1][j + closest[1]] - 1).getHealth() <= 0) || (battletable[i - 1][j
+											+ closest[1]] > 0 && team1.getGladiators().get(battletable[i - 1][j + closest[1]] - 1).getHealth() <= 0))) {
 								int other = battletable[i - 1][j + closest[1]];
 								battletable[i - 1][j + closest[1]] = battletable[i][j];
 								battletable[i][j] = other;
 								if (other < 0)
-									team2.getGladiators().elementAt(-other - 1).setLocation(new Point(i, j));
+									team2.getGladiators().get(-other - 1).setLocation(new Point(i, j));
 								else if (other > 0)
-									team1.getGladiators().elementAt(other - 1).setLocation(new Point(i, j));
+									team1.getGladiators().get(other - 1).setLocation(new Point(i, j));
 								gl.setLocation(new Point(i - 1, j + closest[1]));
 								notdone = false;
 							}
 						}
 						if (i < 9 && notdone) {
 							if (battletable[i + 1][j + closest[1]] == 0
-									|| ((battletable[i + 1][j + closest[1]] < 0 && team2.getGladiators().elementAt(-battletable[i + 1][j + closest[1]] - 1).getHealth() <= 0) || (battletable[i + 1][j
-											+ closest[1]] > 0 && team1.getGladiators().elementAt(battletable[i + 1][j + closest[1]] - 1).getHealth() <= 0))) {
+									|| ((battletable[i + 1][j + closest[1]] < 0 && team2.getGladiators().get(-battletable[i + 1][j + closest[1]] - 1).getHealth() <= 0) || (battletable[i + 1][j
+											+ closest[1]] > 0 && team1.getGladiators().get(battletable[i + 1][j + closest[1]] - 1).getHealth() <= 0))) {
 								int other = battletable[i + 1][j + closest[1]];
 								battletable[i + 1][j + closest[1]] = battletable[i][j];
 								battletable[i][j] = other;
 								if (other < 0)
-									team2.getGladiators().elementAt(-other - 1).setLocation(new Point(i, j));
+									team2.getGladiators().get(-other - 1).setLocation(new Point(i, j));
 								else if (other > 0)
-									team1.getGladiators().elementAt(other - 1).setLocation(new Point(i, j));
+									team1.getGladiators().get(other - 1).setLocation(new Point(i, j));
 								gl.setLocation(new Point(i + 1, j + closest[1]));
 								notdone = false;
 							}
@@ -866,9 +866,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					if (battletable[x][y] != 0) {
 						int val = battletable[x][y];
 						if (val < 0)
-							v.showGladiator(team2.getGladiators().elementAt(-val - 1));
+							v.showGladiator(team2.getGladiators().get(-val - 1));
 						else
-							v.showGladiator(team1.getGladiators().elementAt(val - 1));
+							v.showGladiator(team1.getGladiators().get(val - 1));
 					}
 				} else {
 					if (movetable[x][y] == 20) {
@@ -882,32 +882,32 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 								battletable[x][y] = battletable[(int) loc.getX()][(int) loc.getY()];
 								battletable[(int) loc.getX()][(int) loc.getY()] = other;
 								if (other < 0)
-									team2.getGladiators().elementAt(-other - 1).setLocation(loc);
+									team2.getGladiators().get(-other - 1).setLocation(loc);
 								else
-									team1.getGladiators().elementAt(other - 1).setLocation(loc);
+									team1.getGladiators().get(other - 1).setLocation(loc);
 								activeGladiator.setLocation(new Point(x, y));
 							} else {
 								if ((battletable[x][y] > 0 && battletable[(int) loc.getX()][(int) loc.getY()] < 0) || (battletable[x][y] < 0 && battletable[(int) loc.getX()][(int) loc.getY()] > 0)) {
 									int other = battletable[x][y];
 									boolean justmove = false;
 									if (other < 0) {
-										if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+										if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 											justmove = true;
-									} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+									} else if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 										justmove = true;
 									if (justmove) {
 										battletable[x][y] = battletable[(int) loc.getX()][(int) loc.getY()];
 										battletable[(int) loc.getX()][(int) loc.getY()] = other;
 										if (other < 0)
-											team2.getGladiators().elementAt(-other - 1).setLocation(loc);
+											team2.getGladiators().get(-other - 1).setLocation(loc);
 										else
-											team1.getGladiators().elementAt(other - 1).setLocation(loc);
+											team1.getGladiators().get(other - 1).setLocation(loc);
 										activeGladiator.setLocation(new Point(x, y));
 									} else {
 										if (other < 0)
-											this.duelMelee(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+											this.duelMelee(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 										else
-											this.duelMelee(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+											this.duelMelee(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 									}
 								}
 							}
@@ -920,15 +920,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						int other = battletable[x][y];
 						boolean donothing = false;
 						if (other < 0) {
-							if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+							if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 								donothing = true;
-						} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+						} else if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 							donothing = true;
 						if (!donothing) {
 							if (other < 0)
-								this.duelRanged(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+								this.duelRanged(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 							else
-								this.duelRanged(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+								this.duelRanged(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 							this.resetMoveTable();
 							pause = false;
 						}
@@ -973,15 +973,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 				int other = battletable[x][y];
 				boolean donothing = false;
 				if (other < 0) {
-					if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+					if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 						donothing = true;
-				} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+				} else if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 					donothing = true;
 				if (!donothing) {
 					if (other < 0)
-						this.duelSpell(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+						this.duelSpell(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 					else
-						this.duelSpell(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+						this.duelSpell(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 					this.resetMoveTable();
 					pause = false;
 					return true;
@@ -993,17 +993,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					int other = battletable[x][y];
 					boolean donothing = false;
 					if (other < 0) {
-						if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0
-								|| team2.getGladiators().elementAt(-other - 1).getHealth() == team2.getGladiators().elementAt(-other - 1).getMaxhealth())
+						if (team2.getGladiators().get(-other - 1).getHealth() <= 0 || team2.getGladiators().get(-other - 1).getHealth() == team2.getGladiators().get(-other - 1).getMaxhealth())
 							donothing = true;
-					} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0
-							|| team1.getGladiators().elementAt(-other - 1).getHealth() == team1.getGladiators().elementAt(-other - 1).getMaxhealth())
+					} else if (team1.getGladiators().get(other - 1).getHealth() <= 0 || team1.getGladiators().get(-other - 1).getHealth() == team1.getGladiators().get(-other - 1).getMaxhealth())
 						donothing = true;
 					if (!donothing) {
 						if (other < 0)
-							this.healSpell(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+							this.healSpell(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 						else
-							this.healSpell(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+							this.healSpell(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 						this.resetMoveTable();
 						pause = false;
 						return true;
@@ -1016,15 +1014,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 				int other = battletable[x][y];
 				boolean donothing = false;
 				if (other < 0) {
-					if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+					if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 						donothing = true;
-				} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+				} else if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 					donothing = true;
 				if (!donothing) {
 					if (other < 0)
-						this.duelSpell(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+						this.duelSpell(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 					else
-						this.duelSpell(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+						this.duelSpell(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 					this.resetMoveTable();
 					pause = false;
 					return true;
@@ -1035,17 +1033,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					int other = battletable[x][y];
 					boolean donothing = false;
 					if (other < 0) {
-						if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0
-								|| team2.getGladiators().elementAt(-other - 1).getHealth() == team2.getGladiators().elementAt(-other - 1).getMaxhealth())
+						if (team2.getGladiators().get(-other - 1).getHealth() <= 0 || team2.getGladiators().get(-other - 1).getHealth() == team2.getGladiators().get(-other - 1).getMaxhealth())
 							donothing = true;
-					} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0
-							|| team1.getGladiators().elementAt(other - 1).getHealth() == team1.getGladiators().elementAt(other - 1).getMaxhealth())
+					} else if (team1.getGladiators().get(other - 1).getHealth() <= 0 || team1.getGladiators().get(other - 1).getHealth() == team1.getGladiators().get(other - 1).getMaxhealth())
 						donothing = true;
 					if (!donothing) {
 						if (other < 0)
-							this.healSpell(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+							this.healSpell(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 						else
-							this.healSpell(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+							this.healSpell(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 						this.resetMoveTable();
 						pause = false;
 						return true;
@@ -1059,15 +1055,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 				int other = battletable[x][y];
 				boolean donothing = false;
 				if (other < 0) {
-					if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+					if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 						donothing = true;
-				} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+				} else if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 					donothing = true;
 				if (!donothing) {
 					if (other < 0)
-						this.duelSpell(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+						this.duelSpell(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 					else
-						this.duelSpell(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+						this.duelSpell(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 					this.resetMoveTable();
 					pause = false;
 					return true;
@@ -1078,17 +1074,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					int other = battletable[x][y];
 					boolean donothing = false;
 					if (other < 0) {
-						if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0
-								|| team2.getGladiators().elementAt(-other - 1).getHealth() == team2.getGladiators().elementAt(-other - 1).getMaxhealth())
+						if (team2.getGladiators().get(-other - 1).getHealth() <= 0 || team2.getGladiators().get(-other - 1).getHealth() == team2.getGladiators().get(-other - 1).getMaxhealth())
 							donothing = true;
-					} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0
-							|| team1.getGladiators().elementAt(-other - 1).getHealth() == team1.getGladiators().elementAt(-other - 1).getMaxhealth())
+					} else if (team1.getGladiators().get(other - 1).getHealth() <= 0 || team1.getGladiators().get(-other - 1).getHealth() == team1.getGladiators().get(-other - 1).getMaxhealth())
 						donothing = true;
 					if (!donothing) {
 						if (other < 0)
-							this.healSpell(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+							this.healSpell(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 						else
-							this.healSpell(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+							this.healSpell(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 						this.resetMoveTable();
 						pause = false;
 						return true;
@@ -1146,32 +1140,32 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 							battletable[x][y] = battletable[(int) loc.getX()][(int) loc.getY()];
 							battletable[(int) loc.getX()][(int) loc.getY()] = other;
 							if (other < 0)
-								team2.getGladiators().elementAt(-other - 1).setLocation(loc);
+								team2.getGladiators().get(-other - 1).setLocation(loc);
 							else
-								team1.getGladiators().elementAt(other - 1).setLocation(loc);
+								team1.getGladiators().get(other - 1).setLocation(loc);
 							activeGladiator.setLocation(new Point(x, y));
 						} else {
 							if ((battletable[x][y] > 0 && battletable[(int) loc.getX()][(int) loc.getY()] < 0) || (battletable[x][y] < 0 && battletable[(int) loc.getX()][(int) loc.getY()] > 0)) {
 								int other = battletable[x][y];
 								boolean justmove = false;
 								if (other < 0) {
-									if (team2.getGladiators().elementAt(-other - 1).getHealth() <= 0)
+									if (team2.getGladiators().get(-other - 1).getHealth() <= 0)
 										justmove = true;
-								} else if (team1.getGladiators().elementAt(other - 1).getHealth() <= 0)
+								} else if (team1.getGladiators().get(other - 1).getHealth() <= 0)
 									justmove = true;
 								if (justmove) {
 									battletable[x][y] = battletable[(int) loc.getX()][(int) loc.getY()];
 									battletable[(int) loc.getX()][(int) loc.getY()] = other;
 									if (other < 0)
-										team2.getGladiators().elementAt(-other - 1).setLocation(loc);
+										team2.getGladiators().get(-other - 1).setLocation(loc);
 									else
-										team1.getGladiators().elementAt(other - 1).setLocation(loc);
+										team1.getGladiators().get(other - 1).setLocation(loc);
 									activeGladiator.setLocation(new Point(x, y));
 								} else {
 									if (other < 0)
-										this.duelMelee(activeGladiator, team2.getGladiators().elementAt(-other - 1), x, y);
+										this.duelMelee(activeGladiator, team2.getGladiators().get(-other - 1), x, y);
 									else
-										this.duelMelee(activeGladiator, team1.getGladiators().elementAt(other - 1), x, y);
+										this.duelMelee(activeGladiator, team1.getGladiators().get(other - 1), x, y);
 								}
 							}
 						}

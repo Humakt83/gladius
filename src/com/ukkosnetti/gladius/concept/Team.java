@@ -13,7 +13,7 @@ public class Team implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3363026838342392895L;
-	private Vector<Gladiator> gladiators = new Vector<Gladiator>();
+	private List<Gladiator> gladiators = new ArrayList<Gladiator>();
 	private String name;
 	private int squirrels;
 	private int members = 0;
@@ -37,8 +37,7 @@ public class Team implements Serializable {
 	}
 
 	public Gladiator getGladiator(String n) {
-		for (Iterator<Gladiator> it = gladiators.iterator(); it.hasNext();) {
-			Gladiator gl = it.next();
+		for (Gladiator gl : gladiators) {
 			if (gl.getName().equals(n))
 				return gl;
 		}
@@ -46,8 +45,7 @@ public class Team implements Serializable {
 	}
 
 	public void resetGladiatorsHealth() {
-		for (Iterator<Gladiator> it = gladiators.iterator(); it.hasNext();) {
-			Gladiator gl = it.next();
+		for (Gladiator gl : gladiators) {
 			gl.setHealth(gl.getMaxhealth());
 			gl.setMana(gl.getMaxmana());
 		}
@@ -61,9 +59,7 @@ public class Team implements Serializable {
 		return (squirrelstart - squirrels);
 	}
 
-	public Vector<Gladiator> getGladiators() {
-		if (gladiators.isEmpty())
-			return null;
+	public List<Gladiator> getGladiators() {
 		return gladiators;
 	}
 
