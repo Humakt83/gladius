@@ -2,10 +2,8 @@ package com.ukkosnetti.gladius.shop;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
-import com.ukkosnetti.gladius.DAO;
-import com.ukkosnetti.gladius.Game;
 import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gui.View;
@@ -15,10 +13,10 @@ public class Tavern implements ShopInterface, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6151312881627631404L;
-	private Vector<Gladiator> gladiators;
+	private List<Gladiator> gladiators;
 
-	public Tavern(DAO dao, Game g) {
-		gladiators = dao.searchGladiators("Tavern", g);
+	public Tavern() {
+		gladiators = Gladiator.getGladiators();
 	}
 
 	public boolean purchase(Team t, String which, Gladiator g, View v) {
@@ -60,7 +58,7 @@ public class Tavern implements ShopInterface, Serializable {
 		return g;
 	}
 
-	public Vector<Gladiator> getGladiators() {
+	public List<Gladiator> getGladiators() {
 		return gladiators;
 	}
 }

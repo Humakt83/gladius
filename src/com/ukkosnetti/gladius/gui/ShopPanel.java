@@ -2,7 +2,7 @@ package com.ukkosnetti.gladius.gui;
 
 import java.awt.Color;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -66,7 +66,7 @@ public class ShopPanel extends GradientPanel {
 		return null;
 	}
 
-	public void addShopItems(Vector<MeleeWeapon> melee, Vector<RangedWeapon> ranged, Vector<Armor> armor, Vector<Spell> damage, Vector<Spell> healing) {
+	public void addShopItems(List<MeleeWeapon> melee, List<RangedWeapon> ranged, List<Armor> armor, List<Spell> damage, List<Spell> healing) {
 		int rc = MeleeWeapons.getRowCount();
 		DefaultTableModel dtm = (DefaultTableModel) MeleeWeapons.getModel();
 		for (int i = rc - 1; i >= 0; i--)

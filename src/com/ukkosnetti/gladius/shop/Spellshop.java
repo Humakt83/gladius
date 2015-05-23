@@ -2,9 +2,8 @@ package com.ukkosnetti.gladius.shop;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
-import com.ukkosnetti.gladius.DAO;
 import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gui.View;
@@ -15,12 +14,12 @@ public class Spellshop implements ShopInterface, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -4680531697500241304L;
-	private Vector<Spell> damagespells;
-	private Vector<Spell> healingspells;
+	private List<Spell> damagespells;
+	private List<Spell> healingspells;
 
-	public Spellshop(DAO d) {
-		damagespells = d.searchSpells(true);
-		healingspells = d.searchSpells(false);
+	public Spellshop() {
+		damagespells = Spell.getDamageSpells();
+		healingspells = Spell.getHealingSpells();
 	}
 
 	public boolean purchase(Team t, String which, Gladiator g, View v) {
@@ -75,11 +74,11 @@ public class Spellshop implements ShopInterface, Serializable {
 		return null;
 	}
 
-	public Vector<Spell> getDamageSpells() {
+	public List<Spell> getDamageSpells() {
 		return damagespells;
 	}
 
-	public Vector<Spell> getHealingSpells() {
+	public List<Spell> getHealingSpells() {
 		return healingspells;
 	}
 }

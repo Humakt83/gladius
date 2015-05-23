@@ -1,7 +1,9 @@
 package com.ukkosnetti.gladius.concept;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import com.ukkosnetti.gladius.gladiator.Gladiator;
@@ -191,5 +193,16 @@ public class Team implements Serializable {
 
 	public int getMatchWinsAllTime() {
 		return this.matchwinsalltime;
+	}
+
+	// TODO: Temporary method in order to get rid of old dao impl
+	public static List<Team> getTeams() {
+		List<Team> teams = new ArrayList<Team>();
+		for (int i = 0; i < 15; i++) {
+			Team team = new Team("Team" + i, 4 - ((int)Math.floor(i / 4)), 500, true);
+			team.addGladiator(Gladiator.getGladiators().get(0));
+			teams.add(team);
+		}
+		return teams;
 	}
 }

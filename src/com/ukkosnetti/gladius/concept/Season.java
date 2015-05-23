@@ -22,7 +22,7 @@ public class Season implements Serializable {
 	private int currentmatch = 0;
 	private int currentround = 0;
 
-	public Season(Vector<Team> teams, Game g) {
+	public Season(List<Team> teams, Game g) {
 		game = g;
 		this.teams = teams;
 		matchTable = new Team[8][2][3];
@@ -31,32 +31,32 @@ public class Season implements Serializable {
 			List<String> names = new ArrayList<String>();
 			for (int j = 0; j < 8; j++) {
 				for (int k = formerk; k < teams.size(); k++) {
-					if (!(teams.elementAt(k).getMatchesAlready() >= 3) && !(names.contains(teams.elementAt(k).getName()))) {
-						matchTable[j][0][i] = teams.elementAt(k);
-						teams.elementAt(k).increaseMatchesAlready();
-						int league = teams.elementAt(k).getLeague();
-						String name1 = teams.elementAt(k).getOpponent1();
-						String name2 = teams.elementAt(k).getOpponent2();
-						names.add(teams.elementAt(k).getName());
+					if (!(teams.get(k).getMatchesAlready() >= 3) && !(names.contains(teams.get(k).getName()))) {
+						matchTable[j][0][i] = teams.get(k);
+						teams.get(k).increaseMatchesAlready();
+						int league = teams.get(k).getLeague();
+						String name1 = teams.get(k).getOpponent1();
+						String name2 = teams.get(k).getOpponent2();
+						names.add(teams.get(k).getName());
 						formerk = k;
 						for (k = k + 1; k < teams.size(); k++) {
-							if (teams.elementAt(k).getLeague() == league && !(teams.elementAt(k).getMatchesAlready() >= 3)
-									&& !(teams.elementAt(k).getName().equals(name1) || teams.elementAt(k).getName().equals(name2)) && !(names.contains(teams.elementAt(k).getName()))) {
-								matchTable[j][1][i] = teams.elementAt(k);
-								names.add(teams.elementAt(k).getName());
-								teams.elementAt(k).increaseMatchesAlready();
-								if (teams.elementAt(k).getOpponent1().equals(""))
-									teams.elementAt(k).setOpponent1(teams.elementAt(formerk).getName());
-								else if (teams.elementAt(k).getOpponent2().equals(""))
-									teams.elementAt(k).setOpponent2(teams.elementAt(formerk).getName());
+							if (teams.get(k).getLeague() == league && !(teams.get(k).getMatchesAlready() >= 3) && !(teams.get(k).getName().equals(name1) || teams.get(k).getName().equals(name2))
+									&& !(names.contains(teams.get(k).getName()))) {
+								matchTable[j][1][i] = teams.get(k);
+								names.add(teams.get(k).getName());
+								teams.get(k).increaseMatchesAlready();
+								if (teams.get(k).getOpponent1().equals(""))
+									teams.get(k).setOpponent1(teams.get(formerk).getName());
+								else if (teams.get(k).getOpponent2().equals(""))
+									teams.get(k).setOpponent2(teams.get(formerk).getName());
 								else
-									teams.elementAt(k).setOpponent3(teams.elementAt(formerk).getName());
-								if (teams.elementAt(formerk).getOpponent1().equals(""))
-									teams.elementAt(formerk).setOpponent1(teams.elementAt(k).getName());
-								else if (teams.elementAt(formerk).getOpponent2().equals(""))
-									teams.elementAt(formerk).setOpponent2(teams.elementAt(k).getName());
+									teams.get(k).setOpponent3(teams.get(formerk).getName());
+								if (teams.get(formerk).getOpponent1().equals(""))
+									teams.get(formerk).setOpponent1(teams.get(k).getName());
+								else if (teams.get(formerk).getOpponent2().equals(""))
+									teams.get(formerk).setOpponent2(teams.get(k).getName());
 								else
-									teams.elementAt(formerk).setOpponent3(teams.elementAt(k).getName());
+									teams.get(formerk).setOpponent3(teams.get(k).getName());
 								k = teams.size();
 							}
 						}

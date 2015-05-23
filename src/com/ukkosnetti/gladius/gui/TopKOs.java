@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -26,7 +27,7 @@ public class TopKOs extends JFrame {
 	private JTable toptable;
 	private ImageIcon gladius = new ImageIcon("Gladius.png");
 
-	public TopKOs(Vector<Team> t) {
+	public TopKOs(List<Team> t) {
 		String[][] top10 = new String[10][3];
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 3; j++) {

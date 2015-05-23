@@ -1,6 +1,8 @@
 package com.ukkosnetti.gladius.item;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class RangedWeapon implements WeaponInterface, Serializable {
@@ -45,5 +47,9 @@ public class RangedWeapon implements WeaponInterface, Serializable {
 
 	public int getPrice() {
 		return price;
+	}
+
+	public static List<RangedWeapon> getRangedWeapons() {
+		return Arrays.asList(new RangedWeapon(1, 3, "0", "Sling", 25), new RangedWeapon(2, 5, "0", "Bow", 50), new RangedWeapon(4, 7, "1", "Crossbow", 75));
 	}
 }

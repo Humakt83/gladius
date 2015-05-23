@@ -1,6 +1,8 @@
 package com.ukkosnetti.gladius.item;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class Spell implements Serializable {
@@ -51,5 +53,13 @@ public class Spell implements Serializable {
 
 	public int getManaCost() {
 		return mana;
+	}
+
+	public static List<Spell> getDamageSpells() {
+		return Arrays.asList(new Spell(2, 5, true, "Firebolt", 60, 5));
+	}
+
+	public static List<Spell> getHealingSpells() {
+		return Arrays.asList(new Spell(1, 4, true, "Bandage", 50, 6));
 	}
 }

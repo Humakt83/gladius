@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -29,7 +29,7 @@ public class TopTeams extends JFrame {
 	private JTable toptable; // Customized JTable is used to show data in this
 								// JFrame.
 
-	public TopTeams(Vector<Team> t) {
+	public TopTeams(List<Team> t) {
 		String[][] top10 = new String[10][3];
 		// Resetting values of 2D String array.
 		for (int i = 0; i < 10; i++) {

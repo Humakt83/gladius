@@ -1,6 +1,8 @@
 package com.ukkosnetti.gladius.item;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class MeleeWeapon implements WeaponInterface, Serializable {
@@ -45,5 +47,9 @@ public class MeleeWeapon implements WeaponInterface, Serializable {
 
 	public int getPrice() {
 		return price;
+	}
+
+	public static List<MeleeWeapon> getMeleeWeapons() {
+		return Arrays.asList(new MeleeWeapon(1, 6, "0", "Spear", 25), new MeleeWeapon(3, 4, "1", "Sword", 45), new MeleeWeapon(2, 5, "2", "Axe", 50), new MeleeWeapon(3, 7, "3", "Hammer", 75));
 	}
 }

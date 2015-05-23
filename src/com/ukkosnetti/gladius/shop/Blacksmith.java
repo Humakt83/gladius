@@ -2,9 +2,8 @@ package com.ukkosnetti.gladius.shop;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
-import com.ukkosnetti.gladius.DAO;
 import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gui.View;
@@ -21,25 +20,25 @@ public class Blacksmith implements ShopInterface, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6727096730008821602L;
-	private Vector<RangedWeapon> rangedweapons; // Container for ranged weapons.
-	private Vector<Armor> armors; // Container for armors.
-	private Vector<MeleeWeapon> meleeweapons; // Container for melee weapons.
+	private List<RangedWeapon> rangedweapons; // Container for ranged weapons.
+	private List<Armor> armors; // Container for armors.
+	private List<MeleeWeapon> meleeweapons; // Container for melee weapons.
 
-	public Blacksmith(DAO d) {
-		armors = d.searchArmors();
-		rangedweapons = d.searchRangeds();
-		meleeweapons = d.searchMelees();
+	public Blacksmith() {
+		armors = Armor.getArmors();
+		rangedweapons = RangedWeapon.getRangedWeapons();
+		meleeweapons = MeleeWeapon.getMeleeWeapons();
 	}
 
-	public Vector<RangedWeapon> getRangeds() {
+	public List<RangedWeapon> getRangeds() {
 		return rangedweapons;
 	}
 
-	public Vector<MeleeWeapon> getMelees() {
+	public List<MeleeWeapon> getMelees() {
 		return meleeweapons;
 	}
 
-	public Vector<Armor> getArmors() {
+	public List<Armor> getArmors() {
 		return armors;
 	}
 

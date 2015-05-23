@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import com.ukkosnetti.gladius.concept.Season;
@@ -35,7 +36,7 @@ public class Game implements Serializable {
 	private Tavern tavern;
 	private Blacksmith blacksmith;
 	private Spellshop spellshop;
-	private Vector<Team> teams;
+	private List<Team> teams;
 	private Team activeTeam;
 	private Gladiator currentGladiator = null;
 	private Season season;
@@ -44,19 +45,18 @@ public class Game implements Serializable {
 	private int humanplayers = 0;
 
 	public Game() {
-		DAO dao = new DAO();
-		tavern = new Tavern(dao, this);
-		blacksmith = new Blacksmith(dao);
-		spellshop = new Spellshop(dao);
-		teams = dao.searchTeams(this);
+		tavern = new Tavern();
+		blacksmith = new Blacksmith();
+		spellshop = new Spellshop();
+		teams = Team.getTeams();
 		currentseason = 500;
 	}
 
 	public void setTeams(String t[]) {
 		if (t[3] != null && !t[3].equals("")) {
 			for (int i = 0; i < teams.size(); i++)
-				if (teams.elementAt(i).getLeague() == 4 && (teams.elementAt(i).getComputer())) {
-					teams.remove(teams.elementAt(i));
+				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
+					teams.remove(teams.get(i));
 					i = teams.size();
 				}
 			activeTeam = new Team(t[3], 4, 1000, false);
@@ -65,8 +65,8 @@ public class Game implements Serializable {
 		}
 		if (t[2] != null && !t[2].equals("")) {
 			for (int i = 0; i < teams.size(); i++)
-				if (teams.elementAt(i).getLeague() == 4 && (teams.elementAt(i).getComputer())) {
-					teams.remove(teams.elementAt(i));
+				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
+					teams.remove(teams.get(i));
 					i = teams.size();
 				}
 			activeTeam = new Team(t[2], 4, 1000, false);
@@ -75,8 +75,8 @@ public class Game implements Serializable {
 		}
 		if (t[1] != null && !t[1].equals("")) {
 			for (int i = 0; i < teams.size(); i++)
-				if (teams.elementAt(i).getLeague() == 4 && (teams.elementAt(i).getComputer())) {
-					teams.remove(teams.elementAt(i));
+				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
+					teams.remove(teams.get(i));
 					i = teams.size();
 				}
 			activeTeam = new Team(t[1], 4, 1000, false);
@@ -85,8 +85,8 @@ public class Game implements Serializable {
 		}
 		if (t[0] != null && !t[0].equals("")) {
 			for (int i = 0; i < teams.size(); i++)
-				if (teams.elementAt(i).getLeague() == 4 && (teams.elementAt(i).getComputer())) {
-					teams.remove(teams.elementAt(i));
+				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
+					teams.remove(teams.get(i));
 					i = teams.size();
 				}
 			activeTeam = new Team(t[0], 4, 1000, false);
@@ -103,13 +103,13 @@ public class Game implements Serializable {
 	public boolean newBattle(BattlePanel bp, View v) {
 		int loc = 0;
 		for (int i = teams.size() - 1; i >= 0; i--) {
-			if (activeTeam.getName().equals(teams.elementAt(i).getName())) {
+			if (activeTeam.getName().equals(teams.get(i).getName())) {
 				loc = i;
 			}
 		}
 		for (int i = loc - 1; i >= 0; i--) {
-			if (!(teams.elementAt(i).getComputer())) {
-				activeTeam = teams.elementAt(i);
+			if (!(teams.get(i).getComputer())) {
+				activeTeam = teams.get(i);
 				return false;
 			}
 		}
@@ -119,8 +119,8 @@ public class Game implements Serializable {
 
 	public void roundOverStartFromFirstTeam() {
 		for (int i = teams.size() - 1; i >= 0; i--) {
-			if (!(teams.elementAt(i).getComputer())) {
-				activeTeam = teams.elementAt(i);
+			if (!(teams.get(i).getComputer())) {
+				activeTeam = teams.get(i);
 				i = -1;
 			}
 		}
@@ -205,7 +205,7 @@ public class Game implements Serializable {
 
 	public boolean checkExistingTeamNames(String s) {
 		for (int i = teams.size() - 1; i >= 0; i--) {
-			if (teams.elementAt(i).getName().equals(s)) {
+			if (teams.get(i).getName().equals(s)) {
 				return false;
 			}
 		}
@@ -232,30 +232,30 @@ public class Game implements Serializable {
 		return spellshop.getSpell(n);
 	}
 
-	public Vector<MeleeWeapon> getMeleeBlacksmith() {
+	public List<MeleeWeapon> getMeleeBlacksmith() {
 		return blacksmith.getMelees();
 	}
 
-	public Vector<RangedWeapon> getRangedBlacksmith() {
+	public List<RangedWeapon> getRangedBlacksmith() {
 		return blacksmith.getRangeds();
 	}
 
-	public Vector<Armor> getArmorBlacksmith() {
+	public List<Armor> getArmorBlacksmith() {
 		return blacksmith.getArmors();
 	}
 
-	public Vector<Gladiator> getTavernGladiators() {
+	public List<Gladiator> getTavernGladiators() {
 		return tavern.getGladiators();
 	}
 
-	public Vector<Spell> getSpells(boolean d) {
+	public List<Spell> getSpells(boolean d) {
 		if (d)
 			return spellshop.getDamageSpells();
 		else
 			return spellshop.getHealingSpells();
 	}
 
-	public Vector<Team> getTeams() {
+	public List<Team> getTeams() {
 		return teams;
 	}
 
@@ -270,9 +270,9 @@ public class Game implements Serializable {
 			switch (i) {
 			case 1:
 				if (league1high != null) {
-					if (teams.elementAt(league1highint).getMatchWins() < apu.getMatchWins()) {
+					if (teams.get(league1highint).getMatchWins() < apu.getMatchWins()) {
 						if (league1low != null) {
-							if (teams.elementAt(league1highint).getMatchWins() < teams.elementAt(league1lowint).getMatchWins()) {
+							if (teams.get(league1highint).getMatchWins() < teams.get(league1lowint).getMatchWins()) {
 								league1lowint = league1highint;
 								league1low = league1high;
 							}
@@ -284,7 +284,7 @@ public class Game implements Serializable {
 						league1high = apu.getName();
 					} else {
 						if (league1low != null) {
-							if (apu.getMatchWins() < teams.elementAt(league1lowint).getMatchWins()) {
+							if (apu.getMatchWins() < teams.get(league1lowint).getMatchWins()) {
 								league1lowint = co;
 								league1low = apu.getName();
 							}
@@ -300,9 +300,9 @@ public class Game implements Serializable {
 				break;
 			case 2:
 				if (league2high != null) {
-					if (teams.elementAt(league2highint).getMatchWins() < apu.getMatchWins()) {
+					if (teams.get(league2highint).getMatchWins() < apu.getMatchWins()) {
 						if (league2low != null) {
-							if (teams.elementAt(league2highint).getMatchWins() < teams.elementAt(league2lowint).getMatchWins()) {
+							if (teams.get(league2highint).getMatchWins() < teams.get(league2lowint).getMatchWins()) {
 								league2lowint = league2highint;
 								league2low = league2high;
 							}
@@ -314,7 +314,7 @@ public class Game implements Serializable {
 						league2high = apu.getName();
 					} else {
 						if (league2low != null) {
-							if (apu.getMatchWins() < teams.elementAt(league2lowint).getMatchWins()) {
+							if (apu.getMatchWins() < teams.get(league2lowint).getMatchWins()) {
 								league2lowint = co;
 								league2low = apu.getName();
 							}
@@ -330,9 +330,9 @@ public class Game implements Serializable {
 				break;
 			case 3:
 				if (league3high != null) {
-					if (teams.elementAt(league3highint).getMatchWins() < apu.getMatchWins()) {
+					if (teams.get(league3highint).getMatchWins() < apu.getMatchWins()) {
 						if (league3low != null) {
-							if (teams.elementAt(league3highint).getMatchWins() < teams.elementAt(league3lowint).getMatchWins()) {
+							if (teams.get(league3highint).getMatchWins() < teams.get(league3lowint).getMatchWins()) {
 								league3lowint = league3highint;
 								league3low = league3high;
 							}
@@ -344,7 +344,7 @@ public class Game implements Serializable {
 						league3high = apu.getName();
 					} else {
 						if (league3low != null) {
-							if (apu.getMatchWins() < teams.elementAt(league3lowint).getMatchWins()) {
+							if (apu.getMatchWins() < teams.get(league3lowint).getMatchWins()) {
 								league3lowint = co;
 								league3low = apu.getName();
 							}
@@ -360,7 +360,7 @@ public class Game implements Serializable {
 				break;
 			case 4:
 				if (league4high != null) {
-					if (teams.elementAt(league4highint).getMatchWins() < apu.getMatchWins()) {
+					if (teams.get(league4highint).getMatchWins() < apu.getMatchWins()) {
 						league4highint = co;
 						league4high = apu.getName();
 					}

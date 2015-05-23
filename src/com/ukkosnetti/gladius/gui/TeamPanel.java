@@ -9,7 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -83,7 +83,7 @@ public class TeamPanel extends GradientPanel {
 		this.add(ret);
 	}
 
-	public void setText(Vector<Team> teams) {
+	public void setText(List<Team> teams) {
 		le1panel.removeAll();
 		le1panel.add(league1);
 		le1panel.add(new JLabel());

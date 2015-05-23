@@ -7,7 +7,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import com.ukkosnetti.gladius.Game;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
@@ -188,7 +188,7 @@ public class Controller implements ActionListener, MouseListener {
 			}
 			if (ae.getActionCommand().equals("TAVERN")) {
 				v.addText("Thou has entered a local tavern. In the dark corners you can see variety of creeps howling for a chance to be gladiator.");
-				Vector<Gladiator> vec = g.getTavernGladiators();
+				List<Gladiator> vec = g.getTavernGladiators();
 				String name[] = new String[vec.size()];
 				String race[] = new String[vec.size()];
 				int price[] = new int[vec.size()];
