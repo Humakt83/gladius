@@ -436,25 +436,25 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		if (weapa.equals("fist"))
 			attack = a.getAttack();
 		else {
-			if (weaptypea.equals("hammer"))
+			if (weaptypea.equals(MeleeWeaponType.HAMMER))
 				attack = a.getHammerskillAtt();
-			if (weaptypea.equals("sword"))
+			if (weaptypea.equals(MeleeWeaponType.SWORD))
 				attack = a.getSwordskillAtt();
-			if (weaptypea.equals("axe"))
+			if (weaptypea.equals(MeleeWeaponType.AXE))
 				attack = a.getAxeskillAtt();
-			if (weaptypea.equals("spear"))
+			if (weaptypea.equals(MeleeWeaponType.SPEAR))
 				attack = a.getSpearskillAtt();
 		}
 		if (weapb.equals("fist"))
 			defend = b.getDefense();
 		else {
-			if (weaptypeb.equals("hammer"))
+			if (weaptypeb.equals(MeleeWeaponType.HAMMER))
 				defend = b.getHammerskillDef();
-			if (weaptypeb.equals("sword"))
+			if (weaptypeb.equals(MeleeWeaponType.SWORD))
 				defend = b.getSwordskillDef();
-			if (weaptypeb.equals("axe"))
+			if (weaptypeb.equals(MeleeWeaponType.AXE))
 				defend = b.getAxeskillDef();
-			if (weaptypeb.equals("spear"))
+			if (weaptypeb.equals(MeleeWeaponType.SPEAR))
 				defend = b.getSpearskillDef();
 		}
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
@@ -516,9 +516,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		else
 			v.addText(a.getName() + " shoots beholder ray at " + b.getName() + ".");
 		int attack = 0, defend = 0;
-		if (weaptypea.equals("bow"))
+		if (weaptypea.equals(RangedWeaponType.BOW))
 			attack = a.getBowskill();
-		if (weaptypea.equals("crossbow"))
+		if (weaptypea.equals(RangedWeaponType.CROSSBOW))
 			attack = a.getCrossbowskill();
 		if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
 			attack = 10;
