@@ -28,13 +28,23 @@ public class GladiatorGenerator {
 		for (int i = amount; i > 0; i--) {
 			GladiatorType[] types = GladiatorType.values();
 			GladiatorType type = types[random.nextInt(types.length)];
-			generatedGladiators.add(GladiatorFactory.generateGladiator(type, randomName(random)));
+			generatedGladiators.add(GladiatorFactory.generateGladiator(type, randomName(random, generatedGladiators)));
 		}
 		return generatedGladiators;
 	}
 
-	private String randomName(Random random) {
-		return names.get(random.nextInt(names.size()));
+	private String randomName(Random random, List<Gladiator> gladiators) {
+		String name = names.get(random.nextInt(names.size()));
+		return nameAlreadyUsed(name, gladiators) ? randomName(random, gladiators) : name;
+	}
+
+	private boolean nameAlreadyUsed(String name, List<Gladiator> gladiators) {
+		for (Gladiator gl : gladiators) {
+			if (gl.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static GladiatorGenerator getInstance() {
