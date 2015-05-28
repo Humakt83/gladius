@@ -316,7 +316,6 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 	public void showGladiator(Gladiator g) {
 		Gladiator_Name.setText(g.getName());
 		Health.setText(g.getHealth() + "/" + g.getMaxhealth());
-		Agility.setText("" + g.getAgility());
 		Strength.setText("" + g.getStrength());
 		Mana.setText("" + g.getMana());
 		Spear.setText(g.getSpearskillAtt() + "/" + g.getSpearskillDef());
@@ -438,7 +437,6 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 		jLabel5 = new javax.swing.JLabel();
 		Strength = new javax.swing.JLabel();
 		Mana = new javax.swing.JLabel();
-		Agility = new javax.swing.JLabel();
 		jLabel3 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
 		Health = new javax.swing.JLabel();
@@ -650,9 +648,6 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 
 		Mana.setForeground(new java.awt.Color(255, 255, 255));
 
-		Agility.setForeground(new java.awt.Color(255, 255, 255));
-		Agility.setText("00");
-
 		jLabel3.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel3.setText("Agility");
 
@@ -679,7 +674,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 								.addGap(18, 18, 18)
 								.addGroup(
 										jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(actualrace)
-												.addComponent(Agility, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE).addComponent(Health))
+.addComponent(Health))
 
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 70, 70)
 								.addGroup(
@@ -709,7 +704,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 				jPanel2Layout.createSequentialGroup().addContainerGap().addComponent(Gladiator_Name).addGap(11, 11, 11)
 						.addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(jLabel4).addComponent(Strength).addComponent(jLabel2).addComponent(Health))
 						.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-						.addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(jLabel5).addComponent(Mana).addComponent(Agility).addComponent(jLabel3))
+						.addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(jLabel5).addComponent(Mana).addComponent(jLabel3))
 						.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 						.addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(upkeep).addComponent(upkeemam).addComponent(actualrace).addComponent(race))
 						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
@@ -1271,7 +1266,6 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 	private SeasonPanel sep;
 	private TeamPanel tep;
 	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JLabel Agility;
 	private javax.swing.JLabel ArmorName;
 	private javax.swing.JLabel ArmorProtection;
 	private javax.swing.JLabel Axe;

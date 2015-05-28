@@ -28,7 +28,6 @@ public class Gladiator implements Serializable {
 	private int strength;
 	private int attack;
 	private int defense;
-	private int agility;
 	private int evasion;
 	private int resistance;
 	private int swordatt;
@@ -50,7 +49,7 @@ public class Gladiator implements Serializable {
 
 	private ImageIcon picture;
 
-	public Gladiator(String race, int naturalarmor, int maxhealth, int attack, int defense, int agility, int resistance, int swordatt, int sworddef, int spearatt, int speardef, int axeatt,
+	public Gladiator(String race, int naturalarmor, int maxhealth, int attack, int defense, int resistance, int swordatt, int sworddef, int spearatt, int speardef, int axeatt,
 			int axedef, int hammeratt, int hammerdef, int bowskill, int crossbowskill, int maxmana, String name, int upkeep, ImageIcon p, int strength, int evasion) {
 		picture = p;
 		this.strength = strength;
@@ -60,7 +59,6 @@ public class Gladiator implements Serializable {
 		this.maxhealth = maxhealth;
 		this.attack = attack;
 		this.defense = defense;
-		this.agility = agility;
 		this.resistance = resistance;
 		this.swordatt = swordatt;
 		this.sworddef = sworddef;
@@ -181,14 +179,6 @@ public class Gladiator implements Serializable {
 
 	public void setDefense(int defense) {
 		this.defense = defense;
-	}
-
-	public int getAgility() {
-		return agility;
-	}
-
-	public void setAgility(int agility) {
-		this.agility = agility;
 	}
 
 	public int getResistance() {
@@ -392,6 +382,6 @@ public class Gladiator implements Serializable {
 	// TODO: Temporary method in order to get rid of current DAO implementation
 	// of the project
 	public static List<Gladiator> getGladiators() {
-		return Arrays.asList(new Gladiator("Höbötti", 0, 15, 25, 35, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 25, 25, 10, "Kontikka", 5, new ImageIcon("res/Höbötti.gif"), 5, 15));
+		return Arrays.asList(new Gladiator("Höbötti", 0, 15, 25, 35, 15, 15, 15, 15, 15, 15, 15, 15, 15, 25, 25, 10, "Kontikka", 5, new ImageIcon("res/Höbötti.gif"), 5, 15));
 	}
 }
