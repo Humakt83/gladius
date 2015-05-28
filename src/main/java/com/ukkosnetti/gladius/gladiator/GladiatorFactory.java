@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class GladiatorFactory {
 
-	public static Gladiator generateGladiator(GladiatorType type) {
+	public static Gladiator generateGladiator(GladiatorType type, String name) {
 		GladiatorBuilder builder = new GladiatorBuilder(type);
 		switch (type) {
 		case BEHOLDER:
@@ -101,7 +101,7 @@ public class GladiatorFactory {
 		default:
 			break;
 		}
-		return builder.build("name");
+		return builder.build(name);
 	}
 
 	private static int randomNumberBetween(int min, int max) {
