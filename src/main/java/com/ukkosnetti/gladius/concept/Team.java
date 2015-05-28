@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 import com.ukkosnetti.gladius.gladiator.Gladiator;
+import com.ukkosnetti.gladius.gladiator.GladiatorGenerator;
 
 public class Team implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3363026838342392895L;
+
 	private List<Gladiator> gladiators = new ArrayList<Gladiator>();
 	private String name;
 	private int squirrels;
@@ -28,6 +28,9 @@ public class Team implements Serializable {
 	private int op2 = 0;
 	private int matchwinsalltime = 0;
 	private int championwins = 0;
+	
+	private static final String[] TEAM_NAMES = { "Lahnat", "Tontut", "Noobs", "Bottom feeders", "Hellions", "Shell", "Vegetables", "Cemetary shift", "Brutes", "Chutes", "Abs", "Oxmen", "Champions",
+			"Black Death", "Blood Fist", "Iron Hammer" };
 
 	public Team(String n, int l, int m, boolean computer) {
 		name = n;
@@ -191,12 +194,13 @@ public class Team implements Serializable {
 		return this.matchwinsalltime;
 	}
 
-	// TODO: Temporary method in order to get rid of old dao impl
 	public static List<Team> getTeams() {
 		List<Team> teams = new ArrayList<Team>();
 		for (int i = 0; i < 16; i++) {
-			Team team = new Team("Team" + i, 4 - ((int)Math.floor(i / 4)), 500, true);
-			team.addGladiator(Gladiator.getGladiators().get(0));
+			Team team = new Team(TEAM_NAMES[i], 4 - ((int)Math.floor(i / 4)), 500, true);
+			for (Gladiator gl : GladiatorGenerator.getInstance().generateRandomGladiators(4, new Random(System.currentTimeMillis() + i + 1))) {
+				team.addGladiator(gl);
+			}
 			teams.add(team);
 		}
 		return teams;

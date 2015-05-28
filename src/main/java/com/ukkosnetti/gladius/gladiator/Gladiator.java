@@ -2,8 +2,6 @@ package com.ukkosnetti.gladius.gladiator;
 
 import java.awt.Point;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -379,9 +377,4 @@ public class Gladiator implements Serializable {
 		return false;
 	}
 
-	// TODO: Temporary method in order to get rid of current DAO implementation
-	// of the project
-	public static List<Gladiator> getGladiators() {
-		return Arrays.asList(new Gladiator("Höbötti", 0, 15, 25, 35, 15, 15, 15, 15, 15, 15, 15, 15, 15, 25, 25, 10, "Kontikka", 5, new ImageIcon("res/Höbötti.gif"), 5, 15));
-	}
 }

@@ -648,9 +648,6 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 
 		Mana.setForeground(new java.awt.Color(255, 255, 255));
 
-		jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-		jLabel3.setText("Agility");
-
 		jLabel2.setForeground(new java.awt.Color(255, 255, 255));
 		jLabel2.setText("Health");
 

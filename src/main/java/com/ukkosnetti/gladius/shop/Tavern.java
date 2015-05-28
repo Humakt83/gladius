@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
+import com.ukkosnetti.gladius.gladiator.GladiatorGenerator;
 import com.ukkosnetti.gladius.gui.View;
 
 public class Tavern implements ShopInterface, Serializable {
@@ -17,7 +18,7 @@ public class Tavern implements ShopInterface, Serializable {
 	private List<Gladiator> gladiators;
 
 	public Tavern() {
-		gladiators = new ArrayList<>(Gladiator.getGladiators());
+		gladiators = new ArrayList<>(GladiatorGenerator.getInstance().generateRandomGladiators(50));
 	}
 
 	public boolean purchase(Team t, String which, Gladiator g, View v) {

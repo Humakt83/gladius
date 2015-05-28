@@ -7,7 +7,7 @@ public class GladiatorBuilder {
 	private final Gladiator gladiator;
 
 	public GladiatorBuilder(GladiatorType type) {
-		gladiator = new Gladiator("", 0, 10, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, "", 10, new ImageIcon(type.imgName), 10, 10);
+		gladiator = new Gladiator(type.race, 0, 10, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, "", 10, new ImageIcon(type.imgName), 10, 10);
 	}
 
 	public GladiatorBuilder setNaturalArmor(int armor) {
@@ -92,6 +92,8 @@ public class GladiatorBuilder {
 
 	public Gladiator build(String name) {
 		gladiator.setName(name);
+		gladiator.setHealth(gladiator.getMaxhealth());
+		gladiator.setMana(gladiator.getMaxmana());
 		return gladiator;
 	}
 }

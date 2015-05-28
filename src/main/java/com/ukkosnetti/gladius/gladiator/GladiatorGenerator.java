@@ -20,6 +20,10 @@ public class GladiatorGenerator {
 
 	public List<Gladiator> generateRandomGladiators(int amount) {
 		Random random = new Random(System.currentTimeMillis());
+		return generateRandomGladiators(amount, random);
+	}
+
+	public List<Gladiator> generateRandomGladiators(int amount, Random random) {
 		List<Gladiator> generatedGladiators = new ArrayList<>();
 		for (int i = amount; i > 0; i--) {
 			GladiatorType[] types = GladiatorType.values();
