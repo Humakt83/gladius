@@ -3,14 +3,12 @@ package com.ukkosnetti.gladius;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Predicate;
@@ -228,151 +226,22 @@ public class Game implements Serializable {
 	}
 
 	public void newSeason(View v) {
-		String league1high = null, league2high = null, league3high = null, league4high = null, league1low = null, league2low = null, league3low = null;
-		int league1highint = -1, league2highint = -1, league3highint = -1, league4highint = -1, league1lowint = -1, league2lowint = -1, league3lowint = -1;
-		Iterator<Team> it = teams.iterator();
-		int co = 0;
-		while (it.hasNext()) {
-			Team apu = it.next();
-			int i = apu.getLeague();
-			switch (i) {
-			case 1:
-				if (league1high != null) {
-					if (teams.get(league1highint).getMatchWins() < apu.getMatchWins()) {
-						if (league1low != null) {
-							if (teams.get(league1highint).getMatchWins() < teams.get(league1lowint).getMatchWins()) {
-								league1lowint = league1highint;
-								league1low = league1high;
-							}
-						} else {
-							league1lowint = league1highint;
-							league1low = league1high;
-						}
-						league1highint = co;
-						league1high = apu.getName();
-					} else {
-						if (league1low != null) {
-							if (apu.getMatchWins() < teams.get(league1lowint).getMatchWins()) {
-								league1lowint = co;
-								league1low = apu.getName();
-							}
-						} else {
-							league1lowint = co;
-							league1low = apu.getName();
-						}
-					}
-				} else {
-					league1high = apu.getName();
-					league1highint = co;
-				}
-				break;
-			case 2:
-				if (league2high != null) {
-					if (teams.get(league2highint).getMatchWins() < apu.getMatchWins()) {
-						if (league2low != null) {
-							if (teams.get(league2highint).getMatchWins() < teams.get(league2lowint).getMatchWins()) {
-								league2lowint = league2highint;
-								league2low = league2high;
-							}
-						} else {
-							league2lowint = league2highint;
-							league2low = league2high;
-						}
-						league2highint = co;
-						league2high = apu.getName();
-					} else {
-						if (league2low != null) {
-							if (apu.getMatchWins() < teams.get(league2lowint).getMatchWins()) {
-								league2lowint = co;
-								league2low = apu.getName();
-							}
-						} else {
-							league2lowint = co;
-							league2low = apu.getName();
-						}
-					}
-				} else {
-					league2high = apu.getName();
-					league2highint = co;
-				}
-				break;
-			case 3:
-				if (league3high != null) {
-					if (teams.get(league3highint).getMatchWins() < apu.getMatchWins()) {
-						if (league3low != null) {
-							if (teams.get(league3highint).getMatchWins() < teams.get(league3lowint).getMatchWins()) {
-								league3lowint = league3highint;
-								league3low = league3high;
-							}
-						} else {
-							league3lowint = league3highint;
-							league3low = league3high;
-						}
-						league3highint = co;
-						league3high = apu.getName();
-					} else {
-						if (league3low != null) {
-							if (apu.getMatchWins() < teams.get(league3lowint).getMatchWins()) {
-								league3lowint = co;
-								league3low = apu.getName();
-							}
-						} else {
-							league3lowint = co;
-							league3low = apu.getName();
-						}
-					}
-				} else {
-					league3high = apu.getName();
-					league3highint = co;
-				}
-				break;
-			case 4:
-				if (league4high != null) {
-					if (teams.get(league4highint).getMatchWins() < apu.getMatchWins()) {
-						league4highint = co;
-						league4high = apu.getName();
-					}
-				} else {
-					league4high = apu.getName();
-					league4highint = co;
-				}
-				break;
-			}
-			co++;
-		}
-		// change league statuses:
-		Iterator<Team> it2 = teams.iterator();
-		while (it2.hasNext()) {
-			Team apu = it2.next();
-			if (apu.getName().equals(league1high)) {
-				apu.setSquirrels(apu.getSquirrels() + 5000);
-				apu.increaseChampionWins();
-			}
-			if (apu.getName().equals(league2high)) {
-				apu.setLeague(1);
-				apu.setSquirrels(apu.getSquirrels() + 500);
-			}
-			if (apu.getName().equals(league3high)) {
-				apu.setLeague(2);
-				apu.setSquirrels(apu.getSquirrels() + 500);
-			}
-			if (apu.getName().equals(league4high)) {
-				apu.setLeague(3);
-				apu.setSquirrels(apu.getSquirrels() + 500);
-			}
-			if (apu.getName().equals(league1low)) {
-				apu.setLeague(2);
-			}
-			if (apu.getName().equals(league2low)) {
-				apu.setLeague(3);
-			}
-			if (apu.getName().equals(league3low)) {
-				apu.setLeague(4);
-			}
-		}
-		v.addText(league1high.toUpperCase() + " IS THE CHAMPION OF SEASON AND EARNS 5000 SQUIRRELS!");
-		v.addText("Following teams have risen up in the leagueladder: " + league2high + ", " + league3high + " and " + league4high + ". All ladder-risers earn 500 bonus squirrels!");
-		v.addText("While following teams have succumbed to lower league: " + league1low + ", " + league2low + " and " + league3low + ".");
+		Team champion = season.getChampion();
+		champion.addSquirrels(5000);
+		champion.increaseChampionWins();
+		List<Team> risers = season.getLeagueRisers();
+		List<Team> lowers = season.getLeagueLowers();
+		risers.forEach(riser -> { 
+			riser.addSquirrels(500);
+			riser.setLeague(riser.getLeague() - 1);
+		});
+		lowers.forEach(lower -> {
+			lower.setLeague(lower.getLeague() + 1);
+		});
+		new StringBuilder();
+		v.addText(champion.getName().toUpperCase() + " IS THE CHAMPION OF SEASON AND EARNS 5000 SQUIRRELS!");
+		v.addText("Following teams have risen up in the leagueladder: " + risers + ". All ladder-risers earn 500 bonus squirrels!");
+		v.addText("While following teams have succumbed to lower league: " + lowers + ".");
 		v.addText("New season has started!");
 		season.clearTeamBattlesInfo();
 		season = new Season(teams, this);
@@ -418,11 +287,7 @@ public class Game implements Serializable {
 		Game ga = null;
 		try {
 			ga = this.readObject(n);
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-		} catch (IOException ex) {
+		} catch (ClassNotFoundException | IOException ex) {
 			ex.printStackTrace();
 		}
 		return ga;
@@ -430,30 +295,19 @@ public class Game implements Serializable {
 
 	private Game readObject(String n) throws IOException, ClassNotFoundException {
 		ObjectInputStream ois = null;
-		Game ga = null;
-		// Construct the ObjectInputStream object
 		try {
 			ois = new ObjectInputStream(new FileInputStream("saves/" + n + ".gla"));
-			Object obj = null;
-			if ((obj = ois.readObject()) != null) {
-				if (obj instanceof Game) {
-					ga = (Game) obj;
-					// System.out.println(ga.getActiveTeamName());
-					// System.out.println(ga.getCurrentGladiator().getName());
-
-				}
-			}
+			return (Game) ois.readObject();
 		} catch (EOFException ex) {
 			ex.printStackTrace();
+			return null;
+		} finally {
+			if (ois != null) {
+				ois.close();
+			}
 		}
-		// This exception will be caught when EOF is reached
-
-		// System.out.println(ga.getActiveTeamName());
-		if (ois != null) {
-			ois.close();
-		}
-		return ga;
 	}
+
 
 	private void writeObject(String file) throws IOException {
 		FileOutputStream fos = new FileOutputStream("saves/" + file + ".gla");

@@ -18,7 +18,7 @@ public class Team implements Serializable {
 	private int squirrels;
 	private int league;
 	private boolean computer;
-	private int matchwinscurrentseason = 0;
+	private Integer matchwinscurrentseason = 0;
 	private int matchesalready = 0;
 	private String opponent1 = "";
 	private String opponent2 = "";
@@ -89,6 +89,10 @@ public class Team implements Serializable {
 		return squirrels;
 	}
 
+	public void addSquirrels(int amount) {
+		this.squirrels += amount;
+	}
+
 	public void setSquirrels(int squirrels) {
 		this.squirrels = squirrels;
 	}
@@ -130,7 +134,7 @@ public class Team implements Serializable {
 			return op2;
 	}
 
-	public int getMatchWins() {
+	public Integer getMatchWins() {
 		return matchwinscurrentseason;
 	}
 
@@ -196,5 +200,10 @@ public class Team implements Serializable {
 			teams.add(team);
 		}
 		return teams;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 }

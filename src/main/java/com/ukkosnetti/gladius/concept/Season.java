@@ -2,9 +2,14 @@ package com.ukkosnetti.gladius.concept;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.ukkosnetti.gladius.Battle;
 import com.ukkosnetti.gladius.Game;
 import com.ukkosnetti.gladius.gui.BattlePanel;
@@ -96,6 +101,31 @@ public class Season implements Serializable {
 			currentMatch++;
 			new Battle(this.getTeamAForCurrentBattle(), this.getTeamBForCurrentBattle(), this, bp, v);
 		}
+	}
+
+	private List<Team> getSortedLeague(final int league) {
+		List<Team> teamsInLeague = new ArrayList<>(Collections2.filter(teams, new Predicate<Team>() {
+
+			@Override
+			public boolean apply(Team input) {
+				return input.getLeague() == league;
+			}
+			
+		}));
+		Collections.sort(teamsInLeague, (Team t1, Team t2) -> t1.getMatchWins().compareTo(t2.getMatchWins()));
+		return teamsInLeague;
+	}
+
+	public List<Team> getLeagueRisers() {
+		return Arrays.asList(Iterables.getLast(getSortedLeague(2)), Iterables.getLast(getSortedLeague(3)), Iterables.getLast(getSortedLeague(4)));
+	}
+
+	public List<Team> getLeagueLowers() {
+		return Arrays.asList(getSortedLeague(1).get(0), getSortedLeague(2).get(0), getSortedLeague(3).get(0));
+	}
+
+	public Team getChampion() {
+		return Iterables.getLast(getSortedLeague(1));
 	}
 
 	public void clearTeamBattlesInfo() {
