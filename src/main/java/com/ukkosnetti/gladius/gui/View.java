@@ -313,67 +313,70 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			}
 	}
 
-	public void showGladiator(Gladiator g) {
-		Gladiator_Name.setText(g.getName());
-		Health.setText(g.getHealth() + "/" + g.getMaxhealth());
-		Strength.setText("" + g.getStrength());
-		Mana.setText("" + g.getMana());
-		Spear.setText(g.getSpearskillAtt() + "/" + g.getSpearskillDef());
-		Sword.setText(g.getSwordskillAtt() + "/" + g.getSwordskillDef());
-		Hammer.setText(g.getHammerskillAtt() + "/" + g.getHammerskillDef());
-		Axe.setText(g.getAxeskillAtt() + "/" + g.getAxeskillDef());
-		Resistance.setText("" + g.getResistance());
-		Evasion.setText("" + g.getEvasion());
-		Bow.setText("" + g.getBowskill());
-		Crossbow.setText("" + g.getCrossbowskill());
-		actualrace.setText(g.getRace());
-		upkeemam.setText("" + g.getUpkeep());
-		if (g.getMelee() == null) {
+	public void showGladiator(Gladiator gladiator) {
+		if (gladiator == null) {
+			return;
+		}
+		Gladiator_Name.setText(gladiator.getName());
+		Health.setText(gladiator.getHealth() + "/" + gladiator.getMaxhealth());
+		Strength.setText("" + gladiator.getStrength());
+		Mana.setText("" + gladiator.getMana());
+		Spear.setText(gladiator.getSpearskillAtt() + "/" + gladiator.getSpearskillDef());
+		Sword.setText(gladiator.getSwordskillAtt() + "/" + gladiator.getSwordskillDef());
+		Hammer.setText(gladiator.getHammerskillAtt() + "/" + gladiator.getHammerskillDef());
+		Axe.setText(gladiator.getAxeskillAtt() + "/" + gladiator.getAxeskillDef());
+		Resistance.setText("" + gladiator.getResistance());
+		Evasion.setText("" + gladiator.getEvasion());
+		Bow.setText("" + gladiator.getBowskill());
+		Crossbow.setText("" + gladiator.getCrossbowskill());
+		actualrace.setText(gladiator.getRace());
+		upkeemam.setText("" + gladiator.getUpkeep());
+		if (gladiator.getMelee() == null) {
 			MeleeName.setText("None");
 			MeleeDamage.setText("0");
 		} else {
-			MeleeName.setText(g.getMelee().getName());
-			MeleeDamage.setText(g.getMelee().getMinDam() + "-" + g.getMelee().getMaxDam());
+			MeleeName.setText(gladiator.getMelee().getName());
+			MeleeDamage.setText(gladiator.getMelee().getMinDam() + "-" + gladiator.getMelee().getMaxDam());
 		}
-		if (g.getRanged() == null) {
+		if (gladiator.getRanged() == null) {
 			RangedName.setText("None");
 			RangedDamage.setText("0");
 		} else {
-			RangedName.setText(g.getRanged().getName());
-			RangedDamage.setText(g.getRanged().getMinDam() + "-" + g.getRanged().getMaxDam());
+			RangedName.setText(gladiator.getRanged().getName());
+			RangedDamage.setText(gladiator.getRanged().getMinDam() + "-" + gladiator.getRanged().getMaxDam());
 		}
-		if (g.getArmor() == null) {
+		if (gladiator.getArmor() == null) {
 			ArmorName.setText("None");
 			ArmorProtection.setText("0");
 		} else {
-			ArmorName.setText(g.getArmor().getName());
-			ArmorProtection.setText("" + g.getArmor().getArmor());
+			ArmorName.setText(gladiator.getArmor().getName());
+			ArmorProtection.setText("" + gladiator.getArmor().getArmor());
 		}
-		if (g.getSpell1() == null) {
+		if (gladiator.getSpell1() == null) {
 			Spell1Name.setText("None");
 			Spell1Damage.setText("0");
 			Spell1Mana.setText("0");
 		} else {
-			Spell1Name.setText(g.getSpell1().getName());
-			if (g.getSpell1().getDamageSpell())
+			Spell1Name.setText(gladiator.getSpell1().getName());
+			if (gladiator.getSpell1().getDamageSpell())
 				Spell1Effect.setText("Damage");
 			else
 				Spell1Effect.setText("Healing");
-			Spell1Damage.setText(g.getSpell1().getMinDamage() + "-" + g.getSpell1().getMaxDamage());
-			Spell1Mana.setText("" + g.getSpell1().getManaCost());
+			Spell1Damage.setText(gladiator.getSpell1().getMinDamage() + "-" + gladiator.getSpell1().getMaxDamage());
+			Spell1Mana.setText("" + gladiator.getSpell1().getManaCost());
 		}
-		if (g.getSpell2() == null) {
+		if (gladiator.getSpell2() == null) {
 			Spell2Name.setText("None");
 			Spell2Damage.setText("0");
 			Spell2Mana.setText("0");
 		} else {
-			Spell2Name.setText(g.getSpell2().getName());
-			if (g.getSpell2().getDamageSpell())
+			Spell2Name.setText(gladiator.getSpell2().getName());
+			if (gladiator.getSpell2().getDamageSpell())
 				Spell2Effect.setText("Damage");
 			else
 				Spell2Effect.setText("Healing");
-			Spell2Damage.setText(g.getSpell2().getMinDamage() + "-" + g.getSpell2().getMaxDamage());
-			Spell2Mana.setText("" + g.getSpell1().getManaCost());
+			Spell2Damage.setText(gladiator.getSpell2().getMinDamage() + "-" + gladiator.getSpell2().getMaxDamage());
+			Spell2Mana.setText("" + gladiator.getSpell1().getManaCost());
 		}
 	}
 

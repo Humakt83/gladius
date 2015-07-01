@@ -184,7 +184,7 @@ public class Game implements Serializable {
 	}
 
 	public List<Gladiator> getCurrentGladiators(boolean change) {
-		if (activeTeam.getGladiators() != null && change)
+		if (activeTeam.getGladiators() != null && !activeTeam.getGladiators().isEmpty() && change)
 			currentGladiator = activeTeam.getGladiators().get(0);
 		return activeTeam.getGladiators();
 	}
