@@ -67,3 +67,4 @@ $RECYCLE.BIN/
 *.project
 .classpath
 .settings/
+*.gla
