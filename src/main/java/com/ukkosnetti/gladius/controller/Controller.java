@@ -69,14 +69,11 @@ public class Controller implements ActionListener, MouseListener {
 			newGameView = new NewGameView(this);
 		}
 		if (ae.getActionCommand().equals("HELP")) {
-			try // try statement
-			{
+			try {
 				String command = "rundll32 url.dll,FileProtocolHandler " + "USER_MANUAL.pdf";
 				Runtime.getRuntime().exec(command);
-
-			} catch (Exception e) // catch any exceptions here
-			{
-				view.addText("Error" + e); // print the error
+			} catch (Exception e) {
+				view.addText("Could not open pdf file");
 			}
 		}
 		if (ae.getActionCommand().equals("ABOUT")) {
@@ -87,23 +84,10 @@ public class Controller implements ActionListener, MouseListener {
 		if (ae.getActionCommand().equals("START_NEW_GAME")) {
 			if (gamestarted)
 				game = new Game();
-			String t[] = newGameView.getTeamNames();
-			boolean check = false;
-			if (t[0] != null && !t[0].equals("") && game.checkExistingTeamNames(t[0])) {
-				view.setTeamName(t[0]);
-				check = true;
-			} else if (t[1] != null && !t[1].equals("") && game.checkExistingTeamNames(t[1])) {
-				view.setTeamName(t[1]);
-				check = true;
-			} else if (t[2] != null && !t[2].equals("") && game.checkExistingTeamNames(t[2])) {
-				view.setTeamName(t[2]);
-				check = true;
-			} else if (t[3] != null && !t[3].equals("") && game.checkExistingTeamNames(t[3])) {
-				view.setTeamName(t[3]);
-				check = true;
-			}
-			if (check) {
-				game.setTeams(t);
+			List<String> teamNames = newGameView.getTeamNames();
+			if (validateTeamNames(teamNames)) {
+				view.setTeamName(teamNames.get(0));
+				game.setTeams(teamNames.toArray(new String[teamNames.size()]));
 				gamestarted = true;
 				newGameView.disposeThis();
 				view.clearGladiatorPanels();
@@ -114,7 +98,7 @@ public class Controller implements ActionListener, MouseListener {
 				view.setCurSeason(game.getCurrentSeason());
 				view.addText("O noble player, thy first task in this game was a magnificent success!\nNow recruit gladiators, purchase equipments and spells and enter arena!");
 			} else
-				view.addText("No valid names!");
+				view.addText("Invalid names!");
 		}
 		if (ae.getActionCommand().equals("LOAD")) {
 			if (loadGame == null)
@@ -322,6 +306,15 @@ public class Controller implements ActionListener, MouseListener {
 				askStuff.disposeThis();
 			}
 		}
+	}
+
+	private boolean validateTeamNames(List<String> teamNames) {
+		for (String name : teamNames) {
+			if (game.teamNameExists(name)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void mouseClicked(MouseEvent evt) {

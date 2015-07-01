@@ -194,20 +194,20 @@ public class Game implements Serializable {
 	}
 
 	public boolean changeTeamName(String s) {
-		if (this.checkExistingTeamNames(s)) {
+		if (!this.teamNameExists(s)) {
 			activeTeam.setName(s);
 			return true;
 		} else
 			return false;
 	}
 
-	public boolean checkExistingTeamNames(String s) {
+	public boolean teamNameExists(String s) {
 		for (int i = teams.size() - 1; i >= 0; i--) {
-			if (teams.get(i).getName().equals(s)) {
-				return false;
+			if (teams.get(i).getName().equalsIgnoreCase(s)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public Gladiator getGladiator(String n, String where) {
