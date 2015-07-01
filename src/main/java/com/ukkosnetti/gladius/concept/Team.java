@@ -16,7 +16,6 @@ public class Team implements Serializable {
 	private List<Gladiator> gladiators = new ArrayList<Gladiator>();
 	private String name;
 	private int squirrels;
-	private int members = 0;
 	private int league;
 	private boolean computer;
 	private int matchwinscurrentseason = 0;
@@ -66,18 +65,12 @@ public class Team implements Serializable {
 		return gladiators;
 	}
 
-	public int getMembers() {
-		return members;
-	}
-
 	public void setMembers(Vector<Gladiator> v) {
 		gladiators = v;
-		members = v.size();
 	}
 
 	public void addGladiator(Gladiator gl) {
 		gladiators.add(gl);
-		members++;
 	}
 
 	public String getName() {
@@ -86,7 +79,6 @@ public class Team implements Serializable {
 
 	public void fireGladiator(Gladiator gl) {
 		gladiators.remove(gl);
-		members--;
 	}
 
 	public void setName(String name) {

@@ -29,9 +29,11 @@ import com.ukkosnetti.gladius.shop.Spellshop;
 import com.ukkosnetti.gladius.shop.Tavern;
 
 public class Game implements Serializable {
-	/**
-	 * 
-	 */
+
+	private static final int STARTING_SQUIRRELS = 1000;
+
+	private static final int MAXIMUM_TEAM_SIZE = 6;
+
 	private static final long serialVersionUID = -4919572168403078010L;
 	private Tavern tavern;
 	private Blacksmith blacksmith;
@@ -61,7 +63,7 @@ public class Game implements Serializable {
 		}
 		teams.removeAll(aiTeamsToRemove);
 		for (String teamName : teamNames) {
-			teams.add(new Team(teamName, 4, 1000, false));
+			teams.add(new Team(teamName, 4, STARTING_SQUIRRELS, false));
 		}
 		activeTeam = Iterables.find(teams, new Predicate<Team>() {
 
@@ -126,7 +128,7 @@ public class Game implements Serializable {
 	}
 
 	public boolean canHire() {
-		if (activeTeam.getMembers() >= 6)
+		if (activeTeam.getGladiators().size() >= MAXIMUM_TEAM_SIZE)
 			return false;
 		else
 			return true;

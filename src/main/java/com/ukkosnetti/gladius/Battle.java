@@ -56,7 +56,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			int t1ko = 0, t2ko = 0; // Number of knockouts for both teams in
 									// current battle.
 			int a = 0, b = 0; // Used to indicate gladiators.
-			while (t1ko < t2.getMembers() && t2ko < t1.getMembers()) { // If
+			while (t1ko < t2.getGladiators().size() && t2ko < t1.getGladiators().size()) { // If
 																		// both
 																		// teams
 																		// have
@@ -116,18 +116,19 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					bglad.increaseRangedSkill();
 					t2ko++; // increases number of KO's made by team 2.
 				}
-				if (a < t1.getMembers() - 1)
+				if (a < t1.getGladiators().size() - 1)
 					a++; // If team 1 contains more members increase a, if not
 							// reset a.
 				else
 					a = 0;
-				if (b < t2.getMembers() - 1)
+				if (b < t2.getGladiators().size() - 1)
 					b++; // If team 2 contains more members increase b, if not
 							// reset b.
 				else
 					b = 0;
 			}
-			if (t1ko == t2.getMembers()) { // Increases wins for team 1 or team
+			if (t1ko == t2.getGladiators().size()) { // Increases wins for team
+														// 1 or team
 											// 2, while adding defeat for
 											// opposing team.
 				t1.increaseMatchWins();
