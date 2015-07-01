@@ -16,9 +16,8 @@
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
-			<type>bundle</type>
+			<artifactId>guava-collections</artifactId>
+			<version>r03</version>
 		</dependency>
 	</dependencies>
 

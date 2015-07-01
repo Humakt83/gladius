@@ -174,7 +174,7 @@ public class Team implements Serializable {
 		return opponent3;
 	}
 
-	public boolean getComputer() {
+	public boolean isComputer() {
 		return computer;
 	}
 

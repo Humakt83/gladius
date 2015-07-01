@@ -386,7 +386,7 @@ public class Controller implements ActionListener, MouseListener {
 		List<String> teamNames = newGameView.getTeamNames();
 		if (validateTeamNames(teamNames)) {
 			view.setTeamName(teamNames.get(0));
-			game.setTeams(teamNames.toArray(new String[teamNames.size()]));
+			game.setTeams(teamNames);
 			gamestarted = true;
 			newGameView.disposeThis();
 			displayMainPanel();

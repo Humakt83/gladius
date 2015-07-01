@@ -17,7 +17,9 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -60,7 +62,10 @@ public class NewGameView extends javax.swing.JFrame {
 	}
 
 	public List<String> getTeamNames() {
-		return Arrays.asList(Team1.getText(), Team2.getText(), Team3.getText(), Team4.getText());
+		List<String> teamNames = new ArrayList<>(Arrays.asList(Team1.getText(), Team2.getText(), Team3.getText(), Team4.getText()));
+		teamNames.removeAll(Collections.singleton(null));
+		teamNames.removeAll(Collections.singleton(""));
+		return teamNames;
 	}
 
 	public void disposeThis() {

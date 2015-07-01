@@ -50,7 +50,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 
 	public Battle(Team t1, Team t2, Season s, BattlePanel bp, View v) {
 		// System.out.println(t1.getName() +", " + t2.getName());
-		if (t1.getComputer() && t2.getComputer()) { // Checking if both teams
+		if (t1.isComputer() && t2.isComputer()) { // Checking if both teams
 													// are controlled by
 													// computer.
 			int t1ko = 0, t2ko = 0; // Number of knockouts for both teams in
@@ -242,7 +242,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 												// gladiator in team.
 						battleTurn(team1.getGladiators().get(team1gladturn));
 						team1turn = false;
-						if (team1.getComputer())
+						if (team1.isComputer())
 							this.moveAI(team1.getGladiators().get(team1gladturn)); // If
 																							// team
 																							// 1
@@ -269,7 +269,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 													// gladiator in team.
 							battleTurn(team2.getGladiators().get(team2gladturn));
 							team1turn = true;
-							if (team2.getComputer())
+							if (team2.isComputer())
 								this.moveAI(team2.getGladiators().get(team2gladturn)); // If
 																								// team
 																								// 2
@@ -401,9 +401,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			team2.setResult(1);
 			break;
 		}
-		if (!team1.getComputer())
+		if (!team1.isComputer())
 			v.addText(team1.getName() + " paid " + team1.payGladiators() + " squirrels for the upkeep of the gladiators.");
-		if (!team2.getComputer())
+		if (!team2.isComputer())
 			v.addText(team2.getName() + " paid " + team2.payGladiators() + " squirrels for the upkeep of the gladiators.");
 		team1.resetGladiatorsHealth();
 		team2.resetGladiatorsHealth();

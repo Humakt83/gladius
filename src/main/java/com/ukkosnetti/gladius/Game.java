@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.ukkosnetti.gladius.concept.Season;
 import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
@@ -50,47 +52,25 @@ public class Game implements Serializable {
 		currentseason = 500;
 	}
 
-	public void setTeams(String t[]) {
-		if (t[3] != null && !t[3].equals("")) {
-			for (int i = 0; i < teams.size(); i++)
-				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
-					teams.remove(teams.get(i));
-					i = teams.size();
-				}
-			activeTeam = new Team(t[3], 4, 1000, false);
-			teams.add(activeTeam);
-			humanplayers++;
+	public void setTeams(List<String> teamNames) {
+		humanplayers += teamNames.size();
+		List<Team> aiTeamsToRemove = new ArrayList<>();
+		for (Team team : teams) {
+			if (team.getLeague() == 4 && team.isComputer() && aiTeamsToRemove.size() < humanplayers)
+				aiTeamsToRemove.add(team);
 		}
-		if (t[2] != null && !t[2].equals("")) {
-			for (int i = 0; i < teams.size(); i++)
-				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
-					teams.remove(teams.get(i));
-					i = teams.size();
-				}
-			activeTeam = new Team(t[2], 4, 1000, false);
-			teams.add(activeTeam);
-			humanplayers++;
+		teams.removeAll(aiTeamsToRemove);
+		for (String teamName : teamNames) {
+			teams.add(new Team(teamName, 4, 1000, false));
 		}
-		if (t[1] != null && !t[1].equals("")) {
-			for (int i = 0; i < teams.size(); i++)
-				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
-					teams.remove(teams.get(i));
-					i = teams.size();
-				}
-			activeTeam = new Team(t[1], 4, 1000, false);
-			teams.add(activeTeam);
-			humanplayers++;
-		}
-		if (t[0] != null && !t[0].equals("")) {
-			for (int i = 0; i < teams.size(); i++)
-				if (teams.get(i).getLeague() == 4 && (teams.get(i).getComputer())) {
-					teams.remove(teams.get(i));
-					i = teams.size();
-				}
-			activeTeam = new Team(t[0], 4, 1000, false);
-			teams.add(activeTeam);
-			humanplayers++;
-		}
+		activeTeam = Iterables.find(teams, new Predicate<Team>() {
+
+			@Override
+			public boolean apply(Team input) {
+				return !input.isComputer();
+			}
+
+		});
 		season = new Season(teams, this);
 	}
 
@@ -106,7 +86,7 @@ public class Game implements Serializable {
 			}
 		}
 		for (int i = loc - 1; i >= 0; i--) {
-			if (!(teams.get(i).getComputer())) {
+			if (!(teams.get(i).isComputer())) {
 				activeTeam = teams.get(i);
 				return false;
 			}
@@ -117,7 +97,7 @@ public class Game implements Serializable {
 
 	public void roundOverStartFromFirstTeam() {
 		for (int i = teams.size() - 1; i >= 0; i--) {
-			if (!(teams.get(i).getComputer())) {
+			if (!(teams.get(i).isComputer())) {
 				activeTeam = teams.get(i);
 				i = -1;
 			}
