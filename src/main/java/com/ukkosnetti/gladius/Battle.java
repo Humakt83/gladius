@@ -108,16 +108,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		while (!stop) { // This loops once for each round of battle until battle
 						// ends.
 			displayMessage("Start of round " + (round + 1) + " of " + maxRounds + ".");
-			// Getting amount of conscious (in other words, not knocked out)
-			// members of both teams
-			team1size = team1.getGladiators().size();
-			for (int j = team1size; j > 0; j--)
-				if (team1.getGladiators().get(j - 1).getHealth() <= 0)
-					team1size--;
-			team2size = team2.getGladiators().size();
-			for (int j = team2size; j > 0; j--)
-				if (team2.getGladiators().get(j - 1).getHealth() <= 0)
-					team2size--;
+			team1size = team1.amountOfGladiatorsBattleWorthy();
+			team2size = team2.amountOfGladiatorsBattleWorthy();
 			int i = 0, counter = 0, team1gladturn = 0, team2gladturn = 0;
 			team1turn = true;
 			// Battle ends if there are no healthy members left in either team
@@ -130,20 +122,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 				stop = true;
 				this.battleEnds(1);
 			}
-			while ((!stop && (i < team1size || i < team2size) && !(team1size <= 0 || team2size <= 0))) { // Stop
-																											// is
-																											// checked
-																											// here
-																											// just
-																											// for
-																											// precaution.
-				while (!stop && (!pause && (i < team1size || i < team2size) && !(team1size <= 0 || team2size <= 0))) { // Stop
-																														// is
-																														// checked
-																														// here
-																														// just
-																														// for
-																														// precaution.
+			while ((!stop && (i < team1size || i < team2size) && !(team1size <= 0 || team2size <= 0))) {
+				while (!stop && (!pause && (i < team1size || i < team2size) && !(team1size <= 0 || team2size <= 0))) {
 					if (counter == 2) { // If both teams have had their turn,
 										// increase i and reset counter.
 						i++;
