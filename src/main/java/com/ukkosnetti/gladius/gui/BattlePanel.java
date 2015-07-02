@@ -144,9 +144,6 @@ public class BattlePanel extends GradientPanel implements Runnable {
 					if (battle.getBattleTableValue(x, y) > 0 && battle.getBattleTableValue(x, y) < 10) {
 						g.drawImage(battle.team1.getGladiators().get(battle.getBattleTableValue(x, y) - 1).getImage().getImage(), x * 40, y * 40, null);
 						if (battle.team1.getGladiators().get(battle.getBattleTableValue(x, y) - 1).getHealth() <= 0) {
-							// g.setColor(Color.RED);
-							// g.drawLine(x*40, y*40, (x*40)+40, (y*40)+40);
-							// g.drawLine((x*40)+40, y*40, x*40, (y*40)+40);
 							g.drawImage(ko.getImage(), x * 40, y * 40, null);
 						}
 					}
@@ -170,9 +167,6 @@ public class BattlePanel extends GradientPanel implements Runnable {
 	/**
 	 * This method is called from within the constructor to initialize the form.
 	 */
-
-	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
 	private void initComponents() {
 
 		setBackground(new java.awt.Color(0, 51, 255));
@@ -182,9 +176,6 @@ public class BattlePanel extends GradientPanel implements Runnable {
 		this.setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 412, Short.MAX_VALUE));
 		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 333, Short.MAX_VALUE));
-	}// </editor-fold>//GEN-END:initComponents
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	// End of variables declaration//GEN-END:variables
+	}
 
 }

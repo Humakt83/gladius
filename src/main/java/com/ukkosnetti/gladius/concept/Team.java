@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gladiator.GladiatorGenerator;
 
@@ -188,6 +190,17 @@ public class Team implements Serializable {
 
 	public int getMatchWinsAllTime() {
 		return this.matchwinsalltime;
+	}
+
+	public Integer amountOfGladiatorsBattleWorthy() {
+		return Collections2.filter(gladiators, new Predicate<Gladiator>() {
+
+			@Override
+			public boolean apply(Gladiator input) {
+				return !input.isKnockedOut();
+			}
+
+		}).size();
 	}
 
 	public static List<Team> getTeams() {

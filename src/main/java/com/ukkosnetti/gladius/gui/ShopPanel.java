@@ -42,7 +42,6 @@ public class ShopPanel extends GradientPanel {
 	}
 
 	public String getSelectedItem() {
-		System.out.println(ShopTabbed.getSelectedIndex());
 		if (ShopTabbed.getSelectedIndex() == 0) {
 			int row = MeleeWeapons.getSelectedRow();
 			return (String) MeleeWeapons.getModel().getValueAt(row, 0);

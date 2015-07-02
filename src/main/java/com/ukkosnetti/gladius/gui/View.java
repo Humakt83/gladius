@@ -291,7 +291,6 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 			for (int i = 0; i < gl.size(); i++) {
 				switch (i) {
 				case 0:
-					// System.out.println(gl.elementAt(i).getRace());
 					Gladiator1.setIcon(gl.get(i).getImage());
 					break;
 				case 1:

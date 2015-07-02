@@ -30,7 +30,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	public Team team2; // Team on the right side of battle.
 	private Season season; // Used to send battle outcome to and for starting
 							// next battle.
-	private View v; // Used to display messages and gladiators to players.
+	private View view; // Used to display messages and gladiators to players.
 	private Gladiator activeGladiator; // Current gladiator.
 	private int battletable[][] = new int[10][8]; // Important table that
 													// maintains information of
@@ -46,138 +46,51 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	private int team1size = 0, team2size = 0; // How many gladiators teams have.
 	private boolean pause = false, stop = false; // Boolean flags for pausing or
 													// stopping thread.
-	private Thread t = null;
+	private Thread thread = null;
 
 	public Battle(Team t1, Team t2, Season s, BattlePanel bp, View v) {
-		// System.out.println(t1.getName() +", " + t2.getName());
-		if (t1.isComputer() && t2.isComputer()) { // Checking if both teams
-													// are controlled by
-													// computer.
-			int t1ko = 0, t2ko = 0; // Number of knockouts for both teams in
-									// current battle.
-			int a = 0, b = 0; // Used to indicate gladiators.
-			while (t1ko < t2.getGladiators().size() && t2ko < t1.getGladiators().size()) { // If
-																		// both
-																		// teams
-																		// have
-																		// gladiators
-																		// left
-																		// that
-																		// are
-																		// still
-																		// in
-																		// battle.
-				Gladiator aglad = t1.getGladiators().get(a), bglad = t2.getGladiators().get(b); // Gladiator
-																											// from
-																											// team1
-																											// and
-																											// team2.
-				// Adding values to integers from Gladiators' attributes and
-				// their weapon attributes.
-				int ra = aglad.getStrength() + aglad.getNaturalarmor() + aglad.getMaxhealth(), rb = bglad.getStrength() + bglad.getNaturalarmor() + bglad.getMaxhealth();
-				if (aglad.getArmor() != null)
-					ra += aglad.getArmor().getArmor();
-				if (aglad.getMelee() != null)
-					ra += aglad.getMelee().battleDamage();
-				if (aglad.getRanged() != null)
-					ra += aglad.getRanged().battleDamage();
-				if (aglad.getSpell1() != null)
-					ra += aglad.getSpell1().battleDamage();
-				if (aglad.getSpell2() != null)
-					ra += aglad.getSpell2().battleDamage();
-				if (bglad.getArmor() != null)
-					rb += bglad.getArmor().getArmor();
-				if (bglad.getMelee() != null)
-					rb += bglad.getMelee().battleDamage();
-				if (bglad.getRanged() != null)
-					rb += bglad.getRanged().battleDamage();
-				if (bglad.getSpell1() != null)
-					rb += bglad.getSpell1().battleDamage();
-				if (bglad.getSpell2() != null)
-					rb += bglad.getSpell2().battleDamage();
-				int ran = r.nextInt(ra) - r.nextInt(rb); // Random value used to
-															// decide which
-															// gladiator won.
-				if (ran >= 0) { // Lightly favors team 1 but who cares they are
-								// both computer controlled, right?
-					aglad.setKnockdowns(1); // Increases knockdowns for
-											// gladiator.
-					// Increasing skills of gladiator.
-					aglad.increaseMeleeAttackSkill();
-					aglad.increaseMeleeDefendSkill();
-					aglad.increaseRangedSkill();
-					t1ko++; // increases number of KO's made by team 1.
-				} else {
-					bglad.setKnockdowns(1); // Increases knockdowns for
-											// gladiator.
-					// Increasing skills of gladiator.
-					bglad.increaseMeleeAttackSkill();
-					bglad.increaseMeleeDefendSkill();
-					bglad.increaseRangedSkill();
-					t2ko++; // increases number of KO's made by team 2.
-				}
-				if (a < t1.getGladiators().size() - 1)
-					a++; // If team 1 contains more members increase a, if not
-							// reset a.
-				else
-					a = 0;
-				if (b < t2.getGladiators().size() - 1)
-					b++; // If team 2 contains more members increase b, if not
-							// reset b.
-				else
-					b = 0;
-			}
-			if (t1ko == t2.getGladiators().size()) { // Increases wins for team
-														// 1 or team
-											// 2, while adding defeat for
-											// opposing team.
-				t1.increaseMatchWins();
-				t1.setResult(1);
-				t2.setResult(2);
-			} else {
-				t2.increaseMatchWins();
-				t1.setResult(2);
-				t2.setResult(1);
-			}
-			s.nextBattle(bp, v); // Starts next battle.
-		} else { // If either team is player controlled we get here.
-			this.v = v;
-			team1 = t1;
-			team2 = t2;
-			v.addText("Arena battle between " + team1.getName() + " and " + team2.getName() + " begins!");
-			season = s;
-			drawingarea = bp;
+		drawingarea = bp;
+		this.view = v;
+		team1 = t1;
+		team2 = t2;
+		season = s;
+		placeTeams();
+		if (!(t1.isComputer() && t2.isComputer())) {
+			displayMessage("Arena battle between " + team1.getName() + " and " + team2.getName() + " begins!");
 			drawingarea.setController(this);
 			drawingarea.setSceneryItems();
-			// Filling battletable with 0's.
-			for (int x = 0; x < 10; x++) {
-				for (int y = 0; y < 8; y++) {
-					battletable[x][y] = 0;
-				}
-			}
-			// Placing team 1 gladiators to table, number greater than zero
-			// stands for member of team 1.
-			for (int i = team1.getGladiators().size(), j = 1; i > 0; i--, j++) {
-				battletable[1][j] = i;
-				team1.getGladiators().get(i - 1).setLocation(new Point(1, j));
-			}
-			// Placing team 2 gladiators to table, number lesser than zero
-			// stands for member of team 2.
-			for (int i = team2.getGladiators().size(), j = 1; i > 0; i--, j++) {
-				battletable[8][j] = -i;
-				team2.getGladiators().get(i - 1).setLocation(new Point(8, j));
-			}
+
 			// Reseting values of moveTable, which is done often so using
 			// function for it is practical.
 			this.resetMoveTable();
 			drawingarea.paintBattle(); // Tells BattlePanel to draw stuff.
 			v.setBattleController(this);
-			// Starting new thread.
-			if (t == null) {
-				t = new Thread(this);
-				stop = false;
-				t.start();
+		}
+
+		if (thread == null) {
+			thread = new Thread(this);
+			stop = false;
+			thread.start();
+		}
+	}
+
+	private void placeTeams() {
+		for (int x = 0; x < 10; x++) {
+			for (int y = 0; y < 8; y++) {
+				battletable[x][y] = 0;
 			}
+		}
+		// Placing team 1 gladiators to table, number greater than zero
+		// stands for member of team 1.
+		for (int i = team1.getGladiators().size(), j = 1; i > 0; i--, j++) {
+			battletable[1][j] = i;
+			team1.getGladiators().get(i - 1).setLocation(new Point(1, j));
+		}
+		// Placing team 2 gladiators to table, number lesser than zero
+		// stands for member of team 2.
+		for (int i = team2.getGladiators().size(), j = 1; i > 0; i--, j++) {
+			battletable[8][j] = -i;
+			team2.getGladiators().get(i - 1).setLocation(new Point(8, j));
 		}
 	}
 
@@ -194,7 +107,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	public void run() {
 		while (!stop) { // This loops once for each round of battle until battle
 						// ends.
-			v.addText("Start of round " + (round + 1) + " of " + maxRounds + ".");
+			displayMessage("Start of round " + (round + 1) + " of " + maxRounds + ".");
 			// Getting amount of conscious (in other words, not knocked out)
 			// members of both teams
 			team1size = team1.getGladiators().size();
@@ -254,8 +167,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 																							// AI
 																							// function.
 						else {
-							v.clearGladiatorPanels();
-							v.addGladiatorstoPanels(team1.getGladiators());
+							view.clearGladiatorPanels();
+							view.addGladiatorstoPanels(team1.getGladiators());
 							pause = true; // Otherwise loop waits.
 						}
 						team1gladturn++;
@@ -281,8 +194,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 																								// AI
 																								// function.
 							else {
-								v.clearGladiatorPanels();
-								v.addGladiatorstoPanels(team2.getGladiators());
+								view.clearGladiatorPanels();
+								view.addGladiatorstoPanels(team2.getGladiators());
 								pause = true; // Otherwise loop waits.
 							}
 							team2gladturn++;
@@ -327,7 +240,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	 */
 	public void battleTurn(Gladiator gl) {
 		activeGladiator = gl;
-		v.showGladiator(activeGladiator); // Shows gladiator to player.
+		displayGladiator(activeGladiator); // Shows gladiator to player.
 		Point loc = activeGladiator.getLocation();
 		if (loc.getX() > 0) {
 			movetable[(int) loc.getX() - 1][(int) loc.getY()] = 20;
@@ -353,7 +266,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		if (loc.getX() > 0 && loc.getY() < 7) {
 			movetable[(int) loc.getX() - 1][(int) loc.getY() + 1] = 20;
 		}
-		drawingarea.paintBattle();
+		if (!(team1.isComputer() && team2.isComputer())) {
+			drawingarea.paintBattle();
+		}
+	}
+
+	private void displayGladiator(Gladiator gladiator) {
+		if (!(team1.isComputer() && team2.isComputer())) {
+			view.showGladiator(gladiator);
+		}
 	}
 
 	/*
@@ -370,22 +291,22 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	// Function which is called upon ending the battle.
 	public void battleEnds(int winner) {
 		drawingarea.stop(); // Stops loop in drawingarea.
-		v.addText("Battle has ended.");
+		displayMessage("Battle has ended.");
 		// Gives winner and loser squirrels, amount depending on the league.
 		int losesquirs = 1000 - team1.getLeague() * 200;
 		int winsquirs = 1200 - team1.getLeague() * 200;
 		switch (winner) {
 		case 0:
-			v.addText("Draw: Neither side was victorious.");
-			v.addText("Both teams earn " + losesquirs + " squirrels.");
+			displayMessage("Draw: Neither side was victorious.");
+			displayMessage("Both teams earn " + losesquirs + " squirrels.");
 			team1.setSquirrels(team1.getSquirrels() + losesquirs);
 			team2.setSquirrels(team2.getSquirrels() + losesquirs);
 			team1.setResult(3);
 			team2.setResult(3);
 			break;
 		case 1:
-			v.addText(team1.getName() + " is victorious!");
-			v.addText(team1.getName() + " earns " + winsquirs + " squirrels while " + team2.getName() + " being losers earn only " + losesquirs + " squirrels.");
+			displayMessage(team1.getName() + " is victorious!");
+			displayMessage(team1.getName() + " earns " + winsquirs + " squirrels while " + team2.getName() + " being losers earn only " + losesquirs + " squirrels.");
 			team1.setSquirrels(team1.getSquirrels() + winsquirs);
 			team2.setSquirrels(team2.getSquirrels() + losesquirs);
 			team1.increaseMatchWins();
@@ -393,8 +314,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			team2.setResult(2);
 			break;
 		case 2:
-			v.addText(team2.getName() + " is victorious!");
-			v.addText(team2.getName() + " earns " + winsquirs + " squirrels while " + team1.getName() + " being losers earn only " + losesquirs + " squirrels.");
+			displayMessage(team2.getName() + " is victorious!");
+			displayMessage(team2.getName() + " earns " + winsquirs + " squirrels while " + team1.getName() + " being losers earn only " + losesquirs + " squirrels.");
 			team1.setSquirrels(team1.getSquirrels() + losesquirs);
 			team2.setSquirrels(team2.getSquirrels() + winsquirs);
 			team2.increaseMatchWins();
@@ -403,14 +324,14 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			break;
 		}
 		if (!team1.isComputer())
-			v.addText(team1.getName() + " paid " + team1.payGladiators() + " squirrels for the upkeep of the gladiators.");
+			displayMessage(team1.getName() + " paid " + team1.payGladiators() + " squirrels for the upkeep of the gladiators.");
 		if (!team2.isComputer())
-			v.addText(team2.getName() + " paid " + team2.payGladiators() + " squirrels for the upkeep of the gladiators.");
+			displayMessage(team2.getName() + " paid " + team2.payGladiators() + " squirrels for the upkeep of the gladiators.");
 		team1.resetGladiatorsHealth();
 		team2.resetGladiatorsHealth();
-		t = null;
-		v.removeBattleController(this);
-		season.nextBattle(drawingarea, v);
+		thread = null;
+		view.removeBattleController(this);
+		season.nextBattle(drawingarea, view);
 	}
 
 	/*
@@ -430,9 +351,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		} else
 			weapb = "fist";
 		if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
-			v.addText(a.getName() + " attacks with evil eye while " + b.getName() + " defends with " + weapb + ".");
+			displayMessage(a.getName() + " attacks with evil eye while " + b.getName() + " defends with " + weapb + ".");
 		else
-			v.addText(a.getName() + " attacks with " + weapa + " while " + b.getName() + " defends with " + weapb + ".");
+			displayMessage(a.getName() + " attacks with " + weapa + " while " + b.getName() + " defends with " + weapb + ".");
 		int attack = 0, defend = 0;
 		if (weapa.equals("fist"))
 			attack = a.getAttack();
@@ -460,13 +381,13 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		}
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
 		if (hit < 0) {
-			v.addText(a.getName() + " didn't hit.");
+			displayMessage(a.getName() + " didn't hit.");
 			if (r.nextInt(4) == 1) {
 				boolean skillincrease = b.increaseMeleeDefendSkill();
 				if (skillincrease)
-					v.addText(b.getName() + " defense skill developed.");
+					displayMessage(b.getName() + " defense skill developed.");
 			}
-			drawingarea.hitmiss(x, y, true);
+			displayHitOrMiss(x, y, true);
 		} else {
 			int damage = r.nextInt(a.getStrength());
 			if (!weapa.equals("fist")) {
@@ -478,16 +399,16 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (damage < 0)
 				damage = 0;
 			if (damage == 0)
-				drawingarea.hitmiss(x, y, true);
+				displayHitOrMiss(x, y, true);
 			else
-				drawingarea.hitmiss(x, y, false);
+				displayHitOrMiss(x, y, false);
 			b.setHealth(b.getHealth() - damage);
 			boolean ko = false;
 			if (b.getHealth() <= 0)
 				ko = true;
-			v.addText(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
+			displayMessage(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
 			if (ko) {
-				v.addText(b.getName() + " is knocked out.");
+				displayMessage(b.getName() + " is knocked out.");
 				a.setKnockdowns(1);
 				if (battletable[(int) b.getLocation().getX()][(int) b.getLocation().getY()] < 0)
 					team2size--;
@@ -497,8 +418,14 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (r.nextInt(3) == 1) {
 				boolean skillincrease = a.increaseMeleeAttackSkill();
 				if (skillincrease)
-					v.addText(a.getName() + " attack skill developed.");
+					displayMessage(a.getName() + " attack skill developed.");
 			}
+		}
+	}
+
+	private void displayHitOrMiss(int x, int y, boolean miss) {
+		if (!(team1.isComputer() && team2.isComputer())) {
+			drawingarea.hitmiss(x, y, miss);
 		}
 	}
 
@@ -513,9 +440,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			weaptypea = (RangedWeaponType) a.getRanged().getWeaponType();
 		}
 		if (a.getRanged() != null)
-			v.addText(a.getName() + " shoots " + b.getName() + " with " + weapa + ".");
+			displayMessage(a.getName() + " shoots " + b.getName() + " with " + weapa + ".");
 		else
-			v.addText(a.getName() + " shoots beholder ray at " + b.getName() + ".");
+			displayMessage(a.getName() + " shoots beholder ray at " + b.getName() + ".");
 		int attack = 0, defend = 0;
 		if (weaptypea.equals(RangedWeaponType.BOW))
 			attack = a.getBowskill();
@@ -526,11 +453,11 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		defend = b.getEvasion();
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
 		if (hit < 0) {
-			v.addText(a.getName() + " misses.");
-			drawingarea.hitmiss(x, y, true);
+			displayMessage(a.getName() + " misses.");
+			displayHitOrMiss(x, y, true);
 			if (r.nextInt(4) == 1 && b.getEvasion() < 99) {
 				b.setEvasion(b.getEvasion() + 1);
-				v.addText(b.getName() + " evasion skill developed.");
+				displayMessage(b.getName() + " evasion skill developed.");
 			}
 		} else {
 			int damage = 0;
@@ -544,19 +471,19 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (damage < 0)
 				damage = 0;
 			if (damage == 0)
-				drawingarea.hitmiss(x, y, true);
+				displayHitOrMiss(x, y, true);
 			else
-				drawingarea.hitmiss(x, y, false);
+				displayHitOrMiss(x, y, false);
 			b.setHealth(b.getHealth() - damage);
 			boolean ko = false;
 			if (b.getHealth() <= 0)
 				ko = true;
 			if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
-				v.addText(a.getName() + " rays doing " + damage + " to " + b.getName() + ".");
+				displayMessage(a.getName() + " rays doing " + damage + " to " + b.getName() + ".");
 			else
-				v.addText(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
+				displayMessage(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
 			if (ko) {
-				v.addText(b.getName() + " is knocked out.");
+				displayMessage(b.getName() + " is knocked out.");
 				a.setKnockdowns(1);
 				if (battletable[(int) b.getLocation().getX()][(int) b.getLocation().getY()] < 0)
 					team2size--;
@@ -566,7 +493,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (r.nextInt(3) == 1) {
 				boolean skillincrease = a.increaseRangedSkill();
 				if (skillincrease)
-					v.addText(a.getName() + " ranged skill developed.");
+					displayMessage(a.getName() + " ranged skill developed.");
 			}
 		}
 	}
@@ -587,18 +514,18 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					sp = a.getSpell2();
 			}
 		String spell = sp.getName();
-		v.addText(a.getName() + " casts " + spell + " on " + b.getName() + ".");
+		displayMessage(a.getName() + " casts " + spell + " on " + b.getName() + ".");
 		int success = a.getMaxmana();
 		int hit = r.nextInt(success);
-		drawingarea.hitmiss(x, y, true);
+		displayHitOrMiss(x, y, true);
 		if (hit < 5)
-			v.addText(a.getName() + " fails.");
+			displayMessage(a.getName() + " fails.");
 		else {
 			int heal = sp.battleDamage();
 			b.setHealth(b.getHealth() + heal);
 			if (b.getHealth() >= b.getMaxhealth())
 				b.setHealth(b.getMaxhealth());
-			v.addText(a.getName() + " heals " + heal + ".");
+			displayMessage(a.getName() + " heals " + heal + ".");
 		}
 		a.setMana(a.getMana() - sp.getManaCost());
 	}
@@ -619,15 +546,15 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					sp = a.getSpell2();
 			}
 		String spell = sp.getName();
-		v.addText(a.getName() + " casts " + spell + " on " + b.getName() + ".");
+		displayMessage(a.getName() + " casts " + spell + " on " + b.getName() + ".");
 		int attack = a.getMaxmana() + 10, defend = b.getResistance();
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
 		if (hit < 0) {
-			v.addText(b.getName() + " resists the spell.");
-			drawingarea.hitmiss(x, y, true);
+			displayMessage(b.getName() + " resists the spell.");
+			displayHitOrMiss(x, y, true);
 			if (r.nextInt(4) == 1 && b.getResistance() < 99) {
 				b.setResistance(b.getResistance() + 1);
-				v.addText(b.getName() + " resistance skill developed.");
+				displayMessage(b.getName() + " resistance skill developed.");
 			}
 		} else {
 			int damage = sp.battleDamage();
@@ -635,11 +562,11 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			boolean ko = false;
 			if (b.getHealth() <= 0)
 				ko = true;
-			drawingarea.hitmiss(x, y, false);
-			v.addText(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
+			displayHitOrMiss(x, y, false);
+			displayMessage(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
 			if (ko) {
 				a.setKnockdowns(1);
-				v.addText(b.getName() + " is knocked out.");
+				displayMessage(b.getName() + " is knocked out.");
 				if (battletable[(int) b.getLocation().getX()][(int) b.getLocation().getY()] < 0)
 					team2size--;
 				else
@@ -831,19 +758,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 							}
 						}
 						if (notdone) {
-							v.addText(activeGladiator.getName() + " waits for a better opportunity.");
-							/*
-							 * System.out.println("Here darn."); int other =
-							 * battletable[i+closest[0]][j];
-							 * battletable[i+closest[0]][j]=battletable[i][j];
-							 * battletable[i][j] = other;
-							 * if(other<0)team2.getGladiators
-							 * ().elementAt(-other-1).setLocation(new Point(i,
-							 * j)); else
-							 * if(other>0)team1.getGladiators().elementAt
-							 * (other-1).setLocation(new Point(i, j));
-							 * gl.setLocation(new Point(i+closest[0], j));
-							 */
+							displayMessage(activeGladiator.getName() + " waits for a better opportunity.");
 						}
 					}
 				}
@@ -851,6 +766,12 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		}
 		this.resetMoveTable();
 		pause = false;
+	}
+
+	private void displayMessage(String message) {
+		if (view != null && !(team1.isComputer() && team2.isComputer())) {
+			view.addText(message);
+		}
 	}
 
 	/*
@@ -867,9 +788,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 					if (battletable[x][y] != 0) {
 						int val = battletable[x][y];
 						if (val < 0)
-							v.showGladiator(team2.getGladiators().get(-val - 1));
+							displayGladiator(team2.getGladiators().get(-val - 1));
 						else
-							v.showGladiator(team1.getGladiators().get(val - 1));
+							displayGladiator(team1.getGladiators().get(val - 1));
 					}
 				} else {
 					if (movetable[x][y] == 20) {
@@ -940,9 +861,9 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			}
 		} else {
 			if (evt.getButton() == 3) {
-				v.showGladiator(activeGladiator);
+				displayGladiator(activeGladiator);
 			} else {
-				v.addText(activeGladiator.getName() + " waits for a better opportunity.");
+				displayMessage(activeGladiator.getName() + " waits for a better opportunity.");
 				this.resetMoveTable();
 				pause = false;
 			}
@@ -1177,7 +1098,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			}
 		} else {
 			if (keycode == KeyEvent.VK_NUMPAD5) {
-				v.addText(activeGladiator.getName() + " waits for a better opportunity.");
+				displayMessage(activeGladiator.getName() + " waits for a better opportunity.");
 				this.resetMoveTable();
 				pause = false;
 			}

@@ -377,4 +377,8 @@ public class Gladiator implements Serializable {
 		return false;
 	}
 
+	public boolean isKnockedOut() {
+		return this.getHealth() <= 0;
+	}
+
 }
