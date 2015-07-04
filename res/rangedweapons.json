@@ -1,0 +1,88 @@
+[
+{
+	"name":"Shortbow",
+	"price":75,
+	"damagemin":1,
+	"damagemax":5,
+	"weapontype":"BOW"
+},
+{
+	"name":"Elven bow",
+	"price":270,
+	"damagemin":2,
+	"damagemax":8,
+	"weapontype":"BOW"
+},
+{
+	"name":"Longbow",
+	"price":410,
+	"damagemin":3,
+	"damagemax":10,
+	"weapontype":"BOW"
+},
+{
+	"name":"Ranger's bow",
+	"price":600,
+	"damagemin":5,
+	"damagemax":15,
+	"weapontype":"BOW"
+},
+{
+	"name":"Bow of Lightning",
+	"price":1120,
+	"damagemin":9,
+	"damagemax":18,
+	"weapontype":"BOW"
+},
+{
+	"name":"Bow of the Elf King",
+	"price":3250,
+	"damagemin":10,
+	"damagemax":25,
+	"weapontype":"BOW"
+},
+
+{
+	"name":"Crossbow",
+	"price":95,
+	"damagemin":3,
+	"damagemax":6,
+	"weapontype":"CROSSBOW"
+},
+{
+	"name":"Bandit's Cross",
+	"price":175,
+	"damagemin":4,
+	"damagemax":8,
+	"weapontype":"CROSSBOW"
+},
+{
+	"name":"Heavy Crossbow",
+	"price":450,
+	"damagemin":5,
+	"damagemax":17,
+	"weapontype":"CROSSBOW"
+},
+{
+	"name":"Warbow",
+	"price":775,
+	"damagemin":10,
+	"damagemax":16,
+	"weapontype":"CROSSBOW"
+},
+{
+	"name":"Crossbow of Light",
+	"price":1180,
+	"damagemin":13,
+	"damagemax":18,
+	"weapontype":"CROSSBOW"
+},
+{
+	"name":"Slayer",
+	"price":2750,
+	"damagemin":16,
+	"damagemax":26,
+	"weapontype":"CROSSBOW"
+}
+
+]
