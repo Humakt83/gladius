@@ -1,0 +1,175 @@
+[
+{
+	"name":"Sharp stick",
+	"price":10,
+	"damagemin":1,
+	"damagemax":5,
+	"weapontype":"SPEAR"
+},
+{
+	"name":"Pike",
+	"price":50,
+	"damagemin":2,
+	"damagemax":7,
+	"weapontype":"SPEAR"
+},
+{
+	"name":"Spear",
+	"price":110,
+	"damagemin":3,
+	"damagemax":9,
+	"weapontype":"SPEAR"
+},
+{
+	"name":"Javelin",
+	"price":150,
+	"damagemin":2,
+	"damagemax":11,
+	"weapontype":"SPEAR"
+},
+{
+	"name":"Burning Lance",
+	"price":420,
+	"damagemin":4,
+	"damagemax":15,
+	"weapontype":"SPEAR"
+},
+{
+	"name":"Ahti's Trident",
+	"price":1200,
+	"damagemin":5,
+	"damagemax":20,
+	"weapontype":"SPEAR"
+},
+
+{
+	"name":"Dagger",
+	"price":25,
+	"damagemin":3,
+	"damagemax":4,
+	"weapontype":"SWORD"
+},
+{
+	"name":"Short sword",
+	"price":70,
+	"damagemin":4,
+	"damagemax":8,
+	"weapontype":"SWORD"
+},
+{
+	"name":"Gladius",
+	"price":250,
+	"damagemin":7,
+	"damagemax":10,
+	"weapontype":"SWORD"
+},
+{
+	"name":"Long sword",
+	"price":450,
+	"damagemin":8,
+	"damagemax":13,
+	"weapontype":"SWORD"
+},
+{
+	"name":"Fladamageming sword",
+	"price":730,
+	"damagemin":11,
+	"damagemax":16,
+	"weapontype":"SWORD"
+},
+{
+	"name":"Sword of the Gods",
+	"price":2000,
+	"damagemin":15,
+	"damagemax":20,
+	"weapontype":"SWORD"
+},
+
+
+{
+	"name":"Hand axe",
+	"price":25,
+	"damagemin":3,
+	"damagemax":7,
+	"weapontype":"AXE"
+},
+{
+	"name":"Woodman's axe",
+	"price":100,
+	"damagemin":4,
+	"damagemax":10,
+	"weapontype":"AXE"
+},
+{
+	"name":"Bearded axe",
+	"price":310,
+	"damagemin":7,
+	"damagemax":12,
+	"weapontype":"AXE"
+},
+{
+	"name":"Battle axe",
+	"price":500,
+	"damagemin":9,
+	"damagemax":15,
+	"weapontype":"AXE"
+},
+{
+	"name":"Lightning axe",
+	"price":820,
+	"damagemin":12,
+	"damagemax":18,
+	"weapontype":"AXE"
+},
+{
+	"name":"Axe of Might",
+	"price":2250,
+	"damagemin":15,
+	"damagemax":22,
+	"weapontype":"AXE"
+},
+
+{
+	"name":"Club",
+	"price":75,
+	"damagemin":4,
+	"damagemax":6,
+	"weapontype":"HAMMER"
+},
+{
+	"name":"Hammer",
+	"price":125,
+	"damagemin":5,
+	"damagemax":9,
+	"weapontype":"HAMMER"
+},
+{
+	"name":"Cudgel",
+	"price":350,
+	"damagemin":8,
+	"damagemax":11,
+	"weapontype":"HAMMER"
+},
+{
+	"name":"Warhammer",
+	"price":575,
+	"damagemin":10,
+	"damagemax":16,
+	"weapontype":"HAMMER"
+},
+{
+	"name":"Stormhammer",
+	"price":980,
+	"damagemin":14,
+	"damagemax":19,
+	"weapontype":"HAMMER"
+},
+{
+	"name":"HAMMER from the Stars",
+	"price":3000,
+	"damagemin":20,
+	"damagemax":25,
+	"weapontype":"HAMMER"
+}
+
+]

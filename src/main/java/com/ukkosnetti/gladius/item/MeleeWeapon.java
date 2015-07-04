@@ -1,9 +1,14 @@
 package com.ukkosnetti.gladius.item;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import com.google.gson.Gson;
 
 public class MeleeWeapon implements WeaponInterface<MeleeWeaponType>, Serializable {
 
@@ -22,6 +27,10 @@ public class MeleeWeapon implements WeaponInterface<MeleeWeaponType>, Serializab
 		weapontype = type;
 		name = n;
 		this.price = price;
+	}
+
+	@SuppressWarnings("unused")
+	private MeleeWeapon() {
 	}
 
 	public MeleeWeaponType getWeaponType() {
@@ -49,7 +58,13 @@ public class MeleeWeapon implements WeaponInterface<MeleeWeaponType>, Serializab
 	}
 
 	public static List<MeleeWeapon> getMeleeWeapons() {
-		return Arrays.asList(new MeleeWeapon(1, 6, MeleeWeaponType.SPEAR, "Pike", 25), new MeleeWeapon(3, 4, MeleeWeaponType.SWORD, "Shortsword", 45), new MeleeWeapon(2, 5, MeleeWeaponType.AXE,
-				"Handaxe", 50), new MeleeWeapon(3, 7, MeleeWeaponType.HAMMER, "Club", 75));
+		try {
+			StringBuilder sb = new StringBuilder("");
+			Files.readAllLines(Paths.get("res/weapons.json")).forEach(sb::append);
+			return Arrays.asList(new Gson().fromJson(sb.toString(), MeleeWeapon[].class));
+		} catch (IOException e) {
+			return Arrays.asList(new MeleeWeapon(1, 6, MeleeWeaponType.SPEAR, "Pike", 25), new MeleeWeapon(3, 4, MeleeWeaponType.SWORD, "Shortsword", 45), new MeleeWeapon(2, 5, MeleeWeaponType.AXE,
+					"Handaxe", 50), new MeleeWeapon(3, 7, MeleeWeaponType.HAMMER, "Club", 75));
+		}
 	}
 }
