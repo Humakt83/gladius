@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Spell implements Serializable {
+public class Spell implements Purchasable, Serializable {
 	/**
 	 * 
 	 */
@@ -16,7 +16,6 @@ public class Spell implements Serializable {
 	private boolean damagespell;
 	private int price;
 	private int mana;
-	private Random r = new Random();
 
 	public Spell(int mindamage, int maxdamage, boolean d, String n, int price, int mana) {
 		this.mindamage = mindamage;
@@ -48,7 +47,7 @@ public class Spell implements Serializable {
 	}
 
 	public int battleDamage() {
-		return r.nextInt(maxdamage - mindamage + 1) + mindamage;
+		return new Random().nextInt(maxdamage - mindamage + 1) + mindamage;
 	}
 
 	public int getManaCost() {

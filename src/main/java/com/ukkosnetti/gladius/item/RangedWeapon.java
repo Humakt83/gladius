@@ -17,7 +17,6 @@ public class RangedWeapon implements WeaponInterface<RangedWeaponType>, Serializ
 	private int damagemin;
 	private RangedWeaponType weapontype;
 	private int price;
-	private Random r = new Random();
 	private String name;
 
 	public RangedWeapon(int min, int max, RangedWeaponType type, String n, int p) {
@@ -41,7 +40,7 @@ public class RangedWeapon implements WeaponInterface<RangedWeaponType>, Serializ
 	}
 
 	public int battleDamage() {
-		return r.nextInt(damagemax - damagemin + 1) + damagemin;
+		return new Random().nextInt(damagemax - damagemin + 1) + damagemin;
 	}
 
 	public String getName() {

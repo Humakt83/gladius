@@ -17,7 +17,6 @@ public class MeleeWeapon implements WeaponInterface<MeleeWeaponType>, Serializab
 	private int damagemax;
 	private int damagemin;
 	private MeleeWeaponType weapontype;
-	private Random r = new Random();
 	private String name;
 	private int price;
 
@@ -46,7 +45,7 @@ public class MeleeWeapon implements WeaponInterface<MeleeWeaponType>, Serializab
 	}
 
 	public int battleDamage() {
-		return r.nextInt(damagemax - damagemin + 1) + damagemin;
+		return new Random().nextInt(damagemax - damagemin + 1) + damagemin;
 	}
 
 	public String getName() {

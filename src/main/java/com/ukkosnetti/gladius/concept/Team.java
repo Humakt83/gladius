@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.ukkosnetti.gladius.ai.AIEquipper;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gladiator.GladiatorGenerator;
 
@@ -67,7 +67,7 @@ public class Team implements Serializable {
 		return gladiators;
 	}
 
-	public void setMembers(Vector<Gladiator> v) {
+	public void setMembers(List<Gladiator> v) {
 		gladiators = v;
 	}
 
@@ -212,6 +212,8 @@ public class Team implements Serializable {
 			}
 			teams.add(team);
 		}
+		AIEquipper equipper = new AIEquipper();
+		teams.forEach(equipper::equipTeam);
 		return teams;
 	}
 

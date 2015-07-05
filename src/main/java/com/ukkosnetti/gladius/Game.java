@@ -238,7 +238,6 @@ public class Game implements Serializable {
 		lowers.forEach(lower -> {
 			lower.setLeague(lower.getLeague() + 1);
 		});
-		new StringBuilder();
 		v.addText(champion.getName().toUpperCase() + " IS THE CHAMPION OF SEASON AND EARNS 5000 SQUIRRELS!");
 		v.addText("Following teams have risen up in the leagueladder: " + risers + ". All ladder-risers earn 500 bonus squirrels!");
 		v.addText("While following teams have succumbed to lower league: " + lowers + ".");
