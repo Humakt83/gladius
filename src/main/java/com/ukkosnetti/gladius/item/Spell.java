@@ -56,10 +56,12 @@ public class Spell implements Serializable {
 	}
 
 	public static List<Spell> getDamageSpells() {
-		return Arrays.asList(new Spell(2, 5, true, "Firebolt", 60, 5));
+		return Arrays.asList(new Spell(1, 4, true, "Flare", 60, 5), new Spell(2, 5, true, "Firebolt", 120, 5), new Spell(3, 10, true, "Lightning Bolt", 450, 7), new Spell(5, 12, true, "Fireball",
+				750, 10), new Spell(15, 25, true, "Meteor Strike", 1500, 20), new Spell(20, 25, true, "Divine Strike", 3000, 10));
 	}
 
 	public static List<Spell> getHealingSpells() {
-		return Arrays.asList(new Spell(1, 4, true, "Bandage", 50, 6));
+		return Arrays.asList(new Spell(1, 3, false, "Bandage", 50, 4), new Spell(2, 4, false, "First Aid", 100, 5), new Spell(2, 9, false, "Heal", 500, 6), new Spell(4, 11, false, "Divine Touch",
+				1500, 8));
 	}
 }

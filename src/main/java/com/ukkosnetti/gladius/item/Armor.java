@@ -36,8 +36,8 @@ public class Armor implements Serializable, Purchasable {
 	}
 
 	public static List<Armor> getArmors() {
-		return Arrays.asList(new Armor(1, "Rags", 15), new Armor(2, "Leather", 50), new Armor(3, "Studded Leather", 80), new Armor(4, "Chainmail", 130), new Armor(5, "Splintmail", 185), new Armor(6,
-				"Plate", 250), new Armor(8, "Full plate", 500));
+		return Arrays.asList(new Armor(1, "Rags", 25), new Armor(2, "Leather", 80), new Armor(3, "Studded Leather", 170), new Armor(4, "Chainmail", 270), new Armor(5, "Splintmail", 485), new Armor(6,
+				"Plate", 850), new Armor(8, "Full plate", 1500), new Armor(10, "Titan's Cuirass", 3000));
 
 	}
 }
