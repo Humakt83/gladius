@@ -13,6 +13,8 @@ import com.ukkosnetti.gladius.gladiator.Gladiator;
 import com.ukkosnetti.gladius.gladiator.GladiatorGenerator;
 
 public class Team implements Serializable {
+	private static final int MINIMUM_NUMBER_OF_MEMBERS_IN_AI_TEAM = 4;
+
 	private static final long serialVersionUID = 3363026838342392895L;
 
 	private List<Gladiator> gladiators = new ArrayList<Gladiator>();
@@ -207,7 +209,8 @@ public class Team implements Serializable {
 		List<Team> teams = new ArrayList<Team>();
 		for (int i = 0; i < 16; i++) {
 			Team team = new Team(TEAM_NAMES[i], 4 - ((int)Math.floor(i / 4)), 500, true);
-			for (Gladiator gl : GladiatorGenerator.getInstance().generateRandomGladiators(4, new Random(System.currentTimeMillis() + i + 1))) {
+			for (Gladiator gl : GladiatorGenerator.getInstance().generateRandomGladiators(Math.max(MINIMUM_NUMBER_OF_MEMBERS_IN_AI_TEAM, 7 - team.getLeague()),
+					new Random(System.currentTimeMillis() + i + 1))) {
 				team.addGladiator(gl);
 			}
 			teams.add(team);
