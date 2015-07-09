@@ -8,11 +8,6 @@
 	<description>Manager game where you hire and command a team of gladiators</description>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -26,7 +21,19 @@
 			<version>2.3.1</version>
 		</dependency>
 		
-				
+		<!-- Testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.0.26-beta</version>
+		</dependency>
 	</dependencies>
 
 	<build>

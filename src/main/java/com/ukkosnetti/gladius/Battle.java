@@ -268,8 +268,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		return movetable[x][y];
 	}
 
-	// Function which is called upon ending the battle.
-	public void battleEnds(int winner) {
+	private void battleEnds(int winner) {
 		drawingarea.stop(); // Stops loop in drawingarea.
 		displayMessage("Battle has ended.");
 		// Gives winner and loser squirrels, amount depending on the league.
@@ -314,10 +313,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		season.nextBattle(drawingarea, view);
 	}
 
-	/*
-	 * Function for deciding the outcome of melee attack.
-	 */
-	public void duelMelee(Gladiator a, Gladiator b, int x, int y) {
+	private void duelMelee(Gladiator a, Gladiator b, int x, int y) {
 		String weapa, weapb;
 		MeleeWeaponType weaptypea = null, weaptypeb = null;
 		if (a.getMelee() != null) {
@@ -409,10 +405,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		}
 	}
 
-	/*
-	 * Function for deciding outcome of ranged attack.
-	 */
-	public void duelRanged(Gladiator a, Gladiator b, int x, int y) {
+	private void duelRanged(Gladiator a, Gladiator b, int x, int y) {
 		String weapa = "";
 		RangedWeaponType weaptypea = null;
 		if (a.getRanged() != null) {
@@ -478,10 +471,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		}
 	}
 
-	/*
-	 * Function for deciding outcome of healing spell.
-	 */
-	public void healSpell(Gladiator a, Gladiator b, int x, int y) {
+	private void healSpell(Gladiator a, Gladiator b, int x, int y) {
 		Spell sp = null;
 		if (a.getSpell1() != null)
 			if (!a.getSpell1().getDamageSpell() && a.getMana() >= a.getSpell1().getManaCost())
@@ -510,10 +500,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		a.setMana(a.getMana() - sp.getManaCost());
 	}
 
-	/*
-	 * Function for deciding outcome of spell.
-	 */
-	public void duelSpell(Gladiator a, Gladiator b, int x, int y) {
+	private void duelSpell(Gladiator a, Gladiator b, int x, int y) {
 		Spell sp = null;
 		if (a.getSpell1() != null)
 			if (a.getSpell1().getDamageSpell() && a.getMana() >= a.getSpell1().getManaCost())
@@ -556,10 +543,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 		a.setMana(a.getMana() - sp.getManaCost());
 	}
 
-	/*
-	 * Function for AI.
-	 */
-	public void moveAI(Gladiator gl) {
+	private void moveAI(Gladiator gl) {
 		boolean done = false;
 		activeGladiator = gl;
 		int i = (int) gl.getLocation().getX(), j = (int) gl.getLocation().getY();
@@ -867,7 +851,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 	 * Function for checking possible spells and the validity of player
 	 * initiated action.
 	 */
-	public boolean checkSpells(int x, int y, Point loc) {
+	private boolean checkSpells(int x, int y, Point loc) {
 		if (activeGladiator.getSpell1() != null && activeGladiator.getSpell2() != null) {
 			if (((activeGladiator.getSpell1().getDamageSpell() && activeGladiator.getSpell1().getManaCost() <= activeGladiator.getMana()) || (activeGladiator.getSpell2().getDamageSpell() && activeGladiator
 					.getSpell2().getManaCost() <= activeGladiator.getMana()))
