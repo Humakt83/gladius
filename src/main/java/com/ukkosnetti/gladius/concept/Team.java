@@ -194,15 +194,15 @@ public class Team implements Serializable {
 		return this.matchwinsalltime;
 	}
 
-	public Integer amountOfGladiatorsBattleWorthy() {
-		return Collections2.filter(gladiators, new Predicate<Gladiator>() {
+	public List<Gladiator> getBattleWorthyGladiators() {
+		return new ArrayList<>(Collections2.filter(gladiators, new Predicate<Gladiator>() {
 
 			@Override
 			public boolean apply(Gladiator input) {
 				return !input.isKnockedOut();
 			}
 
-		}).size();
+		}));
 	}
 
 	public static List<Team> getTeams() {

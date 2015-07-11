@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Random;
 
 import com.ukkosnetti.gladius.concept.Season;
@@ -42,11 +43,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 												// attack with current
 												// gladiators.
 	private BattlePanel drawingarea; // Visual component of battle.
-	private boolean team1turn = true; // Which teams turn it is.
 	private int round = 0; // Current round of battle (displayed as value + 1).
-	private int team1size = 0, team2size = 0; // How many gladiators teams have.
-	private boolean pause = false, stop = false; // Boolean flags for pausing or
-													// stopping thread.
+	private boolean pause = false;
 	private Thread thread = null;
 
 	public Battle(Team t1, Team t2, Season s, BattlePanel bp, View v) {
@@ -70,7 +68,6 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 
 		if (thread == null) {
 			thread = new Thread(this);
-			stop = false;
 			thread.start();
 		}
 	}
@@ -106,113 +103,46 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 
 	// Main loop of battle.
 	public void run() {
-		while (!stop) { // This loops once for each round of battle until battle
-						// ends.
-			displayMessage("Start of round " + (round + 1) + " of " + maxRounds + ".");
-			team1size = team1.amountOfGladiatorsBattleWorthy();
-			team2size = team2.amountOfGladiatorsBattleWorthy();
-			int i = 0, counter = 0, team1gladturn = 0, team2gladturn = 0;
-			team1turn = true;
-			// Battle ends if there are no healthy members left in either team
-			// battle.
-			if (team1size <= 0) {
-				stop = true;
+		while (true) {
+			if (round >= maxRounds) {
+				this.battleEnds(0);
+				return;
+			}
+			if (team1.getBattleWorthyGladiators().size() <= 0) {
 				this.battleEnds(2);
+				return;
 			}
-			if (team2size <= 0) {
-				stop = true;
+			if (team2.getBattleWorthyGladiators().size() <= 0) {
 				this.battleEnds(1);
+				return;
 			}
-			while ((!stop && (i < team1size || i < team2size) && !(team1size <= 0 || team2size <= 0))) {
-				while (!stop && (!pause && (i < team1size || i < team2size) && !(team1size <= 0 || team2size <= 0))) {
-					if (counter == 2) { // If both teams have had their turn,
-										// increase i and reset counter.
-						i++;
-						counter = 0;
-					}
-					if (team1turn && i < team1size) {
-						counter++;
-						while (team1.getGladiators().get(team1gladturn).getHealth() <= 0)
-							team1gladturn++; // Gets the nearest conscious
-												// gladiator in team.
-						battleTurn(team1.getGladiators().get(team1gladturn));
-						team1turn = false;
-						if (team1.isComputer())
-							this.moveAI(team1.getGladiators().get(team1gladturn)); // If
-																							// team
-																							// 1
-																							// is
-																							// computer
-																							// controlled
-																							// call
-																							// AI
-																							// function.
-						else {
-							view.clearGladiatorPanels();
-							view.addGladiatorstoPanels(team1.getGladiators());
-							pause = true; // Otherwise loop waits.
-						}
-						team1gladturn++;
-					} else {
-						if (team1turn)
-							counter++; // Increases counter because team 1 had
-										// less gladiators than team 2.
-						if (i < team2size) {
-							counter++;
-							while (team2.getGladiators().get(team2gladturn).getHealth() <= 0)
-								team2gladturn++; // Gets the nearest conscious
-													// gladiator in team.
-							battleTurn(team2.getGladiators().get(team2gladturn));
-							team1turn = true;
-							if (team2.isComputer())
-								this.moveAI(team2.getGladiators().get(team2gladturn)); // If
-																								// team
-																								// 2
-																								// is
-																								// computer
-																								// controlled
-																								// call
-																								// AI
-																								// function.
-							else {
-								view.clearGladiatorPanels();
-								view.addGladiatorstoPanels(team2.getGladiators());
-								pause = true; // Otherwise loop waits.
-							}
-							team2gladturn++;
-						} else {
-							counter++; // Increases counter because team 2 had
-										// less gladiators than team 1.
-							team1turn = true;
-						}
-					}
-				} // pause ends here
-				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
+			displayMessage("Start of round " + (round + 1) + " of " + maxRounds + ".");
+			List<Gladiator> gladiators = team1.getBattleWorthyGladiators();
+			gladiators.addAll(team2.getBattleWorthyGladiators());
+			for (Gladiator gladiator : gladiators) {
+				if (!gladiator.isKnockedOut()) {
+					processGladiatorTurn(gladiator);
 				}
 			}
-			if (!stop) {
-				if (round < maxRounds - 1) { // If battle isn't over yet
-												// increase round.
-					round++;
-				} else { // Otherwise:
-					if (team1size <= 0) { // Checks whether team 1 has conscious
-											// members.
-						stop = true;
-						this.battleEnds(2); // Team 2 wins.
-					}
-					if (team2size <= 0) { // Checks whether team 1 has conscious
-											// members.
-						stop = true;
-						this.battleEnds(1); // Team 1 wins.
-					} else {
-						stop = true;
-						this.battleEnds(0); // Battle is draw.
-					}
-				}
-			}
+			round++;
 		}
+	}
+
+	private void processGladiatorTurn(Gladiator gladiator) {
+		do {
+			boolean aiTurn = (team1.getGladiators().contains(gladiator) && team1.isComputer()) || (team2.getGladiators().contains(gladiator) && team2.isComputer());
+			if (aiTurn) {
+				moveAI(gladiator);
+			} else {
+				view.clearGladiatorPanels();
+				view.addGladiatorstoPanels(team1.getGladiators());
+				pause = true;
+			}
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException ignored) {
+			}
+		} while (pause);
 	}
 
 	/*
@@ -387,10 +317,6 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (ko) {
 				displayMessage(b.getName() + " is knocked out.");
 				a.setKnockdowns(1);
-				if (battletable[(int) b.getLocation().getX()][(int) b.getLocation().getY()] < 0)
-					team2size--;
-				else
-					team1size--;
 			}
 			if (r.nextInt(3) == 1) {
 				boolean skillincrease = a.increaseMeleeAttackSkill();
@@ -453,10 +379,6 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (ko) {
 				displayMessage(b.getName() + " is knocked out.");
 				a.setKnockdowns(1);
-				if (battletable[(int) b.getLocation().getX()][(int) b.getLocation().getY()] < 0)
-					team2size--;
-				else
-					team1size--;
 			}
 			if (r.nextInt(3) == 1) {
 				boolean skillincrease = a.increaseRangedSkill();
@@ -529,10 +451,6 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			if (ko) {
 				a.setKnockdowns(1);
 				displayMessage(b.getName() + " is knocked out.");
-				if (battletable[(int) b.getLocation().getX()][(int) b.getLocation().getY()] < 0)
-					team2size--;
-				else
-					team1size--;
 			}
 		}
 		a.setMana(a.getMana() - sp.getManaCost());
