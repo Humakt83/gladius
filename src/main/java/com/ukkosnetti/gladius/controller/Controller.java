@@ -298,7 +298,7 @@ public class Controller implements ActionListener, MouseListener {
 		while (it.hasNext()) {
 			Gladiator apu = it.next();
 			name[i] = apu.getName();
-			race[i] = apu.getRace();
+			race[i] = apu.getRace().toString();
 			price[i] = 10 * apu.getUpkeep();
 			i++;
 		}

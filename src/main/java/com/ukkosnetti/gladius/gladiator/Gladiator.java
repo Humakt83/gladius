@@ -10,16 +10,15 @@ import com.ukkosnetti.gladius.item.Spell;
 import com.ukkosnetti.gladius.item.WeaponInterface;
 
 public class Gladiator implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 8109938923144968581L;
+
 	private WeaponInterface<?> melee;
 	private WeaponInterface<?> ranged;
 	private Spell spell1;
 	private Spell spell2;
 	private Armor armor;
-	private String race;
+	private GladiatorRace race;
 	private int naturalarmor;
 	private int health;
 	private int maxhealth;
@@ -47,7 +46,7 @@ public class Gladiator implements Serializable {
 
 	private ImageIcon picture;
 
-	public Gladiator(String race, int naturalarmor, int maxhealth, int attack, int defense, int resistance, int swordatt, int sworddef, int spearatt, int speardef, int axeatt,
+	public Gladiator(GladiatorRace race, int naturalarmor, int maxhealth, int attack, int defense, int resistance, int swordatt, int sworddef, int spearatt, int speardef, int axeatt,
 			int axedef, int hammeratt, int hammerdef, int bowskill, int crossbowskill, int maxmana, String name, int upkeep, ImageIcon p, int strength, int evasion) {
 		picture = p;
 		this.strength = strength;
@@ -115,11 +114,11 @@ public class Gladiator implements Serializable {
 		this.armor = armor;
 	}
 
-	public String getRace() {
+	public GladiatorRace getRace() {
 		return race;
 	}
 
-	public void setRace(String race) {
+	public void setRace(GladiatorRace race) {
 		this.race = race;
 	}
 

@@ -328,7 +328,7 @@ public class View extends javax.swing.JFrame implements ChangeListener {
 		Evasion.setText("" + gladiator.getEvasion());
 		Bow.setText("" + gladiator.getBowskill());
 		Crossbow.setText("" + gladiator.getCrossbowskill());
-		actualrace.setText(gladiator.getRace());
+		actualrace.setText(gladiator.getRace().toString());
 		upkeemam.setText("" + gladiator.getUpkeep());
 		if (gladiator.getMelee() == null) {
 			MeleeName.setText("None");

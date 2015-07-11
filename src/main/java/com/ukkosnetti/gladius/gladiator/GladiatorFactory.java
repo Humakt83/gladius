@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class GladiatorFactory {
 
-	public static Gladiator generateGladiator(GladiatorType type, String name) {
+	public static Gladiator generateGladiator(GladiatorRace type, String name) {
 		GladiatorBuilder builder = new GladiatorBuilder(type);
 		switch (type) {
 		case BEHOLDER:
@@ -18,14 +18,14 @@ public class GladiatorFactory {
 					.setAxeSkill(randomNumberBetween(10, 30), randomNumberBetween(5, 20)).setHammerSkill(randomNumberBetween(15, 35), randomNumberBetween(5, 30))
 					.setUpkeep(randomNumberBetween(15, 35)).setStrength(10);
 			break;
-		case GOBLIN_WIZARD:
+		case GREMLIN:
 			builder.setAttack(randomNumberBetween(25, 50)).setDefense(randomNumberBetween(30, 60)).setEvasion(randomNumberBetween(10, 30)).setMaxHealth(randomNumberBetween(10, 20))
 					.setMaxMana(randomNumberBetween(30, 50)).setResistance(randomNumberBetween(30, 50)).setAxeSkill(randomNumberBetween(5, 25), randomNumberBetween(5, 25))
 					.setHammerSkill(randomNumberBetween(5, 25), randomNumberBetween(5, 25)).setSpearSkill(randomNumberBetween(5, 25), randomNumberBetween(5, 25))
 					.setSwordSkill(randomNumberBetween(5, 25), randomNumberBetween(5, 35)).setBowSkill(randomNumberBetween(5, 25)).setCrossBowSkill(randomNumberBetween(5, 25))
 					.setUpkeep(randomNumberBetween(7, 17)).setStrength(2);
 			break;
-		case HOBGOBLIN:
+		case IMP:
 			builder.setAttack(randomNumberBetween(25, 50)).setDefense(randomNumberBetween(20, 40)).setEvasion(randomNumberBetween(10, 25)).setMaxHealth(randomNumberBetween(15, 25))
 					.setMaxMana(randomNumberBetween(10, 20)).setResistance(randomNumberBetween(5, 25)).setAxeSkill(randomNumberBetween(15, 45), randomNumberBetween(10, 30))
 					.setHammerSkill(randomNumberBetween(15, 45), randomNumberBetween(10, 30)).setSpearSkill(randomNumberBetween(15, 45), randomNumberBetween(10, 30))
@@ -39,13 +39,7 @@ public class GladiatorFactory {
 					.setSwordSkill(randomNumberBetween(25, 65), randomNumberBetween(30, 70)).setBowSkill(randomNumberBetween(35, 65)).setCrossBowSkill(randomNumberBetween(35, 65))
 					.setUpkeep(randomNumberBetween(7, 16)).setStrength(1);
 			break;
-		case KAARNAPEIKKO:
-			builder.setAttack(randomNumberBetween(20, 35)).setDefense(randomNumberBetween(15, 30)).setEvasion(randomNumberBetween(5, 20)).setMaxHealth(randomNumberBetween(30, 40))
-					.setMaxMana(randomNumberBetween(1, 10)).setResistance(randomNumberBetween(1, 10)).setNaturalArmor(randomNumberBetween(1, 5))
-					.setAxeSkill(randomNumberBetween(15, 35), randomNumberBetween(15, 35)).setHammerSkill(randomNumberBetween(15, 35), randomNumberBetween(15, 35))
-					.setUpkeep(randomNumberBetween(10, 25)).setStrength(9);
-			break;
-		case LONGSTRIDER:
+		case LIERO:
 			builder.setAttack(randomNumberBetween(20, 45)).setDefense(randomNumberBetween(15, 50)).setEvasion(randomNumberBetween(25, 60)).setMaxHealth(randomNumberBetween(15, 25))
 					.setMaxMana(randomNumberBetween(10, 25)).setResistance(randomNumberBetween(10, 30)).setSwordSkill(randomNumberBetween(25, 50), randomNumberBetween(25, 50))
 					.setSpearSkill(randomNumberBetween(30, 65), randomNumberBetween(30, 65)).setBowSkill(randomNumberBetween(25, 55)).setCrossBowSkill(randomNumberBetween(25, 55))
@@ -91,13 +85,6 @@ public class GladiatorFactory {
 					.setHammerSkill(randomNumberBetween(15, 45), randomNumberBetween(5, 10)).setSpearSkill(randomNumberBetween(5, 35), randomNumberBetween(5, 10))
 					.setSwordSkill(randomNumberBetween(15, 50), randomNumberBetween(5, 10)).setBowSkill(randomNumberBetween(5, 15)).setCrossBowSkill(randomNumberBetween(15, 35))
 					.setUpkeep(randomNumberBetween(2, 10)).setStrength(7);
-			break;
-		case OTO:
-			builder.setAttack(randomNumberBetween(20, 35)).setDefense(randomNumberBetween(15, 30)).setEvasion(randomNumberBetween(1, 10)).setMaxHealth(randomNumberBetween(35, 45))
-					.setMaxMana(randomNumberBetween(5, 15)).setResistance(randomNumberBetween(10, 20)).setNaturalArmor(randomNumberBetween(1, 5))
-					.setAxeSkill(randomNumberBetween(15, 35), randomNumberBetween(15, 35)).setHammerSkill(randomNumberBetween(15, 35), randomNumberBetween(15, 35))
-					.setSpearSkill(randomNumberBetween(15, 45), randomNumberBetween(10, 30)).setSwordSkill(randomNumberBetween(25, 65), randomNumberBetween(20, 60))
-					.setUpkeep(randomNumberBetween(10, 25)).setStrength(8);
 			break;
 		default:
 			break;

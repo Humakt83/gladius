@@ -11,6 +11,7 @@ import java.util.Random;
 import com.ukkosnetti.gladius.concept.Season;
 import com.ukkosnetti.gladius.concept.Team;
 import com.ukkosnetti.gladius.gladiator.Gladiator;
+import com.ukkosnetti.gladius.gladiator.GladiatorRace;
 import com.ukkosnetti.gladius.gui.BattlePanel;
 import com.ukkosnetti.gladius.gui.View;
 import com.ukkosnetti.gladius.item.MeleeWeaponType;
@@ -326,7 +327,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			weaptypeb = (MeleeWeaponType) b.getMelee().getWeaponType();
 		} else
 			weapb = "fist";
-		if (a.getRace().equals("Beholder"))
+		if (a.getRace().equals(GladiatorRace.BEHOLDER))
 			displayMessage(a.getName() + " attacks with evil eye while " + b.getName() + " defends with " + weapb + ".");
 		else
 			displayMessage(a.getName() + " attacks with " + weapa + " while " + b.getName() + " defends with " + weapb + ".");
@@ -421,7 +422,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			attack = a.getBowskill();
 		if (weaptypea.equals(RangedWeaponType.CROSSBOW))
 			attack = a.getCrossbowskill();
-		if (a.getRace().equals("Beholder"))
+		if (a.getRace().equals(GladiatorRace.BEHOLDER))
 			attack = 10;
 		defend = b.getEvasion();
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
@@ -451,7 +452,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			boolean ko = false;
 			if (b.getHealth() <= 0)
 				ko = true;
-			if (a.getRace().equals("Beholder"))
+			if (a.getRace().equals(GladiatorRace.BEHOLDER))
 				displayMessage(a.getName() + " rays doing " + damage + " to " + b.getName() + ".");
 			else
 				displayMessage(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
@@ -569,7 +570,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 				}
 			}
 		}
-		if (!done && (gl.getRanged() != null) || (gl.getRace().equals("Beholder"))) {
+		if (!done && (gl.getRanged() != null) || (gl.getRace().equals(GladiatorRace.BEHOLDER))) {
 			for (int x = 0; x < 10 && !done; x++) {
 				for (int y = 0; y < 8 && !done; y++) {
 					if ((battletable[x][y] > 0 && battletable[i][j] < 0) || (battletable[x][y] < 0 && battletable[i][j] > 0)) {
@@ -802,7 +803,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						pause = false;
 					} else if (!(evt.getButton() == 2)
 							&& (((battletable[x][y] > 0 && battletable[(int) loc.getX()][(int) loc.getY()] < 0) || (battletable[x][y] < 0 && battletable[(int) loc.getX()][(int) loc.getY()] > 0)) && (activeGladiator
-									.getRanged() != null || activeGladiator.getRace().equals("Beholder")))) {
+									.getRanged() != null || activeGladiator.getRace().equals(GladiatorRace.BEHOLDER)))) {
 						int other = battletable[x][y];
 						boolean donothing = false;
 						if (other < 0) {

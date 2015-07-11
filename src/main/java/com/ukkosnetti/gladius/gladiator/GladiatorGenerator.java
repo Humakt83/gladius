@@ -26,8 +26,8 @@ public class GladiatorGenerator {
 	public List<Gladiator> generateRandomGladiators(int amount, Random random) {
 		List<Gladiator> generatedGladiators = new ArrayList<>();
 		for (int i = amount; i > 0; i--) {
-			GladiatorType[] types = GladiatorType.values();
-			GladiatorType type = types[random.nextInt(types.length)];
+			GladiatorRace[] types = GladiatorRace.values();
+			GladiatorRace type = types[random.nextInt(types.length)];
 			generatedGladiators.add(GladiatorFactory.generateGladiator(type, randomName(random, generatedGladiators)));
 		}
 		return generatedGladiators;

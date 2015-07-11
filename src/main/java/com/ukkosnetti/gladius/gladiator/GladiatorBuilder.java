@@ -6,8 +6,8 @@ public class GladiatorBuilder {
 
 	private final Gladiator gladiator;
 
-	public GladiatorBuilder(GladiatorType type) {
-		gladiator = new Gladiator(type.race, 0, 10, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, "", 10, new ImageIcon(type.imgName), 10, 10);
+	public GladiatorBuilder(GladiatorRace type) {
+		gladiator = new Gladiator(type, 0, 10, 15, 15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, "", 10, new ImageIcon(type.imgName), 10, 10);
 	}
 
 	public GladiatorBuilder setNaturalArmor(int armor) {
