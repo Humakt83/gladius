@@ -326,7 +326,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			weaptypeb = (MeleeWeaponType) b.getMelee().getWeaponType();
 		} else
 			weapb = "fist";
-		if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
+		if (a.getRace().equals("Beholder"))
 			displayMessage(a.getName() + " attacks with evil eye while " + b.getName() + " defends with " + weapb + ".");
 		else
 			displayMessage(a.getName() + " attacks with " + weapa + " while " + b.getName() + " defends with " + weapb + ".");
@@ -421,7 +421,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			attack = a.getBowskill();
 		if (weaptypea.equals(RangedWeaponType.CROSSBOW))
 			attack = a.getCrossbowskill();
-		if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
+		if (a.getRace().equals("Beholder"))
 			attack = 10;
 		defend = b.getEvasion();
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
@@ -451,7 +451,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			boolean ko = false;
 			if (b.getHealth() <= 0)
 				ko = true;
-			if (a.getRace().equals("Beholder") || a.getRace().equals("Beholder_Hero"))
+			if (a.getRace().equals("Beholder"))
 				displayMessage(a.getName() + " rays doing " + damage + " to " + b.getName() + ".");
 			else
 				displayMessage(a.getName() + " hit doing " + damage + " to " + b.getName() + ".");
@@ -569,7 +569,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 				}
 			}
 		}
-		if (!done && (gl.getRanged() != null) || (gl.getRace().equals("Beholder") || gl.getRace().equals("Beholder_Hero"))) {
+		if (!done && (gl.getRanged() != null) || (gl.getRace().equals("Beholder"))) {
 			for (int x = 0; x < 10 && !done; x++) {
 				for (int y = 0; y < 8 && !done; y++) {
 					if ((battletable[x][y] > 0 && battletable[i][j] < 0) || (battletable[x][y] < 0 && battletable[i][j] > 0)) {
@@ -802,7 +802,7 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 						pause = false;
 					} else if (!(evt.getButton() == 2)
 							&& (((battletable[x][y] > 0 && battletable[(int) loc.getX()][(int) loc.getY()] < 0) || (battletable[x][y] < 0 && battletable[(int) loc.getX()][(int) loc.getY()] > 0)) && (activeGladiator
-									.getRanged() != null || activeGladiator.getRace().equals("Beholder") || activeGladiator.getRace().equals("Beholder_Hero")))) {
+									.getRanged() != null || activeGladiator.getRace().equals("Beholder")))) {
 						int other = battletable[x][y];
 						boolean donothing = false;
 						if (other < 0) {
