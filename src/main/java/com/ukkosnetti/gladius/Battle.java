@@ -417,14 +417,8 @@ public class Battle implements MouseListener, KeyListener, Runnable, Serializabl
 			displayMessage(a.getName() + " shoots " + b.getName() + " with " + weapa + ".");
 		else
 			displayMessage(a.getName() + " shoots beholder ray at " + b.getName() + ".");
-		int attack = 0, defend = 0;
-		if (weaptypea.equals(RangedWeaponType.BOW))
-			attack = a.getBowskill();
-		if (weaptypea.equals(RangedWeaponType.CROSSBOW))
-			attack = a.getCrossbowskill();
-		if (a.getRace().equals(GladiatorRace.BEHOLDER))
-			attack = 10;
-		defend = b.getEvasion();
+		int attack = a.getRace() == GladiatorRace.BEHOLDER ? 50 : weaptypea.equals(RangedWeaponType.CROSSBOW) ? a.getBowskill() : a.getCrossbowskill();
+		int defend = b.getEvasion();
 		int hit = r.nextInt(attack + 1) - r.nextInt(defend + 1);
 		if (hit < 0) {
 			displayMessage(a.getName() + " misses.");
