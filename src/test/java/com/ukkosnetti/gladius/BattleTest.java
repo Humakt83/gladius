@@ -44,33 +44,62 @@ public class BattleTest {
 	public void teamsBattleAgainstEachOther() throws Exception {
 		Team team1 = teams.get(0);
 		Team team2 = teams.get(1);
-		new Battle(team1, team2, season, panel, view);
-		verify(view, timeout(1000)).removeBattleController(any(Battle.class));
-
+		battle(team1, team2);
 		assertTrue(team1.getMatchWins() > 0 || team2.getMatchWins() > 0);
 	}
 
 	@Test
 	public void teamFromLeagueOneShouldWinMoreAgainstTeamFromLeagueFour() throws Exception {
-		Team leagueOneTeam = Iterables.find(teams, new Predicate<Team>() {
-
-			@Override
-			public boolean apply(Team input) {
-				return input.getLeague() == 1;
-			}
-
-		});
-		Team leagueFourTeam = Iterables.find(teams, new Predicate<Team>() {
-
-			@Override
-			public boolean apply(Team input) {
-				return input.getLeague() == 4;
-			}
-			
-		});
-		new Battle(leagueOneTeam, leagueFourTeam, season, panel, view);
-		verify(view, timeout(1000)).removeBattleController(any(Battle.class));
+		Team leagueOneTeam = getTeamFromLeague(1);
+		Team leagueFourTeam = getTeamFromLeague(4);
+		battle(leagueOneTeam, leagueFourTeam);
 		assertEquals(1, leagueOneTeam.getMatchWins().intValue());
+	}
+
+	@Test
+	public void teamFromLeagueOneShouldBeMoreLikelyToWinAgainstTeamFromLeagueTwo() throws Exception {
+		Team leagueOneTeam = getTeamFromLeague(1);
+		Team leagueTwoTeam = getTeamFromLeague(2);
+		for (int i = 0; i < 10; i++) {
+			battle(leagueOneTeam, leagueTwoTeam);
+		}
+		assertTrue(leagueOneTeam.getMatchWins() > leagueTwoTeam.getMatchWins());
+	}
+
+	@Test
+	public void teamFromLeagueTwoShouldBeMoreLikelyToWinAgainstTeamFromLeagueThree() throws Exception {
+		Team leagueThreeTeam = getTeamFromLeague(3);
+		Team leagueTwoTeam = getTeamFromLeague(2);
+		for (int i = 0; i < 10; i++) {
+			battle(leagueThreeTeam, leagueTwoTeam);
+		}
+		assertTrue(leagueThreeTeam.getMatchWins() < leagueTwoTeam.getMatchWins());
+	}
+
+	@Test
+	public void teamFromLeagueThreeShouldBeMoreLikelyToWinAgainstTeamFromLeagueFour() throws Exception {
+		Team leagueThreeTeam = getTeamFromLeague(3);
+		Team leagueFourTeam = getTeamFromLeague(4);
+		for (int i = 0; i < 10; i++) {
+			battle(leagueThreeTeam, leagueFourTeam);
+		}
+		assertTrue(leagueThreeTeam.getMatchWins() > leagueFourTeam.getMatchWins());
+	}
+
+	private void battle(Team team1, Team team2) {
+		new Battle(team1, team2, season, panel, view);
+		verify(view, timeout(1000)).removeBattleController(any(Battle.class));
+	}
+
+	private Team getTeamFromLeague(final int league) {
+		return Iterables.find(teams, new Predicate<Team>() {
+
+			@Override
+			public boolean apply(Team input) {
+				return input.getLeague() == league;
+			}
+
+		});
 	}
 
 }
